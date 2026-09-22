@@ -1,3 +1,13 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="light dark">
+<meta name="theme-color" content="#F3F6F8" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0D1319" media="(prefers-color-scheme: dark)">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="웅덩이">
 <title>웅덩이 판독기</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap">
 <style>
@@ -23,6 +33,9 @@
   --good:#5CC48C; --warn:#E39A52; --bad:#E06B67; --good-bg:#16311F; --warn-bg:#3A2712; --bad-bg:#3B1B1A; --info-bg:#173040;
 }
 *{box-sizing:border-box}
+/* 그리드/플렉스 항목의 기본 min-width:auto 가 넓은 표·차트를 만나면 화면을 밀어낸다 */
+.stack{grid-template-columns:minmax(0,1fr)}
+section.tk,section.tk>*,.pane,.pane>*,.chartbox,.chartbox>*,.u-chart,.tbl,.cols>*{min-width:0}
 body{background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:14px;line-height:1.55;-webkit-text-size-adjust:100%}
 .wrap{max-width:1120px;margin:0 auto;padding-block:20px 48px;padding-inline:16px}
 h1{font-size:22px;font-weight:700;margin:0;letter-spacing:-.01em;text-wrap:balance}
@@ -158,7 +171,62 @@ table.ov td,table.ov th{padding:9px 8px}
 .buy-legend{width:0;height:0;border-left:6px solid transparent;border-right:6px solid transparent;border-bottom:11px solid var(--accent);background:none;border-radius:0}
 .sell-legend{width:0;height:0;border-left:6px solid transparent;border-right:6px solid transparent;border-top:11px solid var(--bad);background:none;border-radius:0}
 @media (prefers-reduced-motion: no-preference){ .fill{transition:width .3s ease} }
+
+/* ───────── 휴대폰 ───────── */
+.ovcards{display:none}
+@media (max-width:680px){
+  .wrap{padding-block:12px 32px}
+  h1{font-size:19px}
+  .sub{font-size:13px}
+  header{gap:4px 12px;margin-bottom:10px}
+  header .hint{display:none}
+  .tabs.top button{flex:1 1 0;font-size:14px;padding:10px 8px}
+  .bar{padding:10px}
+  .field{flex:1 1 100%}
+  .thr{flex:1 1 100%;justify-content:space-between}
+  .thr input[type=range]{flex:1 1 auto;width:auto;min-width:0}
+  .row>button.primary{flex:1 1 100%;padding:12px}
+  /* 요약: 표 대신 카드 */
+  .ovtable{display:none}
+  .ovcards{display:grid;gap:10px}
+  .ovcard{border:1px solid var(--line);border-radius:10px;padding:10px 12px;display:grid;gap:6px;cursor:pointer;background:var(--bg)}
+  .ovcard:active{background:var(--line-soft)}
+  .ovcard .top{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+  .ovcard .sym{font-size:17px;font-weight:700}
+  .ovcard .nm{color:var(--muted);font-size:12px}
+  .ovcard .facts{display:grid;grid-template-columns:1fr 1fr;gap:2px 10px;font-size:13px}
+  .ovcard .facts div{display:flex;justify-content:space-between;gap:6px}
+  .ovcard .facts span:first-child{color:var(--muted)}
+  .ovcard .facts span:last-child{font-family:var(--mono);font-variant-numeric:tabular-nums}
+  .ovcard .foot{font-size:12px;color:var(--muted);display:grid;gap:2px}
+  .ovcard .go{margin-left:auto;color:var(--accent);font-weight:600;font-size:13px}
+  /* 상세 */
+  .pager{gap:4px;overflow-x:auto;flex-wrap:nowrap;padding-bottom:4px;-webkit-overflow-scrolling:touch}
+  .pager::-webkit-scrollbar{height:0}
+  .pager button{padding:6px 10px;white-space:nowrap;flex:0 0 auto}
+  .pager .hint{flex:0 0 auto;white-space:nowrap}
+  section.tk{padding:12px 10px}
+  .verdict{grid-template-columns:1fr;gap:4px}
+  .verdict .big{font-size:32px}
+  .verdict .sym{font-size:18px}
+  .verdict p{font-size:13px}
+  .legend{font-size:11px;gap:2px 10px}
+  .chart-tools{gap:2px 6px}
+  .chart-tools [data-range] button{padding:4px 7px;font-size:12px}
+  table{font-size:12px}
+  th,td{padding:5px 6px;white-space:nowrap}   /* 줄바꿈 대신 표를 옆으로 밀어 본다 */
+  td .desc{white-space:normal}
+  .summary .grid{grid-template-columns:1fr}
+  .foot{font-size:11px}
+}
+@media (max-width:420px){
+  .ovcard .facts{grid-template-columns:1fr}
+  .verdict .big{font-size:28px}
+}
 </style>
+</head>
+<body>
+
 
 <div class="wrap">
   <header>
@@ -1144,15 +1212,31 @@ var uPlot=function(){"use strict";const l="u-off",e="u-label",t="width",n="heigh
     const ordBy = { "매수 고려": 0, "매도 고려": 1, "관망": 2 };
     rows.sort((a, b) => (ordBy[a[1].res.cur.state] - ordBy[b[1].res.cur.state]) || (b[1].res.cur.size - a[1].res.cur.size));
     ov.innerHTML = `<section class="tk"><h2>매매 고려 요약 · ${rows.length}종목 <span class="hint" style="font-weight:400">— 행을 누르면 상세로 갑니다</span></h2>
-      <div class="tbl"><table class="ov"><thead><tr><th>종목</th><th>판단</th><th class="r">비중</th><th class="r">점수</th><th class="r">종가</th><th class="r">20일 고점 대비</th><th class="r">20일 저점 대비</th><th>마지막 신호</th><th>이 종목에서 매수 / 매도 신호 신뢰도</th></tr></thead><tbody>
+      <div class="tbl ovtable"><table class="ov"><thead><tr><th>종목</th><th>판단</th><th class="r">비중</th><th class="r">점수</th><th class="r">종가</th><th class="r">20일 고점 대비</th><th class="r">20일 저점 대비</th><th>마지막 신호</th><th>이 종목에서 매수 / 매도 신호 신뢰도</th></tr></thead><tbody>
       ${rows.map(([label, r]) => { const {cur, d} = r.res, i = d.close.length - 1, rel = reliability(r.res), m = r.data.meta || {};
         const lastIdx = Math.max(cur.lastBuy, cur.lastSell); const lastKind = lastIdx < 0 ? "—" : (lastIdx === cur.lastBuy ? "매수 " + (d.sig_kind[lastIdx]||"") : "매도 고점꺾임");
         const pill = cur.state === "매수 고려" ? `<span class="pill well"><i></i>매수 고려</span>` : cur.state === "매도 고려" ? `<span class="pill bad"><i></i>매도 고려</span>` : `<span class="pill no"><i></i>관망</span>`;
         const relTxt = (g) => `<span class="${g.c==="good"?"pos":g.c==="bad"?"neg":""}">${g.t}</span>${g.p===g.p?` <span class="desc">p=${g.p.toFixed(2)}</span>`:""}`;
         return `<tr data-label="${label}"><td><b>${label}</b><div class="desc">${escapeHtml(m.name||"")}</div></td><td>${pill}</td><td class="num r">${cur.state==="관망"?"—":cur.size+"%"}</td><td class="num r">${fmtN(cur.score,0)}</td><td class="num r">${fmtN(d.close[i],2)}</td><td class="num r ${cls(cur.dip)}">${fmtPct(cur.dip)}</td><td class="num r ${cls(cur.rise)}">${fmtPct(cur.rise)}</td><td class="num">${lastIdx>=0?`${r.data.dates[lastIdx]} <span class="desc">${lastKind} · ${fmtPct(d.close[i]/d.close[lastIdx]-1)}</span>`:"—"}</td><td>${relTxt(rel.buy)} / ${relTxt(rel.sell)}</td></tr>`; }).join("")}
       </tbody></table></div>
+      <div class="ovcards">${rows.map(([label, r]) => { const {cur, d} = r.res, i = d.close.length - 1, rel = reliability(r.res), m = r.data.meta || {};
+        const lastIdx = Math.max(cur.lastBuy, cur.lastSell); const lastKind = lastIdx < 0 ? "" : (lastIdx === cur.lastBuy ? "매수 " + (d.sig_kind[lastIdx]||"") : "매도 고점꺾임");
+        const pill = cur.state === "매수 고려" ? `<span class="pill well"><i></i>매수 고려</span>` : cur.state === "매도 고려" ? `<span class="pill bad"><i></i>매도 고려</span>` : `<span class="pill no"><i></i>관망</span>`;
+        const relTxt = (g) => `<span class="${g.c==="good"?"pos":g.c==="bad"?"neg":""}">${g.t}</span>`;
+        return `<div class="ovcard" data-label="${label}">
+          <div class="top"><span class="sym">${label}</span>${pill}${cur.state!=="관망"?`<b>비중 ${cur.size}%</b>`:""}<span class="go">상세 ›</span></div>
+          <div class="nm">${escapeHtml(m.name||"")}</div>
+          <div class="facts">
+            <div><span>종가</span><span>${fmtN(d.close[i],2)}</span></div>
+            <div><span>점수</span><span>${fmtN(cur.score,0)}</span></div>
+            <div><span>20일 고점 대비</span><span class="${cls(cur.dip)}">${fmtPct(cur.dip)}</span></div>
+            <div><span>20일 저점 대비</span><span class="${cls(cur.rise)}">${fmtPct(cur.rise)}</span></div>
+          </div>
+          <div class="foot">${lastIdx>=0?`<span>마지막 신호 ${r.data.dates[lastIdx]} · ${lastKind} · 그 뒤 ${fmtPct(d.close[i]/d.close[lastIdx]-1)}</span>`:""}
+            <span>신호 신뢰도 — 매수 ${relTxt(rel.buy)} · 매도 ${relTxt(rel.sell)}</span></div>
+        </div>`; }).join("")}</div>
       <p class="hint" style="margin:8px 0 0">판단 = 매수 고려 / 매도 고려 / 관망. 비중 = 계획 물량 중 지금 넣을(덜어낼) 비율. 신뢰도 = 이 종목의 5년 과거에서 그 신호가 아무 날보다 나았는지 (p&lt;0.1 믿을 만함 · 0.1~0.3 약함 · 0.3 이상 구분 안 됨).</p></section>`;
-    ov.querySelectorAll("tr[data-label]").forEach(tr => tr.addEventListener("click", () => showPage("detail", tr.dataset.label)));
+    ov.querySelectorAll("[data-label]").forEach(el => el.addEventListener("click", () => showPage("detail", el.dataset.label)));
   }
   function sigTable(res, data, d, n, rows, st, sell){
     const [H1, H2] = res.hz.eval, gcol = sell ? res.hz.key + "_sell_grade" : "bz";
@@ -1197,7 +1281,9 @@ var uPlot=function(){"use strict";const l="u-off",e="u-label",t="width",n="heigh
     const bo = d.breakout.map((b,i)=> b ? d.close[i] : null);
     const priceEl = sec.querySelector("[data-price]"), scoreEl = sec.querySelector("[data-score]");
     priceEl.innerHTML = ""; scoreEl.innerHTML = "";
-    const W = () => Math.max(300, priceEl.clientWidth);
+    const W = () => Math.max(260, priceEl.clientWidth || sec.clientWidth - 24);
+    const narrow = () => W() < 520;
+    const H1px = () => narrow() ? 230 : 300, H2px = () => narrow() ? 90 : 120;
     const axisStyle = { stroke: css("--muted"), grid:{stroke: css("--line-soft"), width:1}, ticks:{stroke: css("--line"), width:1}, font:"11px "+css("--mono") };
     const sync = uPlot.sync("wells-"+sec.id);
     const showDetail = document.body.classList.contains("detail");
@@ -1214,22 +1300,23 @@ var uPlot=function(){"use strict";const l="u-off",e="u-label",t="width",n="heigh
     };
     const tip = document.createElement("div"); tip.className="tip"; tip.hidden = true; priceEl.style.position="relative"; priceEl.appendChild(tip);
     const priceOpts = {
-      width: W(), height: 300, cursor:{ sync:{key: sync.key}, y:false, drag:{x:true,y:false} },
+      width: W(), height: H1px(), cursor:{ sync:{key: sync.key}, y:false, drag:{x:true,y:false} },
       scales:{ x:{time:true} },
       axes:[ {...axisStyle, values:(u,v)=>v.map(t=>{const dt=new Date(t*1000); return dt.getUTCMonth()===0&&dt.getUTCDate()<8 ? dt.getUTCFullYear() : (dt.getUTCFullYear()+"."+String(dt.getUTCMonth()+1).padStart(2,"0"));})},
-             {...axisStyle, size:56, values:(u,v)=>v.map(x=>x>=1000?x.toLocaleString():x)} ],
+             {...axisStyle, size:narrow()?40:56, values:(u,v)=>v.map(x=>x>=1000?x.toLocaleString():x)} ],
       series:[ {}, {label:"종가", stroke: css("--price"), width:1.4}, {label:"200일선", stroke: css("--ma"), width:1.2, dash:[4,3]},
                {label:"이탈", stroke: css("--good"), paths: ()=>null, points:{show:false}} ],
       hooks:{ drawClear:[shade], draw:[u=>{                       // 매수 ▲ / 매도 ▼ + 가격
         const ctx=u.ctx; ctx.save(); ctx.font="bold 11px "+css("--mono"); ctx.textAlign="center";
+        const sm = narrow(), w0 = sm?5:7, h0 = sm?13:19, o0 = sm?4:6;   // 좁으면 마커를 줄이고 가격 글자는 생략한다
         ctx.fillStyle=css("--accent");
         for (const i of res.buys){ const x=u.valToPos(xs[i],"x",true), y=u.valToPos(d.close[i],"y",true); if (x<u.bbox.left||x>u.bbox.left+u.bbox.width) continue;
-          ctx.beginPath(); ctx.moveTo(x,y+6); ctx.lineTo(x-7,y+19); ctx.lineTo(x+7,y+19); ctx.closePath(); ctx.fill();
-          ctx.fillText(fmtN(d.close[i], d.close[i]>=1000?0:1), x, y+31); }
+          ctx.beginPath(); ctx.moveTo(x,y+o0); ctx.lineTo(x-w0,y+h0); ctx.lineTo(x+w0,y+h0); ctx.closePath(); ctx.fill();
+          if (!sm) ctx.fillText(fmtN(d.close[i], d.close[i]>=1000?0:1), x, y+31); }
         ctx.fillStyle=css("--bad");
         for (const i of res.sells){ const x=u.valToPos(xs[i],"x",true), y=u.valToPos(d.close[i],"y",true); if (x<u.bbox.left||x>u.bbox.left+u.bbox.width) continue;
-          ctx.beginPath(); ctx.moveTo(x,y-6); ctx.lineTo(x-7,y-19); ctx.lineTo(x+7,y-19); ctx.closePath(); ctx.fill();
-          ctx.fillText(fmtN(d.close[i], d.close[i]>=1000?0:1), x, y-23); }
+          ctx.beginPath(); ctx.moveTo(x,y-o0); ctx.lineTo(x-w0,y-h0); ctx.lineTo(x+w0,y-h0); ctx.closePath(); ctx.fill();
+          if (!sm) ctx.fillText(fmtN(d.close[i], d.close[i]>=1000?0:1), x, y-23); }
         ctx.restore(); }, u=>{ if (!showDetail) return;             // 사후 눌림 = 바닥 ▽ + 몸통 밑줄
         const ctx=u.ctx; ctx.save(); ctx.strokeStyle=css("--trough"); ctx.fillStyle=css("--trough"); ctx.lineWidth=3;
         const yb = u.bbox.top + u.bbox.height - 3;
@@ -1251,9 +1338,9 @@ var uPlot=function(){"use strict";const l="u-off",e="u-label",t="width",n="heigh
     };
     const up = new uPlot(priceOpts, [xs, d.close, d.ma200.map(v=>v===v?v:null), bo], priceEl);
     const scoreOpts = {
-      width: W(), height: 120, cursor:{ sync:{key: sync.key}, y:false, drag:{x:true,y:false} },
+      width: W(), height: H2px(), cursor:{ sync:{key: sync.key}, y:false, drag:{x:true,y:false} },
       scales:{ x:{time:true}, y:{range:[0,100]} },
-      axes:[ {...axisStyle, show:false}, {...axisStyle, size:56, splits:()=>[0,threshold,100]} ],
+      axes:[ {...axisStyle, show:false}, {...axisStyle, size:narrow()?40:56, splits:()=>[0,threshold,100]} ],
       series:[ {}, {label:"저점매수", stroke: css("--score"), width:1.2, fill: css("--well")},
                {label:"문턱", stroke: css("--warn"), width:1, dash:[3,3]},
                {label:"돌파준비", stroke: css("--setup"), width:1, dash:[2,2]} ],
@@ -1270,8 +1357,10 @@ var uPlot=function(){"use strict";const l="u-off",e="u-label",t="width",n="heigh
     sec.querySelectorAll("[data-range] button").forEach(b => b.addEventListener("click", () => {
       sec.querySelectorAll("[data-range] button").forEach(x=>x.setAttribute("aria-pressed","false")); b.setAttribute("aria-pressed","true"); setRange(+b.dataset.y);
     }));
-    setRange(5);
-    const ro = new ResizeObserver(()=>{ const w=W(); up.setSize({width:w,height:300}); us.setSize({width:w,height:120}); }); ro.observe(priceEl);
+    const defY = narrow() ? 2 : 5;
+    sec.querySelectorAll("[data-range] button").forEach(x=>x.setAttribute("aria-pressed", String(+x.dataset.y === defY)));
+    setRange(defY);
+    const ro = new ResizeObserver(()=>{ const w=W(); up.setSize({width:w,height:H1px()}); us.setSize({width:w,height:H2px()}); }); ro.observe(priceEl);
     up.setCursor({left:-10, top:-10});
   }
 
@@ -1295,3 +1384,6 @@ var uPlot=function(){"use strict";const l="u-off",e="u-label",t="width",n="heigh
   renderOverview();
 })();
 </script>
+
+</body>
+</html>
