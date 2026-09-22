@@ -168,8 +168,8 @@ table.ov td,table.ov th{padding:9px 8px}
 .summary ul{margin:0;padding-left:18px;font-size:13px;display:grid;gap:3px}
 .pane[hidden]{display:none}
 .only-detail{display:none} body.detail .legend .only-detail{display:inline}
-.buy-legend{width:0;height:0;border-left:6px solid transparent;border-right:6px solid transparent;border-bottom:11px solid var(--accent);background:none;border-radius:0}
-.sell-legend{width:0;height:0;border-left:6px solid transparent;border-right:6px solid transparent;border-top:11px solid var(--bad);background:none;border-radius:0}
+.buy-legend{width:0;height:0;border-left:7px solid transparent;border-right:7px solid transparent;border-bottom:12px solid var(--accent);background:none;border-radius:0}
+.sell-legend{width:0;height:0;border-left:7px solid transparent;border-right:7px solid transparent;border-top:12px solid var(--bad);background:none;border-radius:0}
 @media (prefers-reduced-motion: no-preference){ .fill{transition:width .3s ease} }
 
 /* ───────── 휴대폰 ───────── */
@@ -1283,7 +1283,7 @@ var uPlot=function(){"use strict";const l="u-off",e="u-label",t="width",n="heigh
     priceEl.innerHTML = ""; scoreEl.innerHTML = "";
     const W = () => Math.max(260, priceEl.clientWidth || sec.clientWidth - 24);
     const narrow = () => W() < 520;
-    const H1px = () => narrow() ? 230 : 300, H2px = () => narrow() ? 90 : 120;
+    const H1px = () => narrow() ? 270 : 300, H2px = () => narrow() ? 90 : 120;
     const axisStyle = { stroke: css("--muted"), grid:{stroke: css("--line-soft"), width:1}, ticks:{stroke: css("--line"), width:1}, font:"11px "+css("--mono") };
     const sync = uPlot.sync("wells-"+sec.id);
     const showDetail = document.body.classList.contains("detail");
@@ -1308,15 +1308,19 @@ var uPlot=function(){"use strict";const l="u-off",e="u-label",t="width",n="heigh
                {label:"이탈", stroke: css("--good"), paths: ()=>null, points:{show:false}} ],
       hooks:{ drawClear:[shade], draw:[u=>{                       // 매수 ▲ / 매도 ▼ + 가격
         const ctx=u.ctx; ctx.save(); ctx.font="bold 11px "+css("--mono"); ctx.textAlign="center";
-        const sm = narrow(), w0 = sm?5:7, h0 = sm?13:19, o0 = sm?4:6;   // 좁으면 마커를 줄이고 가격 글자는 생략한다
-        ctx.fillStyle=css("--accent");
+        // 마커는 크고, 배경색 테두리를 둘러 가격선·서로에게서 분리한다
+        const sm = narrow(), w0 = sm?9:8, h0 = sm?22:21, o0 = sm?5:5;
+        ctx.lineWidth = sm?2.5:2; ctx.lineJoin="round"; ctx.strokeStyle=css("--surface");
+        const tri = (x,y,up,fill) => { ctx.fillStyle=fill;
+          ctx.beginPath(); const k = up?1:-1;
+          ctx.moveTo(x, y+k*o0); ctx.lineTo(x-w0, y+k*h0); ctx.lineTo(x+w0, y+k*h0); ctx.closePath();
+          ctx.stroke(); ctx.fill(); };
         for (const i of res.buys){ const x=u.valToPos(xs[i],"x",true), y=u.valToPos(d.close[i],"y",true); if (x<u.bbox.left||x>u.bbox.left+u.bbox.width) continue;
-          ctx.beginPath(); ctx.moveTo(x,y+o0); ctx.lineTo(x-w0,y+h0); ctx.lineTo(x+w0,y+h0); ctx.closePath(); ctx.fill();
-          if (!sm) ctx.fillText(fmtN(d.close[i], d.close[i]>=1000?0:1), x, y+31); }
-        ctx.fillStyle=css("--bad");
+          tri(x, y, true, css("--accent"));
+          if (!sm) { ctx.fillStyle=css("--accent"); ctx.fillText(fmtN(d.close[i], d.close[i]>=1000?0:1), x, y+34); } }
         for (const i of res.sells){ const x=u.valToPos(xs[i],"x",true), y=u.valToPos(d.close[i],"y",true); if (x<u.bbox.left||x>u.bbox.left+u.bbox.width) continue;
-          ctx.beginPath(); ctx.moveTo(x,y-o0); ctx.lineTo(x-w0,y-h0); ctx.lineTo(x+w0,y-h0); ctx.closePath(); ctx.fill();
-          if (!sm) ctx.fillText(fmtN(d.close[i], d.close[i]>=1000?0:1), x, y-23); }
+          tri(x, y, false, css("--bad"));
+          if (!sm) { ctx.fillStyle=css("--bad"); ctx.fillText(fmtN(d.close[i], d.close[i]>=1000?0:1), x, y-26); } }
         ctx.restore(); }, u=>{ if (!showDetail) return;             // 사후 눌림 = 바닥 ▽ + 몸통 밑줄
         const ctx=u.ctx; ctx.save(); ctx.strokeStyle=css("--trough"); ctx.fillStyle=css("--trough"); ctx.lineWidth=3;
         const yb = u.bbox.top + u.bbox.height - 3;
