@@ -8,7 +8,7 @@
 <meta name="theme-color" content="#0D1319" media="(prefers-color-scheme: dark)">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="웅덩이">
-<title>웅덩이 판독기</title>
+<title>웅덩이(저점매수) 판독기</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap">
 <style>
 .uplot, .uplot *, .uplot *::before, .uplot *::after {box-sizing: border-box;}.uplot {font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";line-height: 1.5;width: min-content;}.u-title {text-align: center;font-size: 18px;font-weight: bold;}.u-wrap {position: relative;user-select: none;}.u-over, .u-under {position: absolute;}.u-under {overflow: hidden;}.uplot canvas {display: block;position: relative;width: 100%;height: 100%;}.u-axis {position: absolute;}.u-legend {font-size: 14px;margin: auto;text-align: center;}.u-inline {display: block;}.u-inline * {display: inline-block;}.u-inline tr {margin-right: 16px;}.u-legend th {font-weight: 600;}.u-legend th > * {vertical-align: middle;display: inline-block;}.u-legend .u-marker {width: 1em;height: 1em;margin-right: 4px;background-clip: padding-box !important;}.u-inline.u-live th::after {content: ":";vertical-align: middle;}.u-inline:not(.u-live) .u-value {display: none;}.u-series > * {padding: 4px;}.u-series th {cursor: pointer;}.u-legend .u-off > * {opacity: 0.3;}.u-select {background: rgba(0,0,0,0.07);position: absolute;pointer-events: none;}.u-cursor-x, .u-cursor-y {position: absolute;left: 0;top: 0;pointer-events: none;will-change: transform;}.u-hz .u-cursor-x, .u-vt .u-cursor-y {height: 100%;border-right: 1px dashed #607D8B;}.u-hz .u-cursor-y, .u-vt .u-cursor-x {width: 100%;border-bottom: 1px dashed #607D8B;}.u-cursor-pt {position: absolute;top: 0;left: 0;border-radius: 50%;border: 0 solid;pointer-events: none;will-change: transform;/*this has to be !important since we set inline "background" shorthand */background-clip: padding-box !important;}.u-axis.u-off, .u-select.u-off, .u-cursor-x.u-off, .u-cursor-y.u-off, .u-cursor-pt.u-off {display: none;}
@@ -63,6 +63,10 @@ button.ghost[aria-pressed=true]{color:var(--ink);background:var(--line-soft)}
 .hint{font-size:12px;color:var(--muted)}
 .hint a{color:var(--accent)}
 .status{font-size:12px;color:var(--muted);min-height:1.2em}
+.bulkbar{align-items:center;gap:8px}
+.quota{display:grid;gap:1px;font-size:12px;color:var(--muted)}
+.quota b{font-family:var(--mono);font-variant-numeric:tabular-nums;color:var(--ink)}
+@media (max-width:680px){ .bulkbar>button{flex:1 1 auto} .quota{flex:1 1 100%} }
 
 /* 결과 */
 .stack{display:grid;gap:16px;margin-top:16px}
@@ -236,7 +240,7 @@ p.lead{margin:0;font-size:14px;line-height:1.55;border-left:3px solid var(--acce
 <div class="wrap">
   <header>
     <div>
-      <h1>웅덩이 판독기</h1>
+      <h1>웅덩이(저점매수) 판독기</h1>
       <p class="sub">종목을 넣으면 전 기간 시세를 받아 1~3개월 시야의 매수·매도 고려를 종목별로 한눈에 정리하고, 상세에서 근거를 보여 줍니다. 미래는 모른다고 가정합니다.</p>
     </div>
     <div class="hint">계산은 이 브라우저 안에서만 합니다 · 서버 없음</div>
@@ -262,6 +266,11 @@ p.lead{margin:0;font-size:14px;line-height:1.55;border-left:3px solid var(--acce
         <span class="num" id="thrv">60</span>
       </div>
       <button class="primary" id="go">분석</button>
+    </div>
+    <div class="row bulkbar">
+      <button id="bulk">미국 대형주 20종목 한번에 조회</button>
+      <button id="bulkstop" hidden>중단</button>
+      <div class="quota"><span id="quotaTxt"></span><span class="hint" id="bulkProg"></span></div>
     </div>
     <div class="row" style="justify-content:space-between">
       <div class="hint">키는 <a href="https://twelvedata.com/pricing" target="_blank" rel="noopener">twelvedata.com</a>에서 무료로 받을 수 있고(하루 800회), 이 브라우저에만 저장됩니다. 페이지 어디에도 박히지 않습니다.</div>
@@ -1060,6 +1069,7 @@ var uPlot=function(){"use strict";const l="u-off",e="u-label",t="width",n="heigh
     u.searchParams.set("symbol", sym); if (ex) u.searchParams.set("exchange", ex);
     u.searchParams.set("interval","1day"); u.searchParams.set("outputsize","5000"); u.searchParams.set("order","ASC");
     u.searchParams.set("apikey", key);
+    bumpQuota();
     const r = await fetch(u.toString());
     const j = await r.json();
     if (j.status === "error" || !j.values) throw new Error(j.message || `'${label}' 시세를 찾지 못했습니다. 티커를 확인해 주세요.`);
@@ -1069,23 +1079,45 @@ var uPlot=function(){"use strict";const l="u-off",e="u-label",t="width",n="heigh
     return {...data, label, cached:false};
   }
 
+  // ── 미국 대형주 20종목 (시가총액 상위권. 파일에 고정된 목록이라 실제 순위와 다를 수 있다)
+  const TOP20 = ["NVDA","MSFT","AAPL","GOOGL","AMZN","META","AVGO","TSLA","BRK.B","LLY",
+                 "WMT","JPM","V","ORCL","MA","NFLX","XOM","COST","JNJ","PG"];
+
+  // ── 하루 한도 (Twelve Data 무료: 800회/일 · 8회/분). 이 브라우저에서 보낸 횟수를 세어 보여 준다
+  const DAY_LIMIT = 800, PER_MIN = 8;
+  const today = () => new Date().toISOString().slice(0,10);
+  function quota(){ try { const q = JSON.parse(store.get("quota")||"{}"); return q.day === today() ? q : {day: today(), used: 0}; } catch(e){ return {day: today(), used: 0}; } }
+  function bumpQuota(n=1){ const q = quota(); q.used += n; store.set("quota", JSON.stringify(q)); showQuota(); }
+  function showQuota(){
+    const q = quota(), el = $("#quotaTxt"); if (!el) return;
+    el.innerHTML = `오늘 조회 <b>${q.used} / ${DAY_LIMIT}회</b> <span class="hint">(무료 한도 · 분당 ${PER_MIN}회)</span>`;
+  }
+
   // ── 분석 실행
   const results = new Map();   // label → {data, res}
-  async function run(){
-    const list = inp.value.split(/[,\s]+/).map(s=>s.trim()).filter(Boolean).slice(0,8);
+  let stopBulk = false;
+  async function run(listIn, bulk){
+    const list = listIn || inp.value.split(/[,\s]+/).map(s=>s.trim()).filter(Boolean).slice(0,8);
     if (!list.length) { status.textContent = "종목을 입력해 주세요."; return; }
     const key = keyInp.value.trim(); if (key) { store.set("td_key", key); $("#keystate").textContent="(저장됨)"; }
-    store.set("tickers", inp.value); location.hash = encodeURIComponent(inp.value.replace(/\s+/g,""));
+    if (!bulk) { store.set("tickers", inp.value); location.hash = encodeURIComponent(inp.value.replace(/\s+/g,"")); }
     stack.innerHTML = ""; results.clear(); renderOverview();
+    stopBulk = false;
+    $("#bulk").disabled = !!bulk; $("#bulkstop").hidden = !bulk;
+    const t0 = Date.now(); let done = 0, fetched = 0;
     for (const q of list){
+      if (stopBulk) break;
       const label = parseSym(q).label;
       const sec = document.createElement("section"); sec.className="tk"; sec.id = "tk-"+label.replace(/[^A-Z0-9]/g,"_");
       sec.innerHTML = `<div class="verdict"><div class="name"><span class="sym">${label}</span><span class="meta">시세 받는 중…</span></div></div>`;
       sec.hidden = topPage === "detail";
       stack.appendChild(sec);
       status.textContent = `${label} 받는 중…`;
+      if (bulk) $("#bulkProg").textContent = `${done} / ${list.length} · ${label} 받는 중… (남은 시간 약 ${Math.ceil((list.length - done) / PER_MIN)}분)`;
       try {
+        const wasCached = !!store.get("ohlcv:"+label);
         const data = await fetchTD(q, key);
+        if (!wasCached) fetched++;
         if (data.close.length < 260) throw new Error(`'${label}' 자료가 ${data.close.length}일뿐이라 판정할 수 없습니다(최소 260일).`);
         const res = Wells.analyze(data, +thr.value, horizon);
         results.set(label, {data, res, sec});
@@ -1096,7 +1128,22 @@ var uPlot=function(){"use strict";const l="u-off",e="u-label",t="width",n="heigh
       } catch(e){
         sec.innerHTML = `<div class="verdict"><div class="name"><span class="sym">${label}</span></div></div><div class="err">${escapeHtml(e.message||String(e))}</div>`;
         status.textContent = "";
+        if (bulk && /limit|credit|429/i.test(e.message||"")) { $("#bulkProg").textContent = "한도에 걸렸습니다. 잠시 뒤 다시 눌러 주세요."; break; }
       }
+      done++;
+      // 분당 요청 제한: 새로 받은 것만 간격을 둔다 (캐시된 종목은 요청을 안 보내므로 기다릴 필요 없음).
+      // 250ms 씩 쪼개서 기다려야 중단 버튼이 바로 먹는다.
+      if (bulk && !stopBulk && done < list.length && fetched > 0){
+        const until = t0 + fetched * (60000 / PER_MIN);
+        while (!stopBulk && Date.now() < until){
+          $("#bulkProg").textContent = `${done} / ${list.length} 완료 · 분당 ${PER_MIN}회 제한으로 ${Math.ceil((until - Date.now())/1000)}초 대기`;
+          await new Promise(r => setTimeout(r, 250));
+        }
+      }
+    }
+    if (bulk){
+      $("#bulk").disabled = false; $("#bulkstop").hidden = true;
+      $("#bulkProg").textContent = stopBulk ? `중단했습니다 — ${done} / ${list.length}종목` : `끝 — ${done}종목 (새로 받은 것 ${fetched})`;
     }
   }
   function rerenderAll(){
@@ -1376,8 +1423,19 @@ var uPlot=function(){"use strict";const l="u-off",e="u-label",t="width",n="heigh
   }
 
   // ── 시작: 저장된 종목 or 예시 자료
-  $("#go").addEventListener("click", run);
+  $("#go").addEventListener("click", () => run());
+  $("#bulkstop").addEventListener("click", () => { stopBulk = true; });
+  $("#bulk").addEventListener("click", () => {
+    if (!keyInp.value.trim()) { status.textContent = "먼저 Twelve Data 키를 넣어 주세요."; return; }
+    const q = quota(), need = TOP20.filter(t => !store.get("ohlcv:"+t)).length;
+    if (q.used + need > DAY_LIMIT && !confirm(`오늘 남은 한도(${DAY_LIMIT - q.used}회)보다 필요한 조회(${need}회)가 많습니다. 그래도 시작할까요?`)) return;
+    inp.value = TOP20.join(", ");
+    showPage("input");
+    run(TOP20, true);
+  });
+  showQuota();
   inp.addEventListener("keydown", e => { if (e.key === "Enter") run(); });
+
   if (inp.value.trim() && (keyInp.value.trim() || hasCacheFor(inp.value))) run();
   else showSample();
   function hasCacheFor(v){ return v.split(/[,\s]+/).filter(Boolean).every(q => store.get("ohlcv:"+parseSym(q).label)); }
