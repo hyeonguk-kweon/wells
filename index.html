@@ -253,12 +253,16 @@ p.lead{margin:0;font-size:14px;line-height:1.55;border-left:3px solid var(--acce
   <div class="bar">
     <div class="row">
       <div class="field" style="flex:2 1 280px">
-        <label for="tickers">종목 (쉼표로 여러 개 · 예: QQQ, SOXX, TSLA, 005930:KRX)</label>
-        <input type="text" id="tickers" placeholder="QQQ, SOXX" autocomplete="off" spellcheck="false">
+        <label for="tickers">종목 (쉼표로 여러 개 · 미국은 티커, 국내는 6자리 코드 · 예: QQQ, TSLA, 005930, 418660)</label>
+        <input type="text" id="tickers" placeholder="QQQ, 005930" autocomplete="off" spellcheck="false">
       </div>
-      <div class="field" style="flex:1 1 200px">
-        <label for="apikey">Twelve Data API 키 <span id="keystate"></span></label>
+      <div class="field" style="flex:1 1 180px">
+        <label for="apikey">미국 · Twelve Data 키 <span id="keystate"></span></label>
         <input type="password" id="apikey" placeholder="무료 키 붙여넣기" autocomplete="off">
+      </div>
+      <div class="field" style="flex:1 1 180px">
+        <label for="govkey">국내 · 공공데이터포털 키 <span id="gkeystate"></span></label>
+        <input type="password" id="govkey" placeholder="일반 인증키 붙여넣기" autocomplete="off">
       </div>
       <div class="thr">
         <label for="thr" class="hint">최소 등급</label>
@@ -273,7 +277,7 @@ p.lead{margin:0;font-size:14px;line-height:1.55;border-left:3px solid var(--acce
       <div class="quota"><span id="quotaTxt"></span><span class="hint" id="bulkProg"></span></div>
     </div>
     <div class="row" style="justify-content:space-between">
-      <div class="hint">키는 <a href="https://twelvedata.com/pricing" target="_blank" rel="noopener">twelvedata.com</a>에서 무료로 받을 수 있고(하루 800회), 이 브라우저에만 저장됩니다. 페이지 어디에도 박히지 않습니다.</div>
+      <div class="hint">미국 종목은 <a href="https://twelvedata.com/pricing" target="_blank" rel="noopener">twelvedata.com</a> 무료 키(하루 800회), 국내 종목은 <a href="https://www.data.go.kr/data/15094808/openapi.do" target="_blank" rel="noopener">공공데이터포털</a> 주식시세·<a href="https://www.data.go.kr/data/15094806/openapi.do" target="_blank" rel="noopener">증권상품시세</a> 무료 키(각 하루 10,000회)를 씁니다. 둘 다 이 브라우저에만 저장되고 페이지 어디에도 박히지 않습니다.</div>
       <div class="status" id="status"></div>
     </div>
   </div>
@@ -291,7 +295,7 @@ p.lead{margin:0;font-size:14px;line-height:1.55;border-left:3px solid var(--acce
     <div class="caveat"><b>상태는 셋뿐입니다 — 매수 고려 / 매도 고려 / 관망.</b> 매수 고려 = 마지막 신호가 매수이고 10일 안이거나 점수가 아직 문턱 위. 매도 고려 = 마지막 신호가 매도이고 10일 안. <b>비중</b> = 계획한 물량 중 지금 넣을(덜어낼) 비율로, 등급 50% + 움직인 폭(조건의 몇 배) 25% + 신선도(신호 뒤 며칠) 25% 로 계산하고, 신호가에서 조건의 절반 이상 멀어졌으면 절반으로 줄입니다. 예: 등급 80·폭 2배·신호 당일 → 90%. 신호 10일 뒤 → 등급·폭만 남아 60% 안팎. <b>표 아래 p값을 먼저 보세요.</b> 매수·매도 고려 시점은 같은 규칙의 거울상입니다 — 20일 고/저점에서 max(4%, 3×ATR₆₀) 이상 움직인 뒤 종가가 직전 3일을 넘으면(매수) / 밑돌면(매도). 시야는 1~3개월. 5년 검증에서 <b>매도 고려는 종목 성격을 탑니다</b>: TSLA(60일 p=0.05)에서는 팔아서 피한 하락이 있었지만, SOXX·NVDA처럼 추세가 강한 종목은 첫 꺾임에 팔면 아무 날보다 나빴습니다(p≈0.8~0.9). 매수 쪽: 매수 시점은 두 종류입니다. <b>단기저점</b> = 20일 고점에서 max(4%, 3×ATR₆₀) 이상 빠진 뒤 첫 반등 확인일(종가가 직전 3일 종가를 넘고, 아직 낙폭 아래 절반이거나 저점 뒤 3일 안) — 사후 눌림을 QQQ 9/9·SPY 5/5·SOXX 10/10·NVDA 13/13·TSLA 14/14 잡습니다. <b>다지기</b> = 저점매수 점수가 60 이상으로 올라선 날. 5년 검증(그날 종가 매수 → 120일, 등급 ≥ 60): QQQ 승률 74% p=0.07 · SPY 75% p=0.19 · NVDA 74% p=0.11 · TSLA 57% p=0.17 · SOXX 75% p=0.56(반도체는 아무 날에 사도 +16%). 규칙 값은 이 세 종목을 보며 고른 것이라 다른 종목에서 확인이 필요합니다. 이 점수는 "떨어지던 속도가 죽어가는 자리"를 찾는 눈금이지 바닥 예언이 아닙니다. 5년 검증에서 실제 눌림은 잘 잡았지만(QQQ 4/9 · SOXX 6/9 · TSLA 13/14) 대개 바닥보다 2~8주 먼저 켜지고, 켜진 구간에 나눠 산 평단이 아무 구간보다 나았던 건 TSLA(p≈0.1~0.4) 뿐이었습니다. QQQ·SOXX 같은 지수는 얕은 V자로 빠르게 되돌아와 구분이 안 됐습니다(p≈0.7~0.9). 종목마다 아래 채점표 ①②를 직접 보세요.</div>
     <div>등급(저점매수 점수) = max(다지기형, V자형). 다지기형 — 눌림 20 · 감속 30 (20일선 기울기가 60일 최저에서 얼마나 올라왔고 0에 얼마나 가까운가) · 저점 유지 15 (60일 저점을 새로 안 쓴 지 며칠) · 저점 근접 15 · 과매도 해소 10 · 거래량 고갈 10. 눌림 자격(52주 고점에서 안 빠졌으면 0)과 가속 자격(20일선 기울기가 오늘 60일 최저를 갱신 중이면 ×0.3)을 곱합니다. V자형 — 눌림 20 · 과매도 깊이 40 (최근 5일 RSI 최저가 40 아래로) · 반전 확인 25 (종가 > 어제, > 3일 고가) · 투매 거래량 15, 눌림 자격만 곱합니다(가속 자격 없음 — V자 바닥은 늘 가속 하락의 끝에 있습니다). 기울기·깊이는 모두 ATR로 나눠 지수와 개별주에 같은 눈금을 씁니다. 회차는 문턱 위가 10일 이상 이어진 구간(7일 끊김 허용). 모든 계산은 그날까지의 자료만 씁니다.</div>
     <div>채점 ① 의 '실제 눌림'만 앞뒤를 본 사후 판정입니다: 꼭지에서 max(10%, 5×ATR) 이상 떨어졌다가 바닥에서 같은 만큼 되올라온 자리, 몸통은 낙폭의 아래 절반.</div>
-    <div>시세: Twelve Data 일봉(분할 조정). 지표: Wilder RSI/ATR/ADX, Appel MACD, Bollinger(ddof=0), Keltner EMA20±1.5ATR, TTM Squeeze, Minervini VCP, Weinstein 국면.</div>
+    <div>시세: 미국은 Twelve Data 일봉(분할 조정), 국내는 공공데이터포털 금융위원회 주식시세·증권상품시세(원화, 무수정 종가 — 하루 뒤 13시 이후 갱신이라 전일까지만 나옵니다). 지표: Wilder RSI/ATR/ADX, Appel MACD, Bollinger(ddof=0), Keltner EMA20±1.5ATR, TTM Squeeze, Minervini VCP, Weinstein 국면.</div>
   </div>
 </div>
 
@@ -1006,7 +1010,7 @@ var uPlot=function(){"use strict";const l="u-off",e="u-label",t="width",n="heigh
   "use strict";
   const $ = (s, el=document) => el.querySelector(s);
   const stack = $("#stack"), status = $("#status");
-  const inp = $("#tickers"), keyInp = $("#apikey"), thr = $("#thr"), thrv = $("#thrv");
+  const inp = $("#tickers"), keyInp = $("#apikey"), gkeyInp = $("#govkey"), thr = $("#thr"), thrv = $("#thrv");
   const store = { get(k){ try{ return localStorage.getItem(k); }catch(e){ return null; } }, set(k,v){ try{ localStorage.setItem(k,v); }catch(e){} } };
   const fmtPct = (x, d=1) => (x!==x||x==null) ? "—" : ((x>=0?"+":"")+(x*100).toFixed(d)+"%");
   const fmtN = (x, d=1) => (x!==x||x==null) ? "—" : x.toFixed(d);
@@ -1016,6 +1020,7 @@ var uPlot=function(){"use strict";const l="u-off",e="u-label",t="width",n="heigh
 
   // ── 키·상태 복원
   const savedKey = store.get("td_key"); if (savedKey) keyInp.value = savedKey;
+  const savedGKey = store.get("gov_key"); if (savedGKey) gkeyInp.value = savedGKey;
   if (store.get("thr_v") !== "4") { store.set("thr_v", "4"); store.set("thr", "40"); }   // 규칙이 바뀌어 저장된 문턱을 새 기본값으로
   const savedThr = store.get("thr"); if (savedThr !== null && +savedThr >= 0) { thr.value = +savedThr; thrv.textContent = thr.value; }
   const horizon = "단기";                      // 1~3개월. 중기(3~6개월)는 회차가 적어 판단이 안 서서 뺐다
@@ -1049,6 +1054,7 @@ var uPlot=function(){"use strict";const l="u-off",e="u-label",t="width",n="heigh
   const hashT = decodeURIComponent(location.hash.slice(1)); if (hashT) inp.value = hashT; else { const s = store.get("tickers"); if (s) inp.value = s; }
   thr.addEventListener("input", () => { thrv.textContent = thr.value; store.set("thr", thr.value); rerenderAll(); });
   $("#keystate").textContent = savedKey ? "(저장됨)" : "";
+  $("#gkeystate").textContent = savedGKey ? "(저장됨)" : "";
 
   // ── 시세 (Twelve Data). 하루 한 번만 받고 브라우저에 캐시
   function parseSym(q){
@@ -1058,12 +1064,65 @@ var uPlot=function(){"use strict";const l="u-off",e="u-label",t="width",n="heigh
     else if (/^\d{6}$/.test(q)) ex = "KRX";
     return {sym, ex, label: ex ? `${sym}:${ex}` : sym};
   }
-  async function fetchTD(q, key){
+  // ── 국내 종목: 공공데이터포털(금융위원회). 개별주식과 ETF·ETN·ELW 가 서로 다른 서비스라 차례로 찾는다.
+  //    응답은 최신순이므로 뒤집어서 오름차순으로 맞춘다. 값이 전부 문자열로 와서 숫자로 바꿔야 한다.
+  const GOV = [
+    { url: "https://apis.data.go.kr/1160100/GetStockSecuritiesInfoService_V2/getStockPriceInfo_V2", kind: "주식" },
+    { url: "https://apis.data.go.kr/1160100/GetSecuritiesProductInfoService_V2/getETFPriceInfo_V2", kind: "ETF" },
+    { url: "https://apis.data.go.kr/1160100/GetSecuritiesProductInfoService_V2/getETNPriceInfo_V2", kind: "ETN" },
+  ];
+  // 시세는 하루 뒤 13시 이후에 갱신되므로 넉넉히 10년을 달라고 하고 온 만큼만 쓴다
+  function govBegin(){ const d = new Date(); d.setFullYear(d.getFullYear() - 10); return d.toISOString().slice(0,10).replace(/-/g,""); }
+  async function fetchGov(code, gkey){
+    if (!gkey) throw new Error(`국내 종목(${code})은 공공데이터포털 인증키가 필요합니다. 위 칸에 붙여넣고 다시 눌러 주세요.`);
+    let lastErr = null;
+    for (const svc of GOV){
+      const u = new URL(svc.url);
+      u.searchParams.set("serviceKey", gkey);
+      u.searchParams.set("resultType", "json");
+      u.searchParams.set("numOfRows", "10000");
+      u.searchParams.set("pageNo", "1");
+      u.searchParams.set("likeSrtnCd", code);
+      u.searchParams.set("beginBasDt", govBegin());
+      bumpGQuota();
+      let j;
+      try { j = JSON.parse(await (await fetch(u.toString())).text()); }
+      catch(e){ lastErr = new Error(`공공데이터포털 응답을 읽지 못했습니다(${svc.kind}).`); continue; }
+      const err = j.OpenAPI_ServiceResponse && j.OpenAPI_ServiceResponse.cmmMsgHeader;
+      if (err){
+        // 인증키 문제는 다른 서비스를 더 찔러봐야 소용없으니 바로 알린다
+        if (/SERVICE_KEY/.test(err.errMsg||"")) throw new Error(`공공데이터포털 인증키가 ${svc.kind}시세에 등록돼 있지 않습니다 (${err.returnAuthMsg||err.errMsg}). 마이페이지에서 해당 데이터 활용신청이 승인됐는지 확인해 주세요.`);
+        lastErr = new Error(`${svc.kind}시세 조회 실패: ${err.returnAuthMsg||err.errMsg}`); continue;
+      }
+      const body = j.response && j.response.body;
+      const raw = body && body.items && body.items.item;
+      const rows = !raw ? [] : (Array.isArray(raw) ? raw : [raw]);
+      // likeSrtnCd 는 앞자리 일치라 6자리를 정확히 맞는 것만 남긴다
+      const hit = rows.filter(x => x.srtnCd === code).reverse();
+      if (!hit.length) continue;
+      const num = (s) => { const v = parseFloat(String(s).replace(/,/g,"")); return v===v ? v : NaN; };
+      return {
+        dates: hit.map(x => `${x.basDt.slice(0,4)}-${x.basDt.slice(4,6)}-${x.basDt.slice(6,8)}`),
+        open: hit.map(x => num(x.mkp)), high: hit.map(x => num(x.hipr)),
+        low: hit.map(x => num(x.lopr)), close: hit.map(x => num(x.clpr)),
+        volume: hit.map(x => num(x.trqu) || 0),
+        meta: { name: hit[0].itmsNm, exchange: hit[0].mrktCtg || "KRX", type: svc.kind, currency: "KRW" },
+      };
+    }
+    throw new Error(lastErr ? lastErr.message : `'${code}' 국내 종목을 주식·ETF·ETN 어디에서도 찾지 못했습니다. 6자리 코드를 확인해 주세요.`);
+  }
+
+  async function fetchTD(q, key, gkey){
     const {sym, ex, label} = parseSym(q);
     const ck = "ohlcv:"+label;
     const today = new Date().toISOString().slice(0,10);
     const cached = store.get(ck);
     if (cached) { try { const c = JSON.parse(cached); if (c.day === today) return {...c.data, label, cached:true}; } catch(e){} }
+    if (ex === "KRX"){
+      const data = await fetchGov(sym, gkey);
+      store.set(ck, JSON.stringify({day: today, data}));
+      return {...data, label, cached:false};
+    }
     if (!key) throw new Error("Twelve Data API 키가 필요합니다. 위 칸에 붙여넣고 다시 눌러 주세요.");
     const u = new URL("https://api.twelvedata.com/time_series");
     u.searchParams.set("symbol", sym); if (ex) u.searchParams.set("exchange", ex);
@@ -1090,12 +1149,15 @@ var uPlot=function(){"use strict";const l="u-off",e="u-label",t="width",n="heigh
 
   // ── 하루 한도 (Twelve Data 무료: 800회/일 · 8회/분). 이 브라우저에서 보낸 횟수를 세어 보여 준다
   const DAY_LIMIT = 800, PER_MIN = 8;
+  const GOV_DAY_LIMIT = 10000;   // 공공데이터포털 개발계정 (서비스별로 각각 10,000회)
   const today = () => new Date().toISOString().slice(0,10);
   function quota(){ try { const q = JSON.parse(store.get("quota")||"{}"); return q.day === today() ? q : {day: today(), used: 0}; } catch(e){ return {day: today(), used: 0}; } }
   function bumpQuota(n=1){ const q = quota(); q.used += n; store.set("quota", JSON.stringify(q)); showQuota(); }
+  function gquota(){ try { const q = JSON.parse(store.get("gquota")||"{}"); return q.day === today() ? q : {day: today(), used: 0}; } catch(e){ return {day: today(), used: 0}; } }
+  function bumpGQuota(n=1){ const q = gquota(); q.used += n; store.set("gquota", JSON.stringify(q)); showQuota(); }
   function showQuota(){
-    const q = quota(), el = $("#quotaTxt"); if (!el) return;
-    el.innerHTML = `오늘 조회 <b>${q.used} / ${DAY_LIMIT}회</b> <span class="hint">(무료 한도 · 분당 ${PER_MIN}회)</span>`;
+    const q = quota(), g = gquota(), el = $("#quotaTxt"); if (!el) return;
+    el.innerHTML = `오늘 조회 — 미국 <b>${q.used} / ${DAY_LIMIT}회</b> · 국내 <b>${g.used} / ${GOV_DAY_LIMIT}회</b> <span class="hint">(무료 한도 · 미국은 분당 ${PER_MIN}회)</span>`;
   }
 
   // ── 분석 실행
@@ -1105,6 +1167,7 @@ var uPlot=function(){"use strict";const l="u-off",e="u-label",t="width",n="heigh
     const list = listIn || inp.value.split(/[,\s]+/).map(s=>s.trim()).filter(Boolean).slice(0,8);
     if (!list.length) { status.textContent = "종목을 입력해 주세요."; return; }
     const key = keyInp.value.trim(); if (key) { store.set("td_key", key); $("#keystate").textContent="(저장됨)"; }
+    const gkey = gkeyInp.value.trim(); if (gkey) { store.set("gov_key", gkey); $("#gkeystate").textContent="(저장됨)"; }
     if (!bulk) { store.set("tickers", inp.value); location.hash = encodeURIComponent(inp.value.replace(/\s+/g,"")); }
     stack.innerHTML = ""; results.clear(); renderOverview();
     stopBulk = false;
@@ -1121,7 +1184,7 @@ var uPlot=function(){"use strict";const l="u-off",e="u-label",t="width",n="heigh
       if (bulk) $("#bulkProg").textContent = `${done} / ${list.length} · ${label} 받는 중… (남은 시간 약 ${Math.ceil((list.length - done) / PER_MIN)}분)`;
       try {
         const wasCached = !!store.get("ohlcv:"+label);
-        const data = await fetchTD(q, key);
+        const data = await fetchTD(q, key, gkey);
         if (!wasCached) fetched++;
         if (data.close.length < 260) throw new Error(`'${label}' 자료가 ${data.close.length}일뿐이라 판정할 수 없습니다(최소 260일).`);
         const res = Wells.analyze(data, +thr.value, horizon);
@@ -1432,7 +1495,7 @@ var uPlot=function(){"use strict";const l="u-off",e="u-label",t="width",n="heigh
   $("#go").addEventListener("click", () => run());
   $("#bulkstop").addEventListener("click", () => { stopBulk = true; });
   $("#bulk").addEventListener("click", () => {
-    if (!keyInp.value.trim()) { status.textContent = "먼저 Twelve Data 키를 넣어 주세요."; return; }
+    if (!keyInp.value.trim() && !gkeyInp.value.trim()) { status.textContent = "먼저 API 키를 넣어 주세요 (미국은 Twelve Data, 국내는 공공데이터포털)."; return; }
     const q = quota(), need = MAIN30.filter(t => !store.get("ohlcv:"+t)).length;
     if (q.used + need > DAY_LIMIT && !confirm(`오늘 남은 한도(${DAY_LIMIT - q.used}회)보다 필요한 조회(${need}회)가 많습니다. 그래도 시작할까요?`)) return;
     inp.value = MAIN30.join(", ");
@@ -1442,7 +1505,7 @@ var uPlot=function(){"use strict";const l="u-off",e="u-label",t="width",n="heigh
   showQuota();
   inp.addEventListener("keydown", e => { if (e.key === "Enter") run(); });
 
-  if (inp.value.trim() && (keyInp.value.trim() || hasCacheFor(inp.value))) run();
+  if (inp.value.trim() && (keyInp.value.trim() || gkeyInp.value.trim() || hasCacheFor(inp.value))) run();
   else showSample();
   function hasCacheFor(v){ return v.split(/[,\s]+/).filter(Boolean).every(q => store.get("ohlcv:"+parseSym(q).label)); }
   function showSample(){
