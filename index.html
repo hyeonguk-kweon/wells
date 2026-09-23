@@ -808,8 +808,8 @@ var uPlot=function(){"use strict";const l="u-off",e="u-label",t="width",n="heigh
 
 
   // ───────────────────────── 매수·매도 고려 시점 (signals.py) ─────────────────────────
-  const HZ = { 단기: { key: "s", look: 20, dmin: 0.04, datr: 3.0, confirm: 3, recent: 10, fresh: 3, cool: 10, eval: [20, 60], rsiW: 10 },
-               중기: { key: "m", look: 60, dmin: 0.08, datr: 6.0, confirm: 10, recent: 20, fresh: 5, cool: 20, eval: [60, 120], rsiW: 20 } };
+  const HZ = { 단기: { key: "s", look: 20, dmin: 0.04, datr: 3.0, confirm: 3, recent: 10, fresh: 3, cool: 10, eval: [20, 60, 120, 200], rsiW: 10 },
+               중기: { key: "m", look: 60, dmin: 0.08, datr: 6.0, confirm: 10, recent: 20, fresh: 5, cool: 20, eval: [60, 120, 200, 250], rsiW: 20 } };
   function sinceExt(c, n, isMin) {
     return c.map((_, i) => { if (i < n - 1) return NaN_; let m = isMin ? Infinity : -Infinity, at = i; for (let j = i - n + 1; j <= i; j++) if (isMin ? c[j] < m : c[j] > m) { m = c[j]; at = j; } return i - at; });
   }
@@ -1483,21 +1483,31 @@ var uPlot=function(){"use strict";const l="u-off",e="u-label",t="width",n="heigh
     ov.querySelectorAll("[data-label]").forEach(el => el.addEventListener("click", () => showPage("detail", el.dataset.label)));
   }
   function sigStats(res, rows, st, sell){
-    const [H1, H2] = res.hz.eval;
+    const HS = res.hz.eval;                       // 20 · 60 · 120 · 200일
     if (!rows.length) return `<div class="empty">이 등급에서는 ${sell?"매도":"매수"} 고려 시점이 없습니다.</div>`;
-    const k = rows.filter(r=>r.f2===r.f2).length, s1 = st[H1], s2 = st[H2];
     const good = (x) => sell ? cls(-x) : cls(x);
+    // 기간이 길수록 '아직 결과를 모르는' 신호가 늘어난다. 기간마다 실제로 센 횟수를 따로 보여 준다.
+    const N = res.d.close.length, cnt = {};
+    for (const H of HS) cnt[H] = rows.filter(r => r.i + H < N).length;
+    const S = HS.map(H => st[H]);
+    const main = st[HS[1]], kMain = cnt[HS[1]];   // 대표는 60일
     let verdict;
-    if (k < 5) verdict = `결과를 아는 시점이 ${k}회뿐이라 우연을 배제할 수 없습니다.`;
-    else if (s2.p < 0.1) verdict = sell ? `이 종목에서는 매도 고려 뒤 ${H2}일 수익이 아무 날보다 낮았습니다 (p=${s2.p.toFixed(2)}) — 팔아서 피한 하락이 실제로 있었습니다.` : `이 종목에서는 매수 고려 뒤 ${H2}일 수익이 아무 날보다 높았습니다 (p=${s2.p.toFixed(2)}).`;
-    else verdict = sell ? `p=${s2.p.toFixed(2)} — 이 종목에서 매도 고려는 아무 날과 구분되지 않습니다. 추세가 강한 종목은 '첫 꺾임'에 팔면 대개 손해입니다.` : `p=${s2.p.toFixed(2)} — 이 종목에서 매수 고려는 아무 날과 구분되지 않습니다.`;
-    return `<div class="tbl"><table><thead><tr><th>그날 종가에 ${sell?"팔았다면 (그 뒤 가격)":"샀다면"}</th><th class="r">${H1}일 뒤</th><th class="r">${H2}일 뒤</th></tr></thead><tbody>
-      <tr><td>${sell?"매도":"매수"} 고려 평균 (${k}회)</td><td class="num r ${good(s1.obs)}">${fmtPct(s1.obs)}</td><td class="num r ${good(s2.obs)}">${fmtPct(s2.obs)}</td></tr>
-      <tr><td>아무 날이나</td><td class="num r">${fmtPct(s1.base)}</td><td class="num r">${fmtPct(s2.base)}</td></tr>
-      <tr><td>${sell?"하락률 (그 뒤 내린 비율)":"오른 비율 (승률)"}</td><td class="num r"><b>${fmtN(s1.hit*100,0)}%</b></td><td class="num r"><b>${fmtN(s2.hit*100,0)}%</b></td></tr>
-      <tr><td>p값</td><td class="num r">${fmtN(s1.p,2)}</td><td class="num r">${fmtN(s2.p,2)}</td></tr>
+    if (kMain < 5) verdict = `결과를 아는 시점이 ${kMain}회뿐이라 우연을 배제할 수 없습니다.`;
+    else if (main.p < 0.1) verdict = sell ? `이 종목에서는 매도 고려 뒤 ${HS[1]}일 수익이 아무 날보다 낮았습니다 (p=${main.p.toFixed(2)}) — 팔아서 피한 하락이 실제로 있었습니다.` : `이 종목에서는 매수 고려 뒤 ${HS[1]}일 수익이 아무 날보다 높았습니다 (p=${main.p.toFixed(2)}).`;
+    else verdict = sell ? `p=${main.p.toFixed(2)} — 이 종목에서 매도 고려는 아무 날과 구분되지 않습니다. 추세가 강한 종목은 '첫 꺾임'에 팔면 대개 손해입니다.` : `p=${main.p.toFixed(2)} — 이 종목에서 매수 고려는 아무 날과 구분되지 않습니다.`;
+    const row = (label, cellFn) => `<tr><td>${label}</td>${S.map((x,j)=>cellFn(x,HS[j])).join("")}</tr>`;
+    return `<div class="tbl"><table><thead><tr><th>그날 종가에 ${sell?"팔았다면 (그 뒤 가격)":"샀다면"}</th>${HS.map(H=>`<th class="r">${H}일 뒤</th>`).join("")}</tr></thead><tbody>
+      ${row(`${sell?"매도":"매수"} 고려 평균`, (x)=>`<td class="num r ${good(x.obs)}">${fmtPct(x.obs)}</td>`)}
+      ${row("아무 날이나", (x)=>`<td class="num r">${fmtPct(x.base)}</td>`)}
+      ${row(sell?"하락률 (그 뒤 내린 비율)":"오른 비율 (승률)", (x)=>`<td class="num r"><b>${fmtN(x.hit*100,0)}%</b></td>`)}
+      ${row("p값", (x)=>`<td class="num r">${fmtN(x.p,2)}</td>`)}
+      ${row("결과를 아는 횟수", (x,H)=>`<td class="num r hint">${cnt[H]}회</td>`)}
     </tbody></table></div>
-    <p class="hint" style="margin:6px 0 0">${verdict}</p>`;
+    <p class="hint" style="margin:6px 0 0">${verdict}</p>
+    <p class="hint" style="margin:4px 0 0"><b>p값은 낮을수록 좋습니다.</b> 신호가 아무 쓸모 없다고 가정했을 때 이만한 성적이 우연히 나올 확률입니다 — 아무 날이나 같은 개수만큼 무작위로 뽑는 일을 2,000번 반복해 견줍니다.
+    <b>0.1 미만</b>이면 우연으로 보기 어렵고, <b>0.1~0.3</b>이면 그럴듯하나 확신할 수 없으며, <b>0.3 이상</b>이면 아무 날과 구분되지 않습니다.
+    승률만 보면 속습니다 — 우상향 종목은 아무 날에 사도 승률이 높으니 반드시 '아무 날이나' 줄과 견주세요.
+    p가 낮아도 <b>"과거 이 기간에는"</b> 이라는 뜻일 뿐, 앞으로도 그렇다는 보장은 아닙니다(QQQ는 최근 5년 p=0.04, 2006~2016은 0.69).</p>`;
   }
   function sigList(res, data, d, n, rows, st, sell){
     const [H1, H2] = res.hz.eval, gcol = sell ? res.hz.key + "_sell_grade" : "bz";
