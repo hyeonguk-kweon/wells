@@ -253,8 +253,8 @@ p.lead{margin:0;font-size:14px;line-height:1.55;border-left:3px solid var(--acce
   <div class="bar">
     <div class="row">
       <div class="field" style="flex:2 1 280px">
-        <label for="tickers">종목 (쉼표로 여러 개 · 미국은 티커, 국내는 6자리 코드 · 예: QQQ, TSLA, 005930, 418660)</label>
-        <input type="text" id="tickers" placeholder="QQQ, 005930" autocomplete="off" spellcheck="false">
+        <label for="tickers">종목 (쉼표로 여러 개 · 미국은 티커, 국내는 종목명이나 6자리 코드 · 예: QQQ, TSLA, 삼성전자, KODEX 200)</label>
+        <input type="text" id="tickers" placeholder="QQQ, 삼성전자" autocomplete="off" spellcheck="false">
       </div>
       <div class="field" style="flex:1 1 180px">
         <label for="apikey">미국 · Twelve Data 키 <span id="keystate"></span></label>
@@ -1057,12 +1057,27 @@ var uPlot=function(){"use strict";const l="u-off",e="u-label",t="width",n="heigh
   $("#gkeystate").textContent = savedGKey ? "(저장됨)" : "";
 
   // ── 시세 (Twelve Data). 하루 한 번만 받고 브라우저에 캐시
+  // 미국 티커는 알파벳 1~6자(BRK.B 처럼 점 포함). 그 밖에 6자리 숫자나 한글·공백이 섞인 이름은 국내로 본다
+  const US_TICKER = /^[A-Z.]{1,6}$/;
   function parseSym(q){
     q = q.trim().toUpperCase();
     let sym=q, ex=null;
     if (q.includes(":")) [sym, ex] = q.split(":");
     else if (/^\d{6}$/.test(q)) ex = "KRX";
+    else if (!US_TICKER.test(q)) ex = "KRX";          // 삼성전자 · KODEX 200 · TIGER 미국나스닥100
     return {sym, ex, label: ex ? `${sym}:${ex}` : sym};
+  }
+  // 입력 쪼개기: 쉼표가 기준. 쉼표 없이 공백으로만 나열한 경우는 조각이 전부 미국 티커일 때만 쪼갠다
+  // ("QQQ SOXX" → 두 종목 / "KODEX 200" → 한 종목)
+  function splitInput(v){
+    const out = [];
+    for (const chunk of v.split(",")){
+      const t = chunk.trim(); if (!t) continue;
+      const parts = t.split(/\s+/);
+      if (parts.length > 1 && parts.every(x => US_TICKER.test(x.toUpperCase()))) out.push(...parts);
+      else out.push(t);
+    }
+    return out;
   }
   // ── 국내 종목: 공공데이터포털(금융위원회). 개별주식과 ETF·ETN·ELW 가 서로 다른 서비스라 차례로 찾는다.
   //    응답은 최신순이므로 뒤집어서 오름차순으로 맞춘다. 값이 전부 문자열로 와서 숫자로 바꿔야 한다.
@@ -1073,10 +1088,50 @@ var uPlot=function(){"use strict";const l="u-off",e="u-label",t="width",n="heigh
   ];
   // 시세는 하루 뒤 13시 이후에 갱신되므로 넉넉히 10년을 달라고 하고 온 만큼만 쓴다
   function govBegin(){ const d = new Date(); d.setFullYear(d.getFullYear() - 10); return d.toISOString().slice(0,10).replace(/-/g,""); }
-  async function fetchGov(code, gkey){
-    if (!gkey) throw new Error(`국내 종목(${code})은 공공데이터포털 인증키가 필요합니다. 위 칸에 붙여넣고 다시 눌러 주세요.`);
-    let lastErr = null;
+  // 이름으로 6자리 코드 찾기. 정확히 일치를 먼저 보고(대부분 여기서 끝난다), 없으면 부분일치 후보를 본다.
+  // 최근 30일 창만 달라고 해서 조회를 가볍게 유지하고, 찾은 코드는 이 브라우저에 기억한다.
+  function nameKey(nm){ return "code:" + nm; }
+  async function govFindCode(name, gkey){
+    const memo = store.get(nameKey(name)); if (memo) return JSON.parse(memo);
+    const begin = (()=>{ const d=new Date(); d.setDate(d.getDate()-30); return d.toISOString().slice(0,10).replace(/-/g,""); })();
+    const squash = (x) => String(x).replace(/\s+/g,"").toUpperCase();
+    let cands = [];
     for (const svc of GOV){
+      for (const param of ["itmsNm", "likeItmsNm"]){
+        const u = new URL(svc.url);
+        u.searchParams.set("serviceKey", gkey); u.searchParams.set("resultType", "json");
+        u.searchParams.set("numOfRows", "100"); u.searchParams.set("pageNo", "1");
+        u.searchParams.set(param, name); u.searchParams.set("beginBasDt", begin);
+        bumpGQuota();
+        let j; try { j = JSON.parse(await (await fetch(u.toString())).text()); } catch(e){ continue; }
+        if (j.OpenAPI_ServiceResponse){
+          const h = j.OpenAPI_ServiceResponse.cmmMsgHeader;
+          if (/SERVICE_KEY/.test(h.errMsg||"")) throw new Error(`공공데이터포털 인증키가 ${svc.kind}시세에 등록돼 있지 않습니다 (${h.returnAuthMsg||h.errMsg}).`);
+          continue;
+        }
+        const raw = j.response && j.response.body && j.response.body.items && j.response.body.items.item;
+        const rows = !raw ? [] : (Array.isArray(raw) ? raw : [raw]);
+        const uniq = new Map();
+        for (const r of rows) if (r.srtnCd && r.itmsNm) uniq.set(r.srtnCd, {code: r.srtnCd, name: r.itmsNm, kind: svc.kind});
+        const all = [...uniq.values()];
+        // 공백만 다른 경우까지 '정확히 일치'로 본다 (KODEX200 / KODEX 200)
+        const exact = all.filter(x => squash(x.name) === squash(name));
+        if (exact.length === 1) { store.set(nameKey(name), JSON.stringify(exact[0])); return exact[0]; }
+        if (exact.length > 1) cands = exact;
+        else if (all.length && !cands.length) cands = all;
+      }
+    }
+    if (!cands.length) throw new Error(`'${name}'을(를) 찾지 못했습니다. 종목명을 정확히 적거나 6자리 코드를 넣어 주세요.`);
+    if (cands.length === 1) { store.set(nameKey(name), JSON.stringify(cands[0])); return cands[0]; }
+    throw new Error(`'${name}'에 해당하는 종목이 여럿입니다 — ${cands.slice(0,6).map(x=>`${x.name}(${x.code})`).join(" · ")}. 원하는 쪽의 이름을 정확히 적거나 6자리 코드를 넣어 주세요.`);
+  }
+
+  async function fetchGov(q, gkey){
+    if (!gkey) throw new Error(`국내 종목(${q})은 공공데이터포털 인증키가 필요합니다. 위 칸에 붙여넣고 다시 눌러 주세요.`);
+    let code = q, found = null;
+    if (!/^\d{6}$/.test(q)) { found = await govFindCode(q, gkey); code = found.code; }
+    let lastErr = null;
+    for (const svc of (found ? [GOV.find(g=>g.kind===found.kind), ...GOV] : GOV)){
       const u = new URL(svc.url);
       u.searchParams.set("serviceKey", gkey);
       u.searchParams.set("resultType", "json");
@@ -1109,7 +1164,7 @@ var uPlot=function(){"use strict";const l="u-off",e="u-label",t="width",n="heigh
         meta: { name: hit[0].itmsNm, exchange: hit[0].mrktCtg || "KRX", type: svc.kind, currency: "KRW" },
       };
     }
-    throw new Error(lastErr ? lastErr.message : `'${code}' 국내 종목을 주식·ETF·ETN 어디에서도 찾지 못했습니다. 6자리 코드를 확인해 주세요.`);
+    throw new Error(lastErr ? lastErr.message : `'${q}' 국내 종목을 주식·ETF·ETN 어디에서도 찾지 못했습니다. 종목명이나 6자리 코드를 확인해 주세요.`);
   }
 
   async function fetchTD(q, key, gkey){
@@ -1167,7 +1222,7 @@ var uPlot=function(){"use strict";const l="u-off",e="u-label",t="width",n="heigh
   async function run(listIn, bulk){
     const my = ++runId;
     const stale = () => my !== runId;
-    const list = listIn || inp.value.split(/[,\s]+/).map(s=>s.trim()).filter(Boolean).slice(0,8);
+    const list = listIn || splitInput(inp.value).slice(0,8);
     if (!list.length) { status.textContent = "종목을 입력해 주세요."; return; }
     const key = keyInp.value.trim(); if (key) { store.set("td_key", key); $("#keystate").textContent="(저장됨)"; }
     const gkey = gkeyInp.value.trim(); if (gkey) { store.set("gov_key", gkey); $("#gkeystate").textContent="(저장됨)"; }
@@ -1512,7 +1567,7 @@ var uPlot=function(){"use strict";const l="u-off",e="u-label",t="width",n="heigh
 
   if (inp.value.trim() && (keyInp.value.trim() || gkeyInp.value.trim() || hasCacheFor(inp.value))) run();
   else showSample();
-  function hasCacheFor(v){ return v.split(/[,\s]+/).filter(Boolean).every(q => store.get("ohlcv:"+parseSym(q).label)); }
+  function hasCacheFor(v){ return splitInput(v).every(q => store.get("ohlcv:"+parseSym(q).label)); }
   function showSample(){
     if (typeof WELLS_SAMPLE === "undefined") return;
     stack.innerHTML = "";
