@@ -1528,9 +1528,9 @@ var uPlot=function(){"use strict";const l="u-off",e="u-label",t="width",n="heigh
     const axisStyle = { stroke: css("--muted"), grid:{stroke: css("--line-soft"), width:1}, ticks:{stroke: css("--line"), width:1}, font:"11px "+css("--mono") };
     const sync = uPlot.sync("wells-"+sec.id);
     const showDetail = document.body.classList.contains("detail");
-    // 신호 구간 = 그 신호 때문에 '매수 고려' / '매도 고려' 상태였던 날들.
-    // 판정 규칙(analyze)과 똑같이 센다 — 매수는 신호 10일 안이거나 점수가 아직 문턱 위, 매도는 신호 10일 안.
-    // 다음 신호가 나오면 거기서 끊는다.
+    // 신호 구간 = 그 신호를 '고려'하던 창. 신호일부터 10거래일이고, 다음 신호가 나오면 거기서 끊는다.
+    // (판정의 '점수가 문턱 위면 계속' 규칙까지 칠하면 음영이 몇 달씩 이어져 그래프를 읽을 수 없다)
+    const SPAN = 10;                       // 신호가 '고려' 상태로 살아 있는 날 수
     const spans = (() => {
       const isBuy = new Set(res.buys), isSell = new Set(res.sells), out = [];
       let cur = null;
@@ -1539,10 +1539,7 @@ var uPlot=function(){"use strict";const l="u-off",e="u-label",t="width",n="heigh
           if (cur) out.push(cur);
           cur = { kind: isBuy.has(i) ? "buy" : "sell", from: i, to: i };
         } else if (cur){
-          const alive = cur.kind === "buy"
-            ? (i - cur.from <= 10 || (d.bz[i] === d.bz[i] && d.bz[i] >= threshold))
-            : (i - cur.from <= 10);
-          if (alive) cur.to = i; else { out.push(cur); cur = null; }
+          if (i - cur.from <= SPAN) cur.to = i; else { out.push(cur); cur = null; }
         }
       }
       if (cur) out.push(cur);
@@ -1564,7 +1561,8 @@ var uPlot=function(){"use strict";const l="u-off",e="u-label",t="width",n="heigh
       width: W(), height: H1px(), cursor:{ sync:{key: sync.key}, y:false, drag:{x:true,y:false} },
       scales:{ x:{time:true} },
       axes:[ {...axisStyle, values:(u,v)=>v.map(t=>{const dt=new Date(t*1000); return dt.getUTCMonth()===0&&dt.getUTCDate()<8 ? dt.getUTCFullYear() : (dt.getUTCFullYear()+"."+String(dt.getUTCMonth()+1).padStart(2,"0"));})},
-             {...axisStyle, size:narrow()?40:56, values:(u,v)=>v.map(x=>x>=1000?x.toLocaleString():x)} ],
+             {...axisStyle, size:(u,vals)=>{ const w=Math.max(...(vals||[]).map(v=>String(v).length), 4); return Math.min(96, 16+w*(narrow()?6.5:7.5)); },
+              values:(u,v)=>v.map(x=>x>=1000?x.toLocaleString():x)} ],
       series:[ {}, {label:"종가", stroke: css("--price"), width:1.4}, {label:"200일선", stroke: css("--ma"), width:1.2, dash:[4,3]},
                ],
       hooks:{ drawClear:[shade], draw:[u=>{                       // 매수 ▲ / 매도 ▼ + 가격
