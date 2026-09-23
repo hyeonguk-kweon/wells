@@ -1250,7 +1250,8 @@ var uPlot=function(){"use strict";const l="u-off",e="u-label",t="width",n="heigh
       const now = Date.now();
       while (tdTimes.length && now - tdTimes[0] > 60000) tdTimes.shift();
       if (tdTimes.length < PER_MIN) { tdTimes.push(now); return; }
-      status.textContent = `분당 ${PER_MIN}회 제한 — ${Math.ceil((60000 - (now - tdTimes[0]))/1000)}초 대기`;
+      const msg = `분당 ${PER_MIN}회 제한 — ${Math.ceil((60000 - (now - tdTimes[0]))/1000)}초 대기 (국내 종목은 그동안 계속 받습니다)`;
+      status.textContent = msg; const bp = $("#bulkProg"); if (bp && !$("#bulkstop").hidden) bp.textContent = msg;
       await new Promise(r => setTimeout(r, 500));
     }
   }
@@ -1281,45 +1282,50 @@ var uPlot=function(){"use strict";const l="u-off",e="u-label",t="width",n="heigh
     stack.innerHTML = ""; results.clear(); renderOverview();
     stopBulk = false;
     $("#bulk").disabled = !!bulk; $("#bulkstop").hidden = !bulk;
-    const t0 = Date.now(); let done = 0, fetched = 0;
-    for (const q of list){
-      if (stopBulk || stale()) break;
+    let done = 0, fetched = 0;
+
+    // 섹션은 입력한 순서대로 먼저 만들어 둔다 — 병렬로 받아도 화면 순서는 그대로다
+    const items = list.map((q) => {
       const label = parseSym(q).label;
-      const sec = document.createElement("section"); sec.className="tk"; sec.id = "tk-"+label.replace(/[^A-Z0-9]/g,"_");
+      const sec = document.createElement("section"); sec.className = "tk"; sec.id = "tk-" + label.replace(/[^A-Z0-9]/g, "_");
       sec.innerHTML = `<div class="verdict"><div class="name"><span class="sym">${label}</span><span class="meta">시세 받는 중…</span></div></div>`;
       sec.hidden = topPage === "detail";
       stack.appendChild(sec);
-      status.textContent = `${label} 받는 중…`;
-      if (bulk) $("#bulkProg").textContent = `${done} / ${list.length} · ${label} 받는 중… (남은 시간 약 ${Math.ceil((list.length - done) / PER_MIN)}분)`;
+      return { q, label, sec, kr: parseSym(q).ex === "KRX" };
+    });
+    const prog = () => { if (bulk) $("#bulkProg").textContent = `${done} / ${list.length} 완료`; };
+
+    const one = async (it) => {
+      status.textContent = `${it.label} 받는 중…`;
       try {
-        const wasCached = !!store.get("ohlcv:"+label);
-        const data = await fetchTD(q, key, gkey);
-        if (stale()) { sec.remove(); return; }
+        const wasCached = !!store.get("ohlcv:" + it.label);
+        const data = await fetchTD(it.q, key, gkey);
+        if (stale()) { it.sec.remove(); return; }
         if (!wasCached) fetched++;
-        if (data.close.length < 260) throw new Error(`'${label}' 자료가 ${data.close.length}일뿐이라 판정할 수 없습니다(최소 260일).`);
+        if (data.close.length < 260) throw new Error(`'${it.label}' 자료가 ${data.close.length}일뿐이라 판정할 수 없습니다(최소 260일).`);
         const res = Wells.analyze(data, +thr.value, horizon);
-        results.set(label, {data, res, sec});
-        render(sec, label, data, res);
+        results.set(it.label, { data, res, sec: it.sec });
+        render(it.sec, it.label, data, res);
         renderOverview();
         if (topPage === "detail") showDetail(detailIdx);
         status.textContent = "";
       } catch(e){
-        if (stale()) { sec.remove(); return; }
-        sec.innerHTML = `<div class="verdict"><div class="name"><span class="sym">${label}</span></div></div><div class="err">${escapeHtml(e.message||String(e))}</div>`;
+        if (stale()) { it.sec.remove(); return; }
+        it.sec.innerHTML = `<div class="verdict"><div class="name"><span class="sym">${it.label}</span></div></div><div class="err">${escapeHtml(e.message||String(e))}</div>`;
         status.textContent = "";
-        if (bulk && /limit|credit|429/i.test(e.message||"")) { $("#bulkProg").textContent = "한도에 걸렸습니다. 잠시 뒤 다시 눌러 주세요."; break; }
+        if (bulk && /limit|credit|429/i.test(e.message||"")) { $("#bulkProg").textContent = "한도에 걸렸습니다. 잠시 뒤 다시 눌러 주세요."; stopBulk = true; }
       }
-      done++;
-      // 분당 요청 제한: 새로 받은 것만 간격을 둔다 (캐시된 종목은 요청을 안 보내므로 기다릴 필요 없음).
-      // 250ms 씩 쪼개서 기다려야 중단 버튼이 바로 먹는다.
-      if (bulk && !stopBulk && done < list.length && fetched > 0){
-        const until = t0 + fetched * (60000 / PER_MIN);
-        while (!stopBulk && Date.now() < until){
-          $("#bulkProg").textContent = `${done} / ${list.length} 완료 · 분당 ${PER_MIN}회 제한으로 ${Math.ceil((until - Date.now())/1000)}초 대기`;
-          await new Promise(r => setTimeout(r, 250));
-        }
-      }
-    }
+      done++; prog();
+    };
+
+    // ── 미국(Twelve Data)과 국내(공공데이터포털)는 서로 다른 서버라 같이 돌린다.
+    //    미국은 분당 8회 제한이 있어 tdGate 가 알아서 간격을 두지만, 국내는 분당 제한이 없어
+    //    그동안 기다릴 이유가 없다. 국내는 정부 서버를 몰아치지 않게 3줄까지만 동시에 받는다.
+    const lane = async (arr) => { for (const it of arr){ if (stopBulk || stale()) break; await one(it); } };
+    const usQ = items.filter((it) => !it.kr), krQ = items.filter((it) => it.kr);
+    const krLanes = Array.from({length: Math.min(3, krQ.length)}, (_, k) => lane(krQ.filter((_, j) => j % 3 === k)));
+    await Promise.all([lane(usQ), ...krLanes]);
+
     if (over > 0 && !stale()) status.textContent = `한 번에 ${MAX_TICKERS}종목까지만 봅니다 — 뒤쪽 ${over}종목은 빼고 돌렸습니다.`;
     if (bulk && !stale()){
       $("#bulk").disabled = false; $("#bulkstop").hidden = true;
