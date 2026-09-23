@@ -1163,7 +1163,10 @@ var uPlot=function(){"use strict";const l="u-off",e="u-label",t="width",n="heigh
   // ── 분석 실행
   const results = new Map();   // label → {data, res}
   let stopBulk = false;
+  let runId = 0;              // 실행 세대. 분석을 연달아 누르면 이전 실행이 화면에 끼어들지 않게 한다
   async function run(listIn, bulk){
+    const my = ++runId;
+    const stale = () => my !== runId;
     const list = listIn || inp.value.split(/[,\s]+/).map(s=>s.trim()).filter(Boolean).slice(0,8);
     if (!list.length) { status.textContent = "종목을 입력해 주세요."; return; }
     const key = keyInp.value.trim(); if (key) { store.set("td_key", key); $("#keystate").textContent="(저장됨)"; }
@@ -1174,7 +1177,7 @@ var uPlot=function(){"use strict";const l="u-off",e="u-label",t="width",n="heigh
     $("#bulk").disabled = !!bulk; $("#bulkstop").hidden = !bulk;
     const t0 = Date.now(); let done = 0, fetched = 0;
     for (const q of list){
-      if (stopBulk) break;
+      if (stopBulk || stale()) break;
       const label = parseSym(q).label;
       const sec = document.createElement("section"); sec.className="tk"; sec.id = "tk-"+label.replace(/[^A-Z0-9]/g,"_");
       sec.innerHTML = `<div class="verdict"><div class="name"><span class="sym">${label}</span><span class="meta">시세 받는 중…</span></div></div>`;
@@ -1185,6 +1188,7 @@ var uPlot=function(){"use strict";const l="u-off",e="u-label",t="width",n="heigh
       try {
         const wasCached = !!store.get("ohlcv:"+label);
         const data = await fetchTD(q, key, gkey);
+        if (stale()) { sec.remove(); return; }
         if (!wasCached) fetched++;
         if (data.close.length < 260) throw new Error(`'${label}' 자료가 ${data.close.length}일뿐이라 판정할 수 없습니다(최소 260일).`);
         const res = Wells.analyze(data, +thr.value, horizon);
@@ -1194,6 +1198,7 @@ var uPlot=function(){"use strict";const l="u-off",e="u-label",t="width",n="heigh
         if (topPage === "detail") showDetail(detailIdx);
         status.textContent = "";
       } catch(e){
+        if (stale()) { sec.remove(); return; }
         sec.innerHTML = `<div class="verdict"><div class="name"><span class="sym">${label}</span></div></div><div class="err">${escapeHtml(e.message||String(e))}</div>`;
         status.textContent = "";
         if (bulk && /limit|credit|429/i.test(e.message||"")) { $("#bulkProg").textContent = "한도에 걸렸습니다. 잠시 뒤 다시 눌러 주세요."; break; }
@@ -1209,7 +1214,7 @@ var uPlot=function(){"use strict";const l="u-off",e="u-label",t="width",n="heigh
         }
       }
     }
-    if (bulk){
+    if (bulk && !stale()){
       $("#bulk").disabled = false; $("#bulkstop").hidden = true;
       $("#bulkProg").textContent = stopBulk ? `중단했습니다 — ${done} / ${list.length}종목` : `끝 — ${done}종목 (새로 받은 것 ${fetched})`;
     }
