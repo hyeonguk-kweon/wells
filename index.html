@@ -292,7 +292,7 @@ p.lead{margin:0;font-size:14px;line-height:1.55;border-left:3px solid var(--acce
   </div>
 
   <div class="foot">
-    <div class="caveat"><b>상태는 셋뿐입니다 — 매수 고려 / 매도 고려 / 관망.</b> 매수 고려 = 마지막 신호가 매수이고 10일 안이거나 점수가 아직 문턱 위. 매도 고려 = 마지막 신호가 매도이고 10일 안. <b>비중</b> = 계획한 물량 중 지금 넣을(덜어낼) 비율로, 등급 50% + 움직인 폭(조건의 몇 배) 25% + 신선도(신호 뒤 며칠) 25% 로 계산하고, 신호가에서 조건의 절반 이상 멀어졌으면 절반으로 줄입니다. 예: 등급 80·폭 2배·신호 당일 → 90%. 신호 10일 뒤 → 등급·폭만 남아 60% 안팎. <b>표 아래 p값을 먼저 보세요.</b> 매수·매도 고려 시점은 같은 규칙의 거울상입니다 — 20일 고/저점에서 max(4%, 3×ATR₆₀) 이상 움직인 뒤 종가가 직전 3일을 넘으면(매수) / 밑돌면(매도). 시야는 1~3개월. 5년 검증에서 <b>매도 고려는 종목 성격을 탑니다</b>: TSLA(60일 p=0.05)에서는 팔아서 피한 하락이 있었지만, SOXX·NVDA처럼 추세가 강한 종목은 첫 꺾임에 팔면 아무 날보다 나빴습니다(p≈0.8~0.9). 매수 쪽: 매수 시점은 두 종류입니다. <b>단기저점</b> = 20일 고점에서 max(4%, 3×ATR₆₀) 이상 빠진 뒤 첫 반등 확인일(종가가 직전 3일 종가를 넘고, 아직 낙폭 아래 절반이거나 저점 뒤 3일 안) — 사후 눌림을 QQQ 9/9·SPY 5/5·SOXX 10/10·NVDA 13/13·TSLA 14/14 잡습니다. <b>다지기</b> = 저점매수 점수가 60 이상으로 올라선 날. 5년 검증(그날 종가 매수 → 120일, 등급 ≥ 60): QQQ 승률 74% p=0.07 · SPY 75% p=0.19 · NVDA 74% p=0.11 · TSLA 57% p=0.17 · SOXX 75% p=0.56(반도체는 아무 날에 사도 +16%). 규칙 값은 이 세 종목을 보며 고른 것이라 다른 종목에서 확인이 필요합니다. 이 점수는 "떨어지던 속도가 죽어가는 자리"를 찾는 눈금이지 바닥 예언이 아닙니다. 5년 검증에서 실제 눌림은 잘 잡았지만(QQQ 4/9 · SOXX 6/9 · TSLA 13/14) 대개 바닥보다 2~8주 먼저 켜지고, 켜진 구간에 나눠 산 평단이 아무 구간보다 나았던 건 TSLA(p≈0.1~0.4) 뿐이었습니다. QQQ·SOXX 같은 지수는 얕은 V자로 빠르게 되돌아와 구분이 안 됐습니다(p≈0.7~0.9). 종목마다 아래 채점표 ①②를 직접 보세요.</div>
+    <div class="caveat"><b>상태는 셋뿐입니다 — 매수 고려 / 매도 고려 / 관망.</b> 매수 고려 = 마지막 신호가 매수이고 10일 안이거나 점수가 아직 문턱 위. 매도 고려 = 마지막 신호가 매도이고 10일 안. <b>비중</b> = 계획한 물량 중 지금 넣을(덜어낼) 비율로, 등급 50% + 움직인 폭(조건의 몇 배) 25% + 신선도(신호 뒤 며칠) 25% 로 계산하고, 신호가에서 조건의 절반 이상 멀어졌으면 절반으로 줄입니다. 예: 등급 80·폭 2배·신호 당일 → 90%. 신호 10일 뒤 → 등급·폭만 남아 60% 안팎. <b>표 아래 p값을 먼저 보세요.</b> 매수·매도 고려 시점은 같은 규칙의 거울상입니다 — 20일 고/저점에서 max(4%, 3×ATR₆₀) 이상 움직인 뒤 종가가 직전 3일을 넘으면(매수) / 밑돌면(매도). 시야는 1~3개월. 5년 검증에서 <b>매도 고려는 종목 성격을 탑니다</b>: TSLA(60일 p=0.05)에서는 팔아서 피한 하락이 있었지만, SOXX·NVDA처럼 추세가 강한 종목은 첫 꺾임에 팔면 아무 날보다 나빴습니다(p≈0.8~0.9). 매수 쪽: 매수 시점은 <b>저점반전</b> 한 종류입니다 — 20일 고점에서 max(4%, 3×ATR₆₀) 이상 빠진 뒤 첫 반등 확인일(종가가 직전 3일 종가를 넘고, 아직 낙폭 아래 절반이거나 저점 뒤 3일 안). 예전에는 <b>다지기</b>(저점매수 점수가 60 위로 올라선 날)도 매수로 썼지만 <b>뺐습니다</b> — 14종목 검증에서 절반이 아무 날보다 나빴고 국내에서 특히 나빴습니다(120일 중앙값: 현대차 −7.2% vs 아무 날 +3.1% · SK하이닉스 −2.7% vs +18.3% · 삼성전자 −1.4% vs +6.6% · TSLA −1.1% vs +10.9%). 남은 저점반전을 14종목으로 검증한 결과(120일 중앙값, 등급 ≥ 40): <b>레버리지 상품에서만 뚜렷했습니다</b> — TQQQ +31.3% vs 아무 날 +24.3%(p=0.02) · TIGER 미국나스닥100레버리지 +31.0% vs +22.8%(p=0.05) · META +18.1% vs +12.8%(p=0.02). 반면 QQQ·SPY·SOXX·TSLA·NVDA·AMZN 은 아무 날과 차이가 노이즈 수준이었고, <b>삼성전자(+1.2% vs +6.6%)·SK하이닉스·KODEX200 은 오히려 더 나빴습니다</b>. 규칙 값은 소수 종목을 보며 고른 것이라 다른 종목에서 확인이 필요합니다. 이 점수는 "떨어지던 속도가 죽어가는 자리"를 찾는 눈금이지 바닥 예언이 아닙니다. 5년 검증에서 실제 눌림은 잘 잡았지만(QQQ 4/9 · SOXX 6/9 · TSLA 13/14) 대개 바닥보다 2~8주 먼저 켜지고, 켜진 구간에 나눠 산 평단이 아무 구간보다 나았던 건 TSLA(p≈0.1~0.4) 뿐이었습니다. QQQ·SOXX 같은 지수는 얕은 V자로 빠르게 되돌아와 구분이 안 됐습니다(p≈0.7~0.9). 종목마다 아래 채점표 ①②를 직접 보세요.</div>
     <div><b>등급 = max(다지기형, V자형) × 추세 보정.</b> 추세 보정은 상승추세(종가가 200일선 위 + 200일선이 20일 전보다 높음)면 <b>×1.25</b>, 아니면 <b>×0.70</b> 입니다(100 상한). 7종목 5년 검증에서 같은 신호라도 상승추세에서 난 것이 일관되게 나았습니다 — 60일 뒤 수익 기준 SOXX p 0.54→0.04 · SK하이닉스 0.96→0.10 · TIGER 0.02→0.00 · 삼성전자 −0.8%→+3.0%. 하락추세 눌림은 떨어지는 칼날이라 감점하지만, <b>TSLA 처럼 추세가 자주 뒤집히는 종목에서는 오히려 손해</b>였으므로(p 0.20→0.36) 신호를 지우지 않고 등급만 깎아 남겨 둡니다. 1.25/0.70 이라는 값 자체는 그 7종목의 결과를 보고 고른 것이라 다른 종목에서 재확인이 필요합니다. 종목별 신뢰도(p)를 먼저 보세요. 등급(저점매수 점수) = max(다지기형, V자형). 다지기형 — 눌림 20 · 감속 30 (20일선 기울기가 60일 최저에서 얼마나 올라왔고 0에 얼마나 가까운가) · 저점 유지 15 (60일 저점을 새로 안 쓴 지 며칠) · 저점 근접 15 · 과매도 해소 10 · 거래량 고갈 10. 눌림 자격(52주 고점에서 안 빠졌으면 0)과 가속 자격(20일선 기울기가 오늘 60일 최저를 갱신 중이면 ×0.3)을 곱합니다. V자형 — 눌림 20 · 과매도 깊이 40 (최근 5일 RSI 최저가 40 아래로) · 반전 확인 25 (종가 > 어제, > 3일 고가) · 투매 거래량 15, 눌림 자격만 곱합니다(가속 자격 없음 — V자 바닥은 늘 가속 하락의 끝에 있습니다). 기울기·깊이는 모두 ATR로 나눠 지수와 개별주에 같은 눈금을 씁니다. 회차는 문턱 위가 10일 이상 이어진 구간(7일 끊김 허용). 모든 계산은 그날까지의 자료만 씁니다.</div>
     <div>채점 ① 의 '실제 눌림'만 앞뒤를 본 사후 판정입니다: 꼭지에서 max(10%, 5×ATR) 이상 떨어졌다가 바닥에서 같은 만큼 되올라온 자리, 몸통은 낙폭의 아래 절반.</div>
     <div>시세: 미국은 Twelve Data 일봉(분할 조정), 국내는 공공데이터포털 금융위원회 주식시세·증권상품시세(원화, 무수정 종가 — 하루 뒤 13시 이후 갱신이라 전일까지만 나옵니다). 지표: Wilder RSI/ATR/ADX, Appel MACD, Bollinger(ddof=0), Keltner EMA20±1.5ATR, TTM Squeeze, Minervini VCP, Weinstein 국면.</div>
@@ -931,6 +931,7 @@ var uPlot=function(){"use strict";const l="u-off",e="u-label",t="width",n="heigh
   }
   const forward = (close, h) => close.map((c, i) => (i + h < close.length ? close[i + h] / c - 1 : NaN_));
   function mean(xs) { const v = xs.filter((x) => !isN(x)); return v.length ? v.reduce((a, b) => a + b, 0) / v.length : NaN_; }
+  function median(xs) { const v = xs.filter((x) => !isN(x)).sort((a, b) => a - b); return v.length ? v[v.length >> 1] : NaN_; }
   // 회차 단위 순열검정. 같은 회차 수만큼 아무 날이나 골라 2,000번 비교
   function pValue(close, starts, h, nIter = 2000, seed = 0) {
     const f = forward(close, h);
@@ -958,27 +959,45 @@ var uPlot=function(){"use strict";const l="u-off",e="u-label",t="width",n="heigh
     const tr = gradeTroughs(troughs(d.close, d.atr_pct), d.bz, threshold);
     const st = { 60: trancheStats(d.close, eps, 60), 120: trancheStats(d.close, eps, 120) };
     // 시점 목록. 중기 매수에는 다지기(점수 60 돌파, 20일 금지)도 포함
+    // 매수는 '저점반전'만 쓴다. 예전엔 '다지기'(점수가 60 위로 올라선 날)도 넣었는데,
+    // 14종목 검증에서 절반이 아무 날보다 나빴다 — 120일 중앙값으로 현대차 -7.2%(아무 날 +3.1%) ·
+    // SK하이닉스 -2.7%(+18.3%) · 삼성전자 -1.4%(+6.6%) · TSLA -1.1%(+10.9%). 그래서 뺐다.
     const buys = [], sells = [], kind = {};
-    let lastB = -1e9;
-    for (let i = 0; i < n; i++) {
-      if (d[h + "_buy"][i] && !isN(d.bz[i]) && d.bz[i] >= threshold) { buys.push(i); kind[i] = "저점반전"; lastB = i; continue; }
-      if (!isN(d.bz[i]) && d.bz[i] >= Math.max(threshold, 60) && d.path[i] === "다지기" && i - lastB > 20) { buys.push(i); kind[i] = "다지기"; lastB = i; }   // 다지기 돌파도 매수 고려
-    }
+    for (let i = 0; i < n; i++)
+      if (d[h + "_buy"][i] && !isN(d.bz[i]) && d.bz[i] >= threshold) { buys.push(i); kind[i] = "저점반전"; }
     for (let i = 0; i < n; i++) if (d[h + "_sell"][i] && !isN(d[h + "_sell_grade"][i]) && d[h + "_sell_grade"][i] >= threshold) { sells.push(i); kind[i] = "고점꺾임"; }
     d.sig_kind = kind;
     const fw = {}; for (const H of p.eval) fw[H] = forward(d.close, H);
     const mkRows = (idx, H2) => idx.map((i) => { let mn = Infinity, mx = -Infinity; for (let j = i; j <= Math.min(n - 1, i + H2); j++) { if (d.close[j] < mn) mn = d.close[j]; if (d.close[j] > mx) mx = d.close[j]; }
       return { i, px: d.close[i], f1: fw[p.eval[0]][i], f2: fw[p.eval[1]][i], mdd: mn / d.close[i] - 1, mup: mx / d.close[i] - 1, done: i + H2 < n }; });
     const buyRows = mkRows(buys, p.eval[1]), sellRows = mkRows(sells, p.eval[1]);
-    const stat = (idx, H, sell) => { const r = pValue(d.close, idx, H); const base = mean(fw[H]);
-      if (sell) { // 매도는 '그 뒤가 낮을수록' 좋다 → p = 무작위가 관측보다 낮을 확률
-        const f = fw[H]; const vals = idx.map((i) => f[i]).filter((x) => !isN(x)); const obs = mean(vals); const pool = f.filter((x) => !isN(x));
-        if (!vals.length || pool.length < vals.length) return { obs, base, p: NaN_, hit: NaN_ };
-        let s2 = 11; const rand = () => { s2 ^= s2 << 13; s2 ^= s2 >>> 17; s2 ^= s2 << 5; return ((s2 >>> 0) % 1e9) / 1e9; };
-        let le = 0; for (let it = 0; it < 1500; it++) { let sum = 0; const used = new Set(); while (used.size < vals.length) { const j = Math.floor(rand() * pool.length); if (!used.has(j)) { used.add(j); sum += pool[j]; } } if (sum / vals.length <= obs) le++; }
-        return { obs, base, p: le / 1500, hit: vals.filter((x) => x < 0).length / vals.length }; }
-      const vals = idx.map((i) => fw[H][i]).filter((x) => !isN(x));
-      return { obs: r.obs, base, p: r.p, hit: vals.length ? vals.filter((x) => x > 0).length / vals.length : NaN_ }; };
+    // 한 번의 순열로 평균·중앙값 p 를 같이 낸다.
+    //   수익률 분포는 한쪽으로 쏠려 있어 평균은 대박 몇 번에 끌려다닌다. 중앙값이 '보통 어떻게 됐나'를 말해 준다.
+    //   (META 는 평균 기준 p=0.58 로 무의미해 보이지만 중앙값 기준으로는 0.02 였다)
+    const stat = (idx, H, sell) => {
+      const f = fw[H];
+      const vals = idx.map((i) => f[i]).filter((x) => !isN(x));
+      const pool = f.filter((x) => !isN(x));
+      const base = mean(pool), baseMed = median(pool);
+      if (!vals.length || pool.length < vals.length)
+        return { obs: mean(vals), med: median(vals), base, baseMed, p: NaN_, pMed: NaN_, hit: NaN_, n: vals.length };
+      const obs = mean(vals), obsMed = median(vals);
+      let s2 = sell ? 11 : 1;
+      const rand = () => { s2 ^= s2 << 13; s2 ^= s2 >>> 17; s2 ^= s2 << 5; return ((s2 >>> 0) % 1e9) / 1e9; };
+      const ITER = 1500;
+      let a = 0, b = 0;
+      const pick = new Array(vals.length);
+      for (let it = 0; it < ITER; it++) {
+        const used = new Set(); let k = 0;
+        while (k < vals.length) { const j = Math.floor(rand() * pool.length); if (!used.has(j)) { used.add(j); pick[k++] = pool[j]; } }
+        const m = mean(pick), md = median(pick);
+        if (sell ? m <= obs : m >= obs) a++;
+        if (sell ? md <= obsMed : md >= obsMed) b++;
+      }
+      return { obs, med: obsMed, base, baseMed, p: a / ITER, pMed: b / ITER,
+               hit: sell ? vals.filter((x) => x < 0).length / vals.length : vals.filter((x) => x > 0).length / vals.length,
+               n: vals.length };
+    };
     const bs = {}, ss = {}; for (const H of p.eval) { bs[H] = stat(buys, H, false); ss[H] = stat(sells, H, true); }
     const last = n - 1;
     const lastBuy = buys.length ? buys[buys.length - 1] : -1, lastSell = sells.length ? sells[sells.length - 1] : -1;
@@ -1486,28 +1505,38 @@ var uPlot=function(){"use strict";const l="u-off",e="u-label",t="width",n="heigh
     const HS = res.hz.eval;                       // 20 · 60 · 120 · 200일
     if (!rows.length) return `<div class="empty">이 등급에서는 ${sell?"매도":"매수"} 고려 시점이 없습니다.</div>`;
     const good = (x) => sell ? cls(-x) : cls(x);
-    // 기간이 길수록 '아직 결과를 모르는' 신호가 늘어난다. 기간마다 실제로 센 횟수를 따로 보여 준다.
-    const N = res.d.close.length, cnt = {};
-    for (const H of HS) cnt[H] = rows.filter(r => r.i + H < N).length;
     const S = HS.map(H => st[H]);
-    const main = st[HS[1]], kMain = cnt[HS[1]];   // 대표는 60일
+    const main = st[HS[2]] || st[HS[1]];          // 대표는 120일
+    const kMain = main.n;
+    const who = sell ? "매도" : "매수";
     let verdict;
     if (kMain < 5) verdict = `결과를 아는 시점이 ${kMain}회뿐이라 우연을 배제할 수 없습니다.`;
-    else if (main.p < 0.1) verdict = sell ? `이 종목에서는 매도 고려 뒤 ${HS[1]}일 수익이 아무 날보다 낮았습니다 (p=${main.p.toFixed(2)}) — 팔아서 피한 하락이 실제로 있었습니다.` : `이 종목에서는 매수 고려 뒤 ${HS[1]}일 수익이 아무 날보다 높았습니다 (p=${main.p.toFixed(2)}).`;
-    else verdict = sell ? `p=${main.p.toFixed(2)} — 이 종목에서 매도 고려는 아무 날과 구분되지 않습니다. 추세가 강한 종목은 '첫 꺾임'에 팔면 대개 손해입니다.` : `p=${main.p.toFixed(2)} — 이 종목에서 매수 고려는 아무 날과 구분되지 않습니다.`;
-    const row = (label, cellFn) => `<tr><td>${label}</td>${S.map((x,j)=>cellFn(x,HS[j])).join("")}</tr>`;
+    else if (main.pMed < 0.1) verdict = `이 종목에서는 ${who} 고려가 아무 날보다 나았습니다 (중앙값 기준 p=${main.pMed.toFixed(2)}).`;
+    else if (main.pMed > 0.6 && (sell ? main.med > main.baseMed : main.med < main.baseMed))
+      verdict = `p=${main.pMed.toFixed(2)} — 이 종목에서는 ${who} 고려가 아무 날보다 <b>오히려 나빴습니다</b>. 이 신호를 근거로 삼지 마세요.`;
+    else verdict = `p=${main.pMed.toFixed(2)} — 이 종목에서 ${who} 고려는 아무 날과 구분되지 않습니다.`;
+    const row = (label, fn, cl) => `<tr${cl?` class="${cl}"`:""}><td>${label}</td>${S.map((x,j)=>fn(x,HS[j])).join("")}</tr>`;
     return `<div class="tbl"><table><thead><tr><th>그날 종가에 ${sell?"팔았다면 (그 뒤 가격)":"샀다면"}</th>${HS.map(H=>`<th class="r">${H}일 뒤</th>`).join("")}</tr></thead><tbody>
-      ${row(`${sell?"매도":"매수"} 고려 평균`, (x)=>`<td class="num r ${good(x.obs)}">${fmtPct(x.obs)}</td>`)}
-      ${row("아무 날이나", (x)=>`<td class="num r">${fmtPct(x.base)}</td>`)}
-      ${row(sell?"하락률 (그 뒤 내린 비율)":"오른 비율 (승률)", (x)=>`<td class="num r"><b>${fmtN(x.hit*100,0)}%</b></td>`)}
-      ${row("p값", (x)=>`<td class="num r">${fmtN(x.p,2)}</td>`)}
-      ${row("결과를 아는 횟수", (x,H)=>`<td class="num r hint">${cnt[H]}회</td>`)}
+      ${row(`${who} 고려 — <b>중앙값</b>`, (x)=>`<td class="num r ${good(x.med)}"><b>${fmtPct(x.med)}</b></td>`)}
+      ${row("아무 날이나 — 중앙값", (x)=>`<td class="num r">${fmtPct(x.baseMed)}</td>`)}
+      ${row(`${who} 고려 — 평균`, (x)=>`<td class="num r ${good(x.obs)}">${fmtPct(x.obs)}</td>`)}
+      ${row("아무 날이나 — 평균", (x)=>`<td class="num r">${fmtPct(x.base)}</td>`)}
+      ${row(sell?"하락률 (그 뒤 내린 비율)":"오른 비율 (승률)", (x)=>`<td class="num r">${fmtN(x.hit*100,0)}%</td>`)}
+      ${row("<b>p값 (중앙값 기준)</b>", (x)=>`<td class="num r"><b>${fmtN(x.pMed,2)}</b></td>`)}
+      ${row("p값 (평균 기준)", (x)=>`<td class="num r hint">${fmtN(x.p,2)}</td>`)}
+      ${row("결과를 아는 횟수", (x)=>`<td class="num r hint">${x.n}회</td>`)}
     </tbody></table></div>
     <p class="hint" style="margin:6px 0 0">${verdict}</p>
-    <p class="hint" style="margin:4px 0 0"><b>p값은 낮을수록 좋습니다.</b> 신호가 아무 쓸모 없다고 가정했을 때 이만한 성적이 우연히 나올 확률입니다 — 아무 날이나 같은 개수만큼 무작위로 뽑는 일을 2,000번 반복해 견줍니다.
+    <p class="hint" style="margin:4px 0 0"><b>중앙값을 먼저 보세요.</b> 수익률은 한쪽으로 심하게 쏠려 있어 평균은 대박 몇 번에 끌려다닙니다 — 중앙값이 "보통 어떻게 됐나"를 말해 줍니다. 14종목 검증에서 META 는 평균 기준 p=0.58(무의미)이었지만 중앙값 기준으로는 0.02(유의)였습니다.
+    <b>p값은 낮을수록 좋습니다.</b> 신호가 아무 쓸모 없다고 가정했을 때 이만한 성적이 우연히 나올 확률입니다 — 아무 날이나 같은 개수만큼 무작위로 뽑는 일을 1,500번 반복해 견줍니다.
     <b>0.1 미만</b>이면 우연으로 보기 어렵고, <b>0.1~0.3</b>이면 그럴듯하나 확신할 수 없으며, <b>0.3 이상</b>이면 아무 날과 구분되지 않습니다.
     승률만 보면 속습니다 — 우상향 종목은 아무 날에 사도 승률이 높으니 반드시 '아무 날이나' 줄과 견주세요.
-    p가 낮아도 <b>"과거 이 기간에는"</b> 이라는 뜻일 뿐, 앞으로도 그렇다는 보장은 아닙니다(QQQ는 최근 5년 p=0.04, 2006~2016은 0.69).</p>`;
+    p가 낮아도 <b>"과거 이 기간에는"</b> 이라는 뜻일 뿐, 앞으로도 그렇다는 보장은 아닙니다(QQQ는 최근 5년 p=0.04, 2006~2016은 0.69).</p>
+    <p class="hint" style="margin:8px 0 0"><b>어떤 종목에서 통했나</b> — 14종목(미국 20년 · 국내 5년, 120일 중앙값, 등급 ≥ 40)으로 확인한 결과입니다.
+    <b>① 레버리지 상품에서만 뚜렷했습니다</b> — TQQQ +31.3% vs 아무 날 +24.3%(p=0.02) · TIGER 미국나스닥100레버리지 +31.0% vs +22.8%(p=0.05). 변동폭이 커서 눌림이 뚜렷하게 찍히기 때문입니다(META p=0.02 도 붙었지만 한 사례뿐이라 우연일 수 있습니다).
+    <b>② 지수·대형주는 아무 날과 차이가 없었습니다</b> — QQQ 0.44 · SPY 0.21 · SOXX 0.35 · TSLA 0.46 · NVDA 0.28 · AMZN 0.32 · GOOGL 0.20. 얕게 빠지고 금방 회복해 '눌림'이 구분되지 않습니다.
+    <b>③ 국내 대형주는 오히려 더 나빴습니다</b> — 삼성전자 +1.2% vs 아무 날 +6.6%(p=0.90) · SK하이닉스 +14.9% vs +18.3%(0.60) · KODEX200 +3.0% vs +5.2%(0.68). 이런 종목에서는 이 신호를 근거로 삼지 마세요(현대차 0.22 는 예외였습니다).
+    <b>그러니 종목마다 위 p값을 먼저 보세요</b> — 등급이 90이어도 그 종목의 p가 0.3을 넘으면 등급은 의미가 없습니다. 이 목록은 제한된 표본이라 넣으시는 종목에서 직접 확인하는 것이 맞습니다.</p>`;
   }
   function sigList(res, data, d, n, rows, st, sell){
     const [H1, H2] = res.hz.eval, gcol = sell ? res.hz.key + "_sell_grade" : "bz";
