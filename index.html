@@ -16,7 +16,7 @@
   --bg:#F3F6F8; --surface:#FFFFFF; --ink:#15202B; --muted:#66737F; --line:#D9E0E6; --line-soft:#EAF0F4;
   --accent:#1F6E8C; --accent-ink:#FFFFFF; --well:rgba(31,110,140,.20); --well-strong:rgba(31,110,140,.55);
   --price:#2A3A4A; --ma:#C28A2A; --score:#1F6E8C; --setup:#9AAAB6; --trough:#C4772A;
-  --good:#2D8A5B; --warn:#C4772A; --bad:#B8413E; --good-bg:#E4F3EA; --warn-bg:#FBEDDD; --bad-bg:#F8E3E2; --info-bg:#E2EEF3;
+  --good:#2D8A5B; --warn:#C4772A; --bad:#B8413E; --buyzone:rgba(31,110,140,.16); --sellzone:rgba(184,65,62,.14); --good-bg:#E4F3EA; --warn-bg:#FBEDDD; --bad-bg:#F8E3E2; --info-bg:#E2EEF3;
   --sans:"IBM Plex Sans KR",-apple-system,"Apple SD Gothic Neo","Malgun Gothic",system-ui,sans-serif;
   --mono:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
 }
@@ -24,13 +24,13 @@
   --bg:#0D1319; --surface:#151E27; --ink:#E4EAEF; --muted:#8A98A5; --line:#24303B; --line-soft:#1B2530;
   --accent:#62B4D2; --accent-ink:#0D1319; --well:rgba(98,180,210,.22); --well-strong:rgba(98,180,210,.6);
   --price:#D8E1E8; --ma:#D9A24A; --score:#62B4D2; --setup:#5C6B78; --trough:#E39A52;
-  --good:#5CC48C; --warn:#E39A52; --bad:#E06B67; --good-bg:#16311F; --warn-bg:#3A2712; --bad-bg:#3B1B1A; --info-bg:#173040;
+  --good:#5CC48C; --warn:#E39A52; --bad:#E06B67; --buyzone:rgba(98,180,210,.20); --sellzone:rgba(224,107,103,.18); --good-bg:#16311F; --warn-bg:#3A2712; --bad-bg:#3B1B1A; --info-bg:#173040;
 }}
 :root[data-theme="dark"]{
   --bg:#0D1319; --surface:#151E27; --ink:#E4EAEF; --muted:#8A98A5; --line:#24303B; --line-soft:#1B2530;
   --accent:#62B4D2; --accent-ink:#0D1319; --well:rgba(98,180,210,.22); --well-strong:rgba(98,180,210,.6);
   --price:#D8E1E8; --ma:#D9A24A; --score:#62B4D2; --setup:#5C6B78; --trough:#E39A52;
-  --good:#5CC48C; --warn:#E39A52; --bad:#E06B67; --good-bg:#16311F; --warn-bg:#3A2712; --bad-bg:#3B1B1A; --info-bg:#173040;
+  --good:#5CC48C; --warn:#E39A52; --bad:#E06B67; --buyzone:rgba(98,180,210,.20); --sellzone:rgba(224,107,103,.18); --good-bg:#16311F; --warn-bg:#3A2712; --bad-bg:#3B1B1A; --info-bg:#173040;
 }
 *{box-sizing:border-box}
 /* 그리드/플렉스 항목의 기본 min-width:auto 가 넓은 표·차트를 만나면 화면을 밀어낸다 */
@@ -91,8 +91,8 @@ section.tk{background:var(--surface);border:1px solid var(--line);border-radius:
 .chart-tools{display:flex;flex-wrap:wrap;gap:4px 12px;align-items:center;justify-content:space-between}
 .legend{display:flex;flex-wrap:wrap;gap:4px 14px;font-size:12px;color:var(--muted)}
 .legend b{display:inline-block;width:14px;height:3px;vertical-align:middle;margin-right:5px;border-radius:2px}
-.legend b.shade{height:10px;width:14px;background:var(--well)}
-.legend b.trough{height:3px;background:var(--trough)}
+.legend b.buyzone{height:10px;width:14px;background:var(--buyzone);border:1px solid var(--accent);border-radius:2px}
+.legend b.sellzone{height:10px;width:14px;background:var(--sellzone);border:1px solid var(--bad);border-radius:2px}
 .legend b.tri{width:0;height:0;border-left:5px solid transparent;border-right:5px solid transparent;border-bottom:9px solid var(--good);background:none;border-radius:0}
 .uplot{width:100%}
 .u-chart{width:100%}
@@ -1377,7 +1377,7 @@ var uPlot=function(){"use strict";const l="u-off",e="u-label",t="width",n="heigh
       <div class="pane" data-pane="ana" style="display:grid;gap:14px">
       <div class="chartbox">
         <div class="chart-tools">
-          <div class="legend"><span><b style="background:var(--price)"></b>종가</span><span><b style="background:var(--ma)"></b>200일선</span><span><b class="buy-legend"></b>매수 고려</span><span><b class="sell-legend"></b>매도 고려</span><span class="only-detail"><b class="shade"></b>점수 ≥ ${threshold} 구간</span><span class="only-detail"><b class="trough"></b>실제 눌림 (사후)</span><span class="only-detail"><b style="background:var(--score)"></b>저점매수 점수</span></div>
+          <div class="legend"><span><b style="background:var(--price)"></b>종가</span><span><b style="background:var(--ma)"></b>200일선</span><span><b class="buy-legend"></b>매수 고려</span><span><b class="buyzone"></b>매수 고려 구간</span><span><b class="sell-legend"></b>매도 고려</span><span><b class="sellzone"></b>매도 고려 구간</span><span class="only-detail"><b style="background:var(--setup)"></b>저점매수 점수</span></div>
           <div class="row" style="gap:2px" data-range>
             <button class="ghost" data-y="1">1년</button><button class="ghost" data-y="2">2년</button><button class="ghost" data-y="5" aria-pressed="true">5년</button><button class="ghost" data-y="0">전체</button>
           </div>
@@ -1528,14 +1528,34 @@ var uPlot=function(){"use strict";const l="u-off",e="u-label",t="width",n="heigh
     const axisStyle = { stroke: css("--muted"), grid:{stroke: css("--line-soft"), width:1}, ticks:{stroke: css("--line"), width:1}, font:"11px "+css("--mono") };
     const sync = uPlot.sync("wells-"+sec.id);
     const showDetail = document.body.classList.contains("detail");
+    // 신호 구간 = 그 신호 때문에 '매수 고려' / '매도 고려' 상태였던 날들.
+    // 판정 규칙(analyze)과 똑같이 센다 — 매수는 신호 10일 안이거나 점수가 아직 문턱 위, 매도는 신호 10일 안.
+    // 다음 신호가 나오면 거기서 끊는다.
+    const spans = (() => {
+      const isBuy = new Set(res.buys), isSell = new Set(res.sells), out = [];
+      let cur = null;
+      for (let i = 0; i < n; i++){
+        if (isBuy.has(i) || isSell.has(i)){
+          if (cur) out.push(cur);
+          cur = { kind: isBuy.has(i) ? "buy" : "sell", from: i, to: i };
+        } else if (cur){
+          const alive = cur.kind === "buy"
+            ? (i - cur.from <= 10 || (d.bz[i] === d.bz[i] && d.bz[i] >= threshold))
+            : (i - cur.from <= 10);
+          if (alive) cur.to = i; else { out.push(cur); cur = null; }
+        }
+      }
+      if (cur) out.push(cur);
+      return out;
+    })();
     const shade = (u) => {
-      if (!showDetail) return;
-      const ctx = u.ctx; ctx.save(); ctx.fillStyle = css("--well");
-      const top = u.bbox.top, h = u.bbox.height;
-      for (const [a,b] of eps){
-        const x0 = u.valToPos(xs[a], "x", true), x1 = u.valToPos(xs[Math.min(b+1,n-1)], "x", true);
-        if (x1 < u.bbox.left || x0 > u.bbox.left+u.bbox.width) continue;
-        ctx.fillRect(Math.max(x0,u.bbox.left), top, Math.min(x1,u.bbox.left+u.bbox.width)-Math.max(x0,u.bbox.left), h);
+      const ctx = u.ctx; ctx.save();
+      const top = u.bbox.top, h = u.bbox.height, L = u.bbox.left, R = L + u.bbox.width;
+      for (const sp of spans){
+        const x0 = u.valToPos(xs[sp.from], "x", true), x1 = u.valToPos(xs[Math.min(sp.to+1, n-1)], "x", true);
+        if (x1 < L || x0 > R) continue;
+        ctx.fillStyle = css(sp.kind === "buy" ? "--buyzone" : "--sellzone");
+        ctx.fillRect(Math.max(x0,L), top, Math.max(2, Math.min(x1,R) - Math.max(x0,L)), h);
       }
       ctx.restore();
     };
@@ -1562,13 +1582,6 @@ var uPlot=function(){"use strict";const l="u-off",e="u-label",t="width",n="heigh
         for (const i of res.sells){ const x=u.valToPos(xs[i],"x",true), y=u.valToPos(d.close[i],"y",true); if (x<u.bbox.left||x>u.bbox.left+u.bbox.width) continue;
           tri(x, y, false, css("--bad"));
           if (!sm) { ctx.fillStyle=css("--bad"); ctx.fillText(fmtN(d.close[i], d.close[i]>=1000?0:1), x, y-26); } }
-        ctx.restore(); }, u=>{ if (!showDetail) return;             // 사후 눌림 = 바닥 ▽ + 몸통 밑줄
-        const ctx=u.ctx; ctx.save(); ctx.strokeStyle=css("--trough"); ctx.fillStyle=css("--trough"); ctx.lineWidth=3;
-        const yb = u.bbox.top + u.bbox.height - 3;
-        for (const w of tr){ const x0=u.valToPos(xs[w.start],"x",true), x1=u.valToPos(xs[w.end],"x",true); if (x1<u.bbox.left||x0>u.bbox.left+u.bbox.width) continue;
-          ctx.beginPath(); ctx.moveTo(Math.max(x0,u.bbox.left),yb); ctx.lineTo(Math.min(x1,u.bbox.left+u.bbox.width),yb); ctx.stroke();
-          const xt=u.valToPos(xs[w.trough],"x",true), yt=u.valToPos(d.close[w.trough],"y",true);
-          ctx.beginPath(); ctx.moveTo(xt,yt+14); ctx.lineTo(xt-6,yt+3); ctx.lineTo(xt+6,yt+3); ctx.closePath(); ctx.fill(); }
         ctx.restore(); }], setCursor:[u=>{
         const i = u.cursor.idx; if (i==null||i<0){ tip.hidden=true; return; }
         tip.hidden=false; tip.innerHTML = `${data.dates[i]}<br>종가 ${fmtN(d.close[i],2)} · 저점매수 <b>${fmtN(d.bz[i],1)}</b><br>${d.regime[i]} · 고점대비 ${fmtPct(d.dd_52w[i])} · RSI ${fmtN(d.rsi14[i],0)}`;
@@ -1581,8 +1594,8 @@ var uPlot=function(){"use strict";const l="u-off",e="u-label",t="width",n="heigh
       width: W(), height: H2px(), cursor:{ sync:{key: sync.key}, y:false, drag:{x:true,y:false} },
       scales:{ x:{time:true}, y:{range:[0,100]} },
       axes:[ {...axisStyle, show:false}, {...axisStyle, size:narrow()?40:56, splits:()=>[0,threshold,100]} ],
-      series:[ {}, {label:"저점매수", stroke: css("--score"), width:1.2, fill: css("--well")},
-               {label:"문턱", stroke: css("--warn"), width:1, dash:[3,3]} ],
+      series:[ {}, {label:"저점매수", stroke: css("--setup"), width:1.4},
+               {label:"문턱", stroke: css("--setup"), width:1, dash:[3,3]} ],
       hooks:{ drawClear:[shade] }, legend:{show:false},
     };
     const us = new uPlot(scoreOpts, [xs, d.bz.map(v=>v===v?v:null), xs.map(()=>threshold)], scoreEl);
