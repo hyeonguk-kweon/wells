@@ -293,7 +293,7 @@ p.lead{margin:0;font-size:14px;line-height:1.55;border-left:3px solid var(--acce
 
   <div class="foot">
     <div class="caveat"><b>상태는 셋뿐입니다 — 매수 고려 / 매도 고려 / 관망.</b> 매수 고려 = 마지막 신호가 매수이고 10일 안이거나 점수가 아직 문턱 위. 매도 고려 = 마지막 신호가 매도이고 10일 안. <b>비중</b> = 계획한 물량 중 지금 넣을(덜어낼) 비율로, 등급 50% + 움직인 폭(조건의 몇 배) 25% + 신선도(신호 뒤 며칠) 25% 로 계산하고, 신호가에서 조건의 절반 이상 멀어졌으면 절반으로 줄입니다. 예: 등급 80·폭 2배·신호 당일 → 90%. 신호 10일 뒤 → 등급·폭만 남아 60% 안팎. <b>표 아래 p값을 먼저 보세요.</b> 매수·매도 고려 시점은 같은 규칙의 거울상입니다 — 20일 고/저점에서 max(4%, 3×ATR₆₀) 이상 움직인 뒤 종가가 직전 3일을 넘으면(매수) / 밑돌면(매도). 시야는 1~3개월. 5년 검증에서 <b>매도 고려는 종목 성격을 탑니다</b>: TSLA(60일 p=0.05)에서는 팔아서 피한 하락이 있었지만, SOXX·NVDA처럼 추세가 강한 종목은 첫 꺾임에 팔면 아무 날보다 나빴습니다(p≈0.8~0.9). 매수 쪽: 매수 시점은 두 종류입니다. <b>단기저점</b> = 20일 고점에서 max(4%, 3×ATR₆₀) 이상 빠진 뒤 첫 반등 확인일(종가가 직전 3일 종가를 넘고, 아직 낙폭 아래 절반이거나 저점 뒤 3일 안) — 사후 눌림을 QQQ 9/9·SPY 5/5·SOXX 10/10·NVDA 13/13·TSLA 14/14 잡습니다. <b>다지기</b> = 저점매수 점수가 60 이상으로 올라선 날. 5년 검증(그날 종가 매수 → 120일, 등급 ≥ 60): QQQ 승률 74% p=0.07 · SPY 75% p=0.19 · NVDA 74% p=0.11 · TSLA 57% p=0.17 · SOXX 75% p=0.56(반도체는 아무 날에 사도 +16%). 규칙 값은 이 세 종목을 보며 고른 것이라 다른 종목에서 확인이 필요합니다. 이 점수는 "떨어지던 속도가 죽어가는 자리"를 찾는 눈금이지 바닥 예언이 아닙니다. 5년 검증에서 실제 눌림은 잘 잡았지만(QQQ 4/9 · SOXX 6/9 · TSLA 13/14) 대개 바닥보다 2~8주 먼저 켜지고, 켜진 구간에 나눠 산 평단이 아무 구간보다 나았던 건 TSLA(p≈0.1~0.4) 뿐이었습니다. QQQ·SOXX 같은 지수는 얕은 V자로 빠르게 되돌아와 구분이 안 됐습니다(p≈0.7~0.9). 종목마다 아래 채점표 ①②를 직접 보세요.</div>
-    <div>등급(저점매수 점수) = max(다지기형, V자형). 다지기형 — 눌림 20 · 감속 30 (20일선 기울기가 60일 최저에서 얼마나 올라왔고 0에 얼마나 가까운가) · 저점 유지 15 (60일 저점을 새로 안 쓴 지 며칠) · 저점 근접 15 · 과매도 해소 10 · 거래량 고갈 10. 눌림 자격(52주 고점에서 안 빠졌으면 0)과 가속 자격(20일선 기울기가 오늘 60일 최저를 갱신 중이면 ×0.3)을 곱합니다. V자형 — 눌림 20 · 과매도 깊이 40 (최근 5일 RSI 최저가 40 아래로) · 반전 확인 25 (종가 > 어제, > 3일 고가) · 투매 거래량 15, 눌림 자격만 곱합니다(가속 자격 없음 — V자 바닥은 늘 가속 하락의 끝에 있습니다). 기울기·깊이는 모두 ATR로 나눠 지수와 개별주에 같은 눈금을 씁니다. 회차는 문턱 위가 10일 이상 이어진 구간(7일 끊김 허용). 모든 계산은 그날까지의 자료만 씁니다.</div>
+    <div><b>등급 = max(다지기형, V자형) × 추세 보정.</b> 추세 보정은 상승추세(종가가 200일선 위 + 200일선이 20일 전보다 높음)면 <b>×1.25</b>, 아니면 <b>×0.70</b> 입니다(100 상한). 7종목 5년 검증에서 같은 신호라도 상승추세에서 난 것이 일관되게 나았습니다 — 60일 뒤 수익 기준 SOXX p 0.54→0.04 · SK하이닉스 0.96→0.10 · TIGER 0.02→0.00 · 삼성전자 −0.8%→+3.0%. 하락추세 눌림은 떨어지는 칼날이라 감점하지만, <b>TSLA 처럼 추세가 자주 뒤집히는 종목에서는 오히려 손해</b>였으므로(p 0.20→0.36) 신호를 지우지 않고 등급만 깎아 남겨 둡니다. 1.25/0.70 이라는 값 자체는 그 7종목의 결과를 보고 고른 것이라 다른 종목에서 재확인이 필요합니다. 종목별 신뢰도(p)를 먼저 보세요. 등급(저점매수 점수) = max(다지기형, V자형). 다지기형 — 눌림 20 · 감속 30 (20일선 기울기가 60일 최저에서 얼마나 올라왔고 0에 얼마나 가까운가) · 저점 유지 15 (60일 저점을 새로 안 쓴 지 며칠) · 저점 근접 15 · 과매도 해소 10 · 거래량 고갈 10. 눌림 자격(52주 고점에서 안 빠졌으면 0)과 가속 자격(20일선 기울기가 오늘 60일 최저를 갱신 중이면 ×0.3)을 곱합니다. V자형 — 눌림 20 · 과매도 깊이 40 (최근 5일 RSI 최저가 40 아래로) · 반전 확인 25 (종가 > 어제, > 3일 고가) · 투매 거래량 15, 눌림 자격만 곱합니다(가속 자격 없음 — V자 바닥은 늘 가속 하락의 끝에 있습니다). 기울기·깊이는 모두 ATR로 나눠 지수와 개별주에 같은 눈금을 씁니다. 회차는 문턱 위가 10일 이상 이어진 구간(7일 끊김 허용). 모든 계산은 그날까지의 자료만 씁니다.</div>
     <div>채점 ① 의 '실제 눌림'만 앞뒤를 본 사후 판정입니다: 꼭지에서 max(10%, 5×ATR) 이상 떨어졌다가 바닥에서 같은 만큼 되올라온 자리, 몸통은 낙폭의 아래 절반.</div>
     <div>시세: 미국은 Twelve Data 일봉(분할 조정), 국내는 공공데이터포털 금융위원회 주식시세·증권상품시세(원화, 무수정 종가 — 하루 뒤 13시 이후 갱신이라 전일까지만 나옵니다). 지표: Wilder RSI/ATR/ADX, Appel MACD, Bollinger(ddof=0), Keltner EMA20±1.5ATR, TTM Squeeze, Minervini VCP, Weinstein 국면.</div>
   </div>
@@ -680,7 +680,8 @@ var uPlot=function(){"use strict";const l="u-off",e="u-label",t="width",n="heigh
   }
 
   const BZ = { DEPTH_GATE_ATR: [1.5, 4.0], DEPTH_GATE_ABS: [0.05, 0.10], DEPTH_PTS_ATR: [3.0, 10.0],
-               SLOPE_LOOK: 10, SLOPE_MIN_WIN: 60, ACCEL_MULT: 0.3, V_RSI: 40 };
+               SLOPE_LOOK: 10, SLOPE_MIN_WIN: 60, ACCEL_MULT: 0.3, V_RSI: 40,
+               TREND_UP: 1.25, TREND_DOWN: 0.70 };   // 등급 추세 보정 (상승 가점 / 하락 감점)
   function rollMinWin(s, n) {          // NaN 은 건너뛰고 창 안에 하나라도 있으면 값 (pandas rolling.min 기본 min_periods=n 이라 NaN 포함 창은 NaN)
     const out = arr(s.length);
     for (let i = n - 1; i < s.length; i++) {
@@ -753,26 +754,34 @@ var uPlot=function(){"use strict";const l="u-off",e="u-label",t="width",n="heigh
     d.bz_v_raw = c.map((_, i) => (isN(d.v_depth[i]) ? 0 : d.v_depth[i]) + (isN(d.v_oversold[i]) ? 0 : d.v_oversold[i]) + d.v_turn[i] + (isN(d.v_climax[i]) ? 0 : d.v_climax[i]));
     d.bz_v = d.bz_v_raw.map((r, i) => (isN(d.v_oversold[i]) || isN(d.v_climax[i]) || isN(d.v_gate[i]) ? NaN_ : r * d.v_gate[i]));
     d.path = c.map((_, i) => (d.bz_v[i] > d.bz_base[i] ? "V자" : "다지기"));
-    d.bz = c.map((_, i) => { const a = d.bz_base[i], b = d.bz_v[i]; return isN(a) || isN(b) ? NaN_ : round1(Math.max(a, b)); });   // np.maximum: 한쪽이 NaN 이면 NaN
+    // ── 추세 보정 (buyzone.py 와 동일). 상승추세 = 종가가 200일선 위 + 200일선이 20일 전보다 높음
+    //    pandas 의 (c > ma200) & (ma200 > ma200.shift(20)) 는 NaN 비교가 False 이므로 여기서도 그렇게 맞춘다
+    d.trend_up = c.map((x, i) => {
+      const m = d.ma200[i], m20 = i >= 20 ? d.ma200[i - 20] : NaN_;
+      return !isN(m) && !isN(m20) && x > m && m > m20;
+    });
+    d.trend_mult = d.trend_up.map((u) => (u ? BZ.TREND_UP : BZ.TREND_DOWN));
+    d.bz = c.map((_, i) => { const a = d.bz_base[i], b = d.bz_v[i]; return isN(a) || isN(b) ? NaN_ : round1(Math.min(100, Math.max(a, b) * d.trend_mult[i])); });   // np.maximum: 한쪽이 NaN 이면 NaN
     return d;
   }
   function explainBZ(d, i) {
     const f = (x, k = 1) => (isN(x) ? "—" : x.toFixed(k));
     const pct = (x) => (isN(x) ? "—" : (x * 100 >= 0 ? "+" : "") + (x * 100).toFixed(1) + "%");
-    if (d.path[i] === "V자") return [
+    const trend = [["추세 보정", 0, 0, (d.trend_up[i] ? "상승추세 (200일선 위·상승 중)" : "하락추세 (200일선 아래이거나 하락 중)") + ` — 등급 ×${f(d.trend_mult[i], 2)}`]];
+    if (d.path[i] === "V자") return trend.concat([
       ["눌림", d.v_depth[i], 20, `20일 고점 대비 낙폭이 단기 저점 조건의 ${f(d.v_dip_ratio[i])}배` + (d.v_gate[i] < 0.999 ? ` · 자격 ×${f(d.v_gate[i], 2)}` : "")],
       ["과매도 깊이", d.v_oversold[i], 40, `최근 10일 RSI 최저 ${f(d.rsi_min5[i], 0)}`],
       ["반전 확인", d.v_turn[i], 25, d.v_turn[i] > 0 ? "종가 > 어제" + (d.v_turn[i] >= 25 ? " · > 3일 고가" : "") : "아직 반등 없음"],
       ["투매 거래량", d.v_climax[i], 15, d.v_climax[i] > 0 ? "최근 5일 거래량 급증" : "거래량 평범"],
-    ];
-    return [
+    ]);
+    return trend.concat([
       ["눌림", d.bz_depth[i], 20, `고점대비 ${pct(d.dd_52w[i])} = ${f(d.depth_atr[i])} ATR` + (d.depth_gate[i] < 0.999 ? ` · 자격 ×${f(d.depth_gate[i], 2)}` : "")],
       ["감속", d.bz_decel[i], 30, `20일선 기울기 ${f(d.slope20_atr[i])} ATR (60일 최저 ${f(d.slope_min[i])}) · 회복 ${f(d.slope_recov[i] * 100, 0)}%` + (d.accel_gate[i] < 1 ? " · 가속 하락 중 ×0.3" : "")],
       ["저점 유지", d.bz_hold[i], 15, `60일 저점 이후 ${f(d.days_low60[i], 0)}일`],
       ["저점 근접", d.bz_near[i], 15, `60일 저점 위 ${f(d.off_low60_atr[i])} ATR`],
       ["과매도 해소", d.bz_rsi[i], 10, `RSI ${f(d.rsi14[i], 0)}`],
       ["거래량 고갈", d.bz_volume[i], 10, `20일/60일 ${f(d.vol_ratio[i], 2)}`],
-    ];
+    ]);
   }
 
   // ───────────────────────── 단기 저점 감지 (buyzone.swing_low) ─────────────────────────
