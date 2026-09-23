@@ -974,7 +974,7 @@ var uPlot=function(){"use strict";const l="u-off",e="u-label",t="width",n="heigh
     // 한 번의 순열로 평균·중앙값 p 를 같이 낸다.
     //   수익률 분포는 한쪽으로 쏠려 있어 평균은 대박 몇 번에 끌려다닌다. 중앙값이 '보통 어떻게 됐나'를 말해 준다.
     //   (META 는 평균 기준 p=0.58 로 무의미해 보이지만 중앙값 기준으로는 0.02 였다)
-    const stat = (idx, H, sell) => {
+    const stat = (idx, H, sell) => {   // H·n·d 는 바깥 스코프
       const f = fw[H];
       const vals = idx.map((i) => f[i]).filter((x) => !isN(x));
       const pool = f.filter((x) => !isN(x));
@@ -994,7 +994,20 @@ var uPlot=function(){"use strict";const l="u-off",e="u-label",t="width",n="heigh
         if (sell ? m <= obs : m >= obs) a++;
         if (sell ? md <= obsMed : md >= obsMed) b++;
       }
+      // 분포: 나쁠 때(하위 25%) · 보통(중앙값) · 좋을 때(상위 25%)
+      const q = (xs, t) => { const v = [...xs].sort((x, y) => x - y); return v[Math.min(v.length - 1, Math.floor(t * v.length))]; };
+      // 도중에 얼마나 물렸나(사고 나서 H일 안의 최저) / 얼마나 떴나(최고)
+      const dips = [], ups = [];
+      for (const i of idx) {
+        if (i + H >= n) continue;
+        let lo = Infinity, hi = -Infinity;
+        for (let j = i; j <= i + H; j++) { if (d.close[j] < lo) lo = d.close[j]; if (d.close[j] > hi) hi = d.close[j]; }
+        dips.push(lo / d.close[i] - 1); ups.push(hi / d.close[i] - 1);
+      }
       return { obs, med: obsMed, base, baseMed, p: a / ITER, pMed: b / ITER,
+               q25: q(vals, 0.25), q75: q(vals, 0.75), baseQ25: q(pool, 0.25), baseQ75: q(pool, 0.75),
+               dip: dips.length ? median(dips) : NaN_, dipWorst: dips.length ? Math.min(...dips) : NaN_,
+               up: ups.length ? median(ups) : NaN_,
                hit: sell ? vals.filter((x) => x < 0).length / vals.length : vals.filter((x) => x > 0).length / vals.length,
                n: vals.length };
     };
@@ -1412,6 +1425,10 @@ var uPlot=function(){"use strict";const l="u-off",e="u-label",t="width",n="heigh
       </div>
       <p class="lead">${verdictTxt}</p>
       <div>
+        <h3>${cur.state === "매수 고려" ? "오늘 사면 — 과거 이런 신호가 어떻게 됐나" : "매수 고려일에 샀다면 — 과거 결과 분포"}</h3>
+        ${outlook(res)}
+      </div>
+      <div>
         <h3>그날 종가에 샀다면 — 매수 고려 ${res.buys.length}회 (등급 ≥ ${threshold})</h3>
         ${sigStats(res, res.buyRows, res.bs, false)}
       </div>
@@ -1501,6 +1518,32 @@ var uPlot=function(){"use strict";const l="u-off",e="u-label",t="width",n="heigh
       <p class="hint" style="margin:8px 0 0">판단 = 매수 고려 / 매도 고려 / 관망. 비중 = 계획 물량 중 지금 넣을(덜어낼) 비율. 신뢰도 = 이 종목의 5년 과거에서 그 신호가 아무 날보다 나았는지 (p&lt;0.1 믿을 만함 · 0.1~0.3 약함 · 0.3 이상 구분 안 됨).</p></section>`;
     ov.querySelectorAll("[data-label]").forEach(el => el.addEventListener("click", () => showPage("detail", el.dataset.label)));
   }
+  // '오늘 사면 어떻게 되나' — 점 하나로 답할 수 없으니 과거 같은 신호들의 결과 분포를 보여 준다.
+  // 중앙값(보통) · 하위 25%(나쁠 때) · 상위 25%(좋을 때) · 보유 중 최대 하락까지 같이 봐야 판단이 된다.
+  function outlook(res){
+    const HS = res.hz.eval, S = HS.map(H => res.bs[H]);
+    if (!res.buys.length || !S[0] || !(S[0].n > 0)) return `<div class="empty">이 등급에서는 매수 고려 시점이 없어 보여 드릴 과거 결과가 없습니다.</div>`;
+    const row = (label, fn2, cl) => `<tr><td>${label}</td>${S.map((x,j)=>fn2(x,HS[j])).join("")}</tr>`;
+    const edge = (x) => { const g = x.med - x.baseMed;
+      const tag = x.pMed < 0.1 ? "" : x.pMed > 0.6 && g < 0 ? " ⚠" : "";
+      return `<td class="num r ${cls(g)}">${(g>=0?"+":"")+(g*100).toFixed(1)}%p${tag}</td>`; };
+    const worst = S.some(x => x.pMed > 0.6 && x.med < x.baseMed);
+    return `<div class="tbl"><table><thead><tr><th>과거 같은 신호 ${S[0].n}번은</th>${HS.map(H=>`<th class="r">${H}일 뒤</th>`).join("")}</tr></thead><tbody>
+      ${row("오를 확률", (x)=>`<td class="num r"><b>${fmtN(x.hit*100,0)}%</b></td>`)}
+      ${row("좋을 때 (상위 25%)", (x)=>`<td class="num r pos">${fmtPct(x.q75)}</td>`)}
+      ${row("<b>보통 (중앙값)</b>", (x)=>`<td class="num r ${cls(x.med)}"><b>${fmtPct(x.med)}</b></td>`)}
+      ${row("나쁠 때 (하위 25%)", (x)=>`<td class="num r neg">${fmtPct(x.q25)}</td>`)}
+      ${row("사고 나서 물린 폭 — 보통", (x)=>`<td class="num r neg">${fmtPct(x.dip)}</td>`)}
+      ${row("사고 나서 물린 폭 — 최악", (x)=>`<td class="num r neg">${fmtPct(x.dipWorst)}</td>`)}
+      ${row("<b>아무 날에 산 것과의 차이</b>", edge)}
+      ${row("결과를 아는 횟수", (x)=>`<td class="num r hint">${x.n}회</td>`)}
+    </tbody></table></div>
+    <p class="hint" style="margin:6px 0 0"><b>이건 예측이 아니라 과거 기록입니다.</b> 이 종목에서 같은 조건의 신호가 났던 ${S[0].n}번이 그 뒤 어떻게 됐는지를 모아 놓은 것입니다.
+    가운데 줄(<b>보통</b>)이 가장 있을 법한 결과이고, 위아래 두 줄은 <b>네 번 중 한 번은 그만큼 좋거나 나빴다</b>는 뜻입니다 — 폭이 넓다면 그만큼 결과가 들쭉날쭉했다는 말입니다.
+    <b>'물린 폭'을 꼭 보세요.</b> 끝에 올랐더라도 도중에 그만큼 내려갔다는 뜻이라, 버틸 수 없는 크기면 그 기간은 들고 갈 수 없습니다.
+    <b>맨 아래 '아무 날과의 차이'가 핵심입니다</b> — 여기가 0 근처면 이 신호를 기다린 보람이 없었다는 뜻입니다.${worst?" <b>⚠ 표시가 붙은 기간은 아무 날보다 오히려 나빴습니다.</b>":""}</p>`;
+  }
+
   function sigStats(res, rows, st, sell){
     const HS = res.hz.eval;                       // 20 · 60 · 120 · 200일
     if (!rows.length) return `<div class="empty">이 등급에서는 ${sell?"매도":"매수"} 고려 시점이 없습니다.</div>`;
