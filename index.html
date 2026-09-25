@@ -292,7 +292,7 @@ p.lead{margin:0;font-size:14px;line-height:1.55;border-left:3px solid var(--acce
   </div>
 
   <div class="foot">
-    <div class="caveat"><b>상태는 셋뿐입니다 — 매수 고려 / 매도 고려 / 관망.</b> 매수 고려 = 마지막 신호가 매수이고 10일 안이거나 점수가 아직 문턱 위. 매도 고려 = 마지막 신호가 매도이고 10일 안. <b>비중</b> = 계획한 물량 중 지금 넣을(덜어낼) 비율로, 등급 50% + 움직인 폭(조건의 몇 배) 25% + 신선도(신호 뒤 며칠) 25% 로 계산하고, 신호가에서 조건의 절반 이상 멀어졌으면 절반으로 줄입니다. 예: 등급 80·폭 2배·신호 당일 → 90%. 신호 10일 뒤 → 등급·폭만 남아 60% 안팎. <b>표 아래 p값을 먼저 보세요.</b> 매수·매도 고려 시점은 같은 규칙의 거울상입니다 — 20일 고/저점에서 max(4%, 3×ATR₆₀) 이상 움직인 뒤 종가가 직전 3일을 넘으면(매수) / 밑돌면(매도). 시야는 1~3개월. 5년 검증에서 <b>매도 고려는 종목 성격을 탑니다</b>: TSLA(60일 p=0.05)에서는 팔아서 피한 하락이 있었지만, SOXX·NVDA처럼 추세가 강한 종목은 첫 꺾임에 팔면 아무 날보다 나빴습니다(p≈0.8~0.9). 매수 쪽: 매수 시점은 <b>저점반전</b> 한 종류입니다 — 20일 고점에서 max(4%, 3×ATR₆₀) 이상 빠진 뒤 첫 반등 확인일(종가가 직전 3일 종가를 넘고, 아직 낙폭 아래 절반이거나 저점 뒤 3일 안). 예전에는 <b>다지기</b>(저점매수 점수가 60 위로 올라선 날)도 매수로 썼지만 <b>뺐습니다</b> — 14종목 검증에서 절반이 아무 날보다 나빴고 국내에서 특히 나빴습니다(120일 중앙값: 현대차 −7.2% vs 아무 날 +3.1% · SK하이닉스 −2.7% vs +18.3% · 삼성전자 −1.4% vs +6.6% · TSLA −1.1% vs +10.9%). 남은 저점반전을 14종목으로 검증한 결과(120일 중앙값, 등급 ≥ 40): <b>레버리지 상품에서만 뚜렷했습니다</b> — TQQQ +31.3% vs 아무 날 +24.3%(p=0.02) · TIGER 미국나스닥100레버리지 +31.0% vs +22.8%(p=0.05) · META +18.1% vs +12.8%(p=0.02). 반면 QQQ·SPY·SOXX·TSLA·NVDA·AMZN 은 아무 날과 차이가 노이즈 수준이었고, <b>삼성전자(+1.2% vs +6.6%)·SK하이닉스·KODEX200 은 오히려 더 나빴습니다</b>. 규칙 값은 소수 종목을 보며 고른 것이라 다른 종목에서 확인이 필요합니다. 이 점수는 "떨어지던 속도가 죽어가는 자리"를 찾는 눈금이지 바닥 예언이 아닙니다. 5년 검증에서 실제 눌림은 잘 잡았지만(QQQ 4/9 · SOXX 6/9 · TSLA 13/14) 대개 바닥보다 2~8주 먼저 켜지고, 켜진 구간에 나눠 산 평단이 아무 구간보다 나았던 건 TSLA(p≈0.1~0.4) 뿐이었습니다. QQQ·SOXX 같은 지수는 얕은 V자로 빠르게 되돌아와 구분이 안 됐습니다(p≈0.7~0.9). 종목마다 아래 채점표 ①②를 직접 보세요.</div>
+    <div class="caveat"><b>상태는 셋뿐입니다 — 매수 고려 / 매도 고려 / 관망.</b> 매수 고려 = 마지막 신호가 매수이고 10일 안이거나 점수가 아직 문턱 위. 매도 고려 = 마지막 신호가 매도이고 10일 안. <b>비중</b> = 계획한 물량 중 지금 넣을(덜어낼) 비율로, 등급 50% + 움직인 폭(조건의 몇 배) 25% + 신선도(신호 뒤 며칠) 25% 로 계산하고, 신호가에서 조건의 절반 이상 멀어졌으면 절반으로 줄입니다. 예: 등급 80·폭 2배·신호 당일 → 90%. 신호 10일 뒤 → 등급·폭만 남아 60% 안팎. <b>표 아래 p값을 먼저 보세요.</b> 매수·매도 고려 시점은 같은 규칙의 거울상입니다 — 20일 고/저점에서 max(4%, 3×ATR₆₀) 이상 움직인 뒤 종가가 직전 3일을 넘으면(매수) / 밑돌면(매도). 시야는 1~3개월. 5년 검증에서 <b>매도 고려는 종목 성격을 탑니다</b>: TSLA(60일 p=0.05)에서는 팔아서 피한 하락이 있었지만, SOXX·NVDA처럼 추세가 강한 종목은 첫 꺾임에 팔면 아무 날보다 나빴습니다(p≈0.8~0.9). 매수 쪽: 매수 시점은 <b>저점반전</b> 한 종류입니다 — 20일 고점에서 max(4%, 3×ATR₆₀) 이상 빠진 뒤 첫 반등 확인일(종가가 직전 3일 종가를 넘고, 아직 낙폭 아래 절반이거나 저점 뒤 3일 안). 예전에는 <b>다지기</b>(저점매수 점수가 60 위로 올라선 날)도 매수로 썼지만 <b>뺐습니다</b> — 14종목 검증에서 절반이 아무 날보다 나빴고 국내에서 특히 나빴습니다(120일 중앙값: 현대차 −7.2% vs 아무 날 +3.1% · SK하이닉스 −2.7% vs +18.3% · 삼성전자 −1.4% vs +6.6% · TSLA −1.1% vs +10.9%). <b>39종목(미국 20년·국내 5년)으로 검증한 결과</b>, 개별 종목만 보면 대부분 "구분 안 됨"이지만 방향을 모아 보면 다릅니다 — 효과가 없다면 "아무 날보다 나은" 종목이 절반이어야 하는데, <b>미국 주식·ETF 는 16개 중 15개</b>가 나았습니다(중앙 +1.2%p · 부호검정 p=0.0003). 파라미터 조정에 한 번도 쓰지 않은 미국 대형주 8종만 따로 봐도 7/8 이 플러스였습니다(p=0.035 · JNJ +3.0%p · JPM +2.4%p · MSFT 만 −6.1%p). <b>국내는 반대입니다</b> — 12개 중 5개만 플러스, 중앙 −2.1%p 로 오히려 나빴습니다(삼성전자 +1.2% vs 아무 날 +6.6%). <b>레버리지는 확증되지 않았습니다</b> — 새로 검증한 8종(SOXL·UPRO·SPXL·TECL·QLD·SSO·TNA·FAS)은 5/8, p=0.36 이었습니다. TQQQ(+7.1%p)가 좋았던 것은 상당 부분 운으로 보입니다. 정리하면 <b>미국 주식·ETF 에서 120일 보유 기준 아무 날보다 대략 +1%p</b> 정도의 작은 우위이고, 국내에서는 우위가 없습니다. +1%p 는 거래비용·세금을 생각하면 얇은 마진이라, 타이밍을 맞춘다는 뜻이 아니라 "아무 날보다 조금 낫다" 정도로 읽어야 합니다. 이 점수는 "떨어지던 속도가 죽어가는 자리"를 찾는 눈금이지 바닥 예언이 아닙니다. 5년 검증에서 실제 눌림은 잘 잡았지만(QQQ 4/9 · SOXX 6/9 · TSLA 13/14) 대개 바닥보다 2~8주 먼저 켜지고, 켜진 구간에 나눠 산 평단이 아무 구간보다 나았던 건 TSLA(p≈0.1~0.4) 뿐이었습니다. QQQ·SOXX 같은 지수는 얕은 V자로 빠르게 되돌아와 구분이 안 됐습니다(p≈0.7~0.9). 종목마다 아래 채점표 ①②를 직접 보세요.</div>
     <div><b>등급 = max(다지기형, V자형) × 추세 보정.</b> 추세 보정은 상승추세(종가가 200일선 위 + 200일선이 20일 전보다 높음)면 <b>×1.25</b>, 아니면 <b>×0.70</b> 입니다(100 상한). 7종목 5년 검증에서 같은 신호라도 상승추세에서 난 것이 일관되게 나았습니다 — 60일 뒤 수익 기준 SOXX p 0.54→0.04 · SK하이닉스 0.96→0.10 · TIGER 0.02→0.00 · 삼성전자 −0.8%→+3.0%. 하락추세 눌림은 떨어지는 칼날이라 감점하지만, <b>TSLA 처럼 추세가 자주 뒤집히는 종목에서는 오히려 손해</b>였으므로(p 0.20→0.36) 신호를 지우지 않고 등급만 깎아 남겨 둡니다. 1.25/0.70 이라는 값 자체는 그 7종목의 결과를 보고 고른 것이라 다른 종목에서 재확인이 필요합니다. 종목별 신뢰도(p)를 먼저 보세요. 등급(저점매수 점수) = max(다지기형, V자형). 다지기형 — 눌림 20 · 감속 30 (20일선 기울기가 60일 최저에서 얼마나 올라왔고 0에 얼마나 가까운가) · 저점 유지 15 (60일 저점을 새로 안 쓴 지 며칠) · 저점 근접 15 · 과매도 해소 10 · 거래량 고갈 10. 눌림 자격(52주 고점에서 안 빠졌으면 0)과 가속 자격(20일선 기울기가 오늘 60일 최저를 갱신 중이면 ×0.3)을 곱합니다. V자형 — 눌림 20 · 과매도 깊이 40 (최근 5일 RSI 최저가 40 아래로) · 반전 확인 25 (종가 > 어제, > 3일 고가) · 투매 거래량 15, 눌림 자격만 곱합니다(가속 자격 없음 — V자 바닥은 늘 가속 하락의 끝에 있습니다). 기울기·깊이는 모두 ATR로 나눠 지수와 개별주에 같은 눈금을 씁니다. 회차는 문턱 위가 10일 이상 이어진 구간(7일 끊김 허용). 모든 계산은 그날까지의 자료만 씁니다.</div>
     <div>채점 ① 의 '실제 눌림'만 앞뒤를 본 사후 판정입니다: 꼭지에서 max(10%, 5×ATR) 이상 떨어졌다가 바닥에서 같은 만큼 되올라온 자리, 몸통은 낙폭의 아래 절반.</div>
     <div>시세: 미국은 Twelve Data 일봉(분할 조정), 국내는 공공데이터포털 금융위원회 주식시세·증권상품시세(원화, 무수정 종가 — 하루 뒤 13시 이후 갱신이라 전일까지만 나옵니다). 지표: Wilder RSI/ATR/ADX, Appel MACD, Bollinger(ddof=0), Keltner EMA20±1.5ATR, TTM Squeeze, Minervini VCP, Weinstein 국면.</div>
@@ -1034,6 +1034,27 @@ var uPlot=function(){"use strict";const l="u-off",e="u-label",t="width",n="heigh
       const drift = d.close[lastSell] / d.close[last] - 1;
       size = (50 * clip01(d[h + "_sell_grade"][last] / 100) + 25 * ramp(d[h + "_rise"][last] / d[h + "_need"][last], 1, 2.5) + 25 * ramp(sinceS, 10, 0)) * (drift > d[h + "_need"][last] / 2 ? 0.5 : 1);
     }
+    // ── 신뢰도 보정. 등급이 높아도 '이 종목에서 그 신호가 통했는지'는 별개다.
+    //    39종목 검증에서 미국 주식·ETF 는 아무 날보다 중앙값 +1.2%p 나았지만 국내는 -2.1%p 였다.
+    //    그러니 이 종목의 과거 우위(120일 중앙값 차이)와 그 우위가 우연일 확률(p)로 비중을 깎는다.
+    const HREL = p.eval[2] || p.eval[1];                 // 120일 기준
+    const rs = state === "매도 고려" ? ss[HREL] : bs[HREL];
+    let rel = 0.7, relWhy = "과거 사례가 적어 보수적으로 잡았습니다";
+    if (rs && rs.n >= 20 && !isN(rs.pMed)) {
+      const gap = state === "매도 고려" ? rs.baseMed - rs.med : rs.med - rs.baseMed;   // 클수록 좋다
+      if (gap <= 0) { rel = 0.3; relWhy = "이 종목에서는 과거 이 신호가 아무 날보다 오히려 나빴습니다"; }
+      else if (rs.pMed < 0.1) { rel = 1.0; relWhy = "이 종목에서 과거 이 신호는 아무 날보다 확실히 나았습니다"; }
+      else if (rs.pMed < 0.3) { rel = 0.85; relWhy = "우위가 있었지만 우연일 가능성을 배제하지 못합니다"; }
+      else { rel = 0.6; relWhy = "우위가 아무 날과 구분되지 않아 절반 넘게 깎았습니다"; }
+      cur.edge = gap; cur.edgeP = rs.pMed; cur.edgeN = rs.n;
+    }
+    // 비중을 숫자로 내놓을 자격이 있는지. 근거가 없으면 수치를 보여 주는 것 자체가 오해를 부른다.
+    //   역효과 = 과거에 아무 날보다 나빴다 / 구분 안 됨 = 우위가 우연과 구분되지 않는다
+    cur.trust = rel >= 1 ? "good" : rel >= 0.85 ? "weak" : rel >= 0.7 ? "unknown" : rel > 0.3 ? "none" : "bad";
+    cur.trustTag = { good: "", weak: "약함", unknown: "사례 부족", none: "구분 안 됨", bad: "역효과" }[cur.trust];
+    cur.showSize = cur.trust === "good" || cur.trust === "weak" || cur.trust === "unknown";
+    cur.rel = rel; cur.relWhy = relWhy; cur.sizeRaw = Math.round(isN(size) ? 0 : size / 5) * 5;
+    size *= rel;
     cur.state = state; cur.size = Math.round(isN(size) ? 0 : size / 5) * 5; cur.sinceB = sinceB; cur.sinceS = sinceS;
     return { d, eps, tr, st, cur, threshold, horizon, hz: p, buys, sells, buyRows, sellRows, bs, ss,
              signals: buys, sigRows: buyRows.map((r) => ({ ...r, f60: r.f1, f120: r.f2 })), sig: { 60: bs[p.eval[0]], 120: bs[p.eval[1]] } };
@@ -1384,11 +1405,11 @@ var uPlot=function(){"use strict";const l="u-off",e="u-label",t="width",n="heigh
     let pill, verdictTxt;
     const now = d.close[i];
     if (cur.state === "매수 고려"){
-      pill = `<span class="pill well"><i></i>매수 고려 · 비중 ${cur.size}%</span>`;
-      verdictTxt = `${cur.buyToday ? "오늘" : data.dates[cur.lastBuy] + " (" + sinceB + "일 전)"} ${d.sig_kind[cur.lastBuy]} 신호 · 등급 ${fmtN(d.bz[cur.lastBuy],0)} · 20일 고점 대비 ${fmtPct(d[res.hz.key+"_dip"][cur.lastBuy])}. ${cur.buyToday ? "" : `지금 가격은 신호가 ${fmtN(bPx,2)} 대비 ${fmtPct(now/bPx-1)}. `}계획한 매수 물량의 <b>${cur.size}%</b>를 지금 넣는 것을 고려. ${regTxt}`;
+      pill = `<span class="pill well"><i></i>매수 고려 · ${cur.showSize ? "비중 "+cur.size+"%" : "비중 — "+cur.trustTag}</span>`;
+      verdictTxt = `${cur.buyToday ? "오늘" : data.dates[cur.lastBuy] + " (" + sinceB + "일 전)"} ${d.sig_kind[cur.lastBuy]} 신호 · 등급 ${fmtN(d.bz[cur.lastBuy],0)} · 20일 고점 대비 ${fmtPct(d[res.hz.key+"_dip"][cur.lastBuy])}. ${cur.buyToday ? "" : `지금 가격은 신호가 ${fmtN(bPx,2)} 대비 ${fmtPct(now/bPx-1)}. `}${cur.showSize ? `계획한 매수 물량의 <b>${cur.size}%</b>를 지금 넣는 것을 고려.` : `<b>얼마를 넣으라고 말할 근거가 없습니다</b> — ${cur.relWhy}. 신호는 떴지만 이 종목에서는 그 신호가 통한 기록이 없으니, 비중은 다른 근거로 정하세요.`} ${relNote(cur)}${regTxt}`;
     } else if (cur.state === "매도 고려"){
-      pill = `<span class="pill bad"><i></i>매도 고려 · 비중 ${cur.size}%</span>`;
-      verdictTxt = `${cur.sellToday ? "오늘" : data.dates[cur.lastSell] + " (" + sinceS + "일 전)"} 고점 꺾임 신호 · 매도 등급 ${fmtN(d[res.hz.key+"_sell_grade"][cur.lastSell],0)} · 20일 저점 대비 ${fmtPct(d[res.hz.key+"_rise"][cur.lastSell])}. ${cur.sellToday ? "" : `지금 가격은 신호가 ${fmtN(sPx,2)} 대비 ${fmtPct(now/sPx-1)}. `}보유 물량의 <b>${cur.size}%</b>를 지금 덜어내는 것을 고려. ${regTxt}`;
+      pill = `<span class="pill bad"><i></i>매도 고려 · ${cur.showSize ? "비중 "+cur.size+"%" : "비중 — "+cur.trustTag}</span>`;
+      verdictTxt = `${cur.sellToday ? "오늘" : data.dates[cur.lastSell] + " (" + sinceS + "일 전)"} 고점 꺾임 신호 · 매도 등급 ${fmtN(d[res.hz.key+"_sell_grade"][cur.lastSell],0)} · 20일 저점 대비 ${fmtPct(d[res.hz.key+"_rise"][cur.lastSell])}. ${cur.sellToday ? "" : `지금 가격은 신호가 ${fmtN(sPx,2)} 대비 ${fmtPct(now/sPx-1)}. `}${cur.showSize ? `보유 물량의 <b>${cur.size}%</b>를 지금 덜어내는 것을 고려.` : `<b>얼마를 덜어내라고 말할 근거가 없습니다</b> — ${cur.relWhy}. 39종목 검증에서 매도 신호는 대부분의 종목에서 쓸모가 없었습니다.`} ${relNote(cur)}${regTxt}`;
     } else {
       pill = `<span class="pill no"><i></i>관망</span>`;
       verdictTxt = `점수 ${fmtN(cur.score)} · 20일 고점 대비 ${fmtPct(cur.dip)} (매수 조건 ${fmtPct(-cur.need)}) · 20일 저점 대비 ${fmtPct(cur.rise)} (매도 조건 ${fmtPct(cur.need)}). ${cur.lastBuy>=0?`마지막 매수 고려 ${data.dates[cur.lastBuy]} (${fmtN(bPx,2)}, 지금 ${fmtPct(now/bPx-1)})`:""}${cur.lastSell>=0?` · 마지막 매도 고려 ${data.dates[cur.lastSell]} (${fmtN(sPx,2)}, 지금 ${fmtPct(now/sPx-1)})`:""}. ${regTxt}`;
@@ -1396,6 +1417,8 @@ var uPlot=function(){"use strict";const l="u-off",e="u-label",t="width",n="heigh
     const extra = [];
     if (LEVERAGED.test(label)) extra.push(`<span class="pill warn" title="일일 리밸런싱 감쇠로 지표가 기초지수보다 일그러집니다"><i></i>레버리지 — 시점은 기초지수로 보세요</span>`);
     if (cur.accel && cur.path !== "V자") extra.push(`<span class="pill bad"><i></i>가속 하락 중</span>`);
+    // 39종목 검증에서 국내는 우위가 없었다 — 종목별 p 와 별개로 항상 알린다
+    if (/:KRX$/.test(label)) extra.push(`<span class="pill warn" title="39종목 검증: 국내 12개 중 5개만 아무 날보다 나았고 중앙 -2.1%p 였습니다"><i></i>국내 — 이 도구의 우위가 확인되지 않은 시장</span>`);
 
 
     const lastDate = data.dates[i];
@@ -1495,18 +1518,23 @@ var uPlot=function(){"use strict";const l="u-off",e="u-label",t="width",n="heigh
   }
   function odds(res){
     const o = oddsPick(res);
-    if (o.none || !o.st || !(o.st.n >= 5)) return `<td class="num r hint">—</td><td class="num r hint">—</td>`;
+    if (o.none || !o.st || !(o.st.n >= 5)) return `<td class="num r hint">—</td><td class="num r hint">—</td><td class="num r hint">—</td>`;
     const g = o.st.med - o.st.baseMed, win = o.sell ? -g : g;
     const warn = o.st.pMed > 0.6 && win < 0 ? " ⚠" : "";
+    // 끝값만 보면 안 된다 — 그 사이 얼마나 물렸는지가 버틸 수 있느냐를 가른다 (매도면 판 뒤 놓친 상승)
+    const pain = o.sell ? o.st.up : o.st.dip;
     return `<td class="num r"><b>${fmtN(o.st.hit*100,0)}%</b> <span class="desc">${fmtPct(o.st.med)}</span></td>`
+         + `<td class="num r neg">${fmtPct(pain)}</td>`
          + `<td class="num r ${cls(win)}">${(g>=0?"+":"")+(g*100).toFixed(1)}%p${warn}</td>`;
   }
   function oddsCard(res){
     const o = oddsPick(res);
     if (o.none || !o.st || !(o.st.n >= 5)) return "";
     const g = o.st.med - o.st.baseMed, win = o.sell ? -g : g;
+    const pain = o.sell ? o.st.up : o.st.dip;
     return `<div><span>${o.sell?"120일 뒤 내릴 확률":"120일 뒤 오를 확률"}</span><span><b>${fmtN(o.st.hit*100,0)}%</b></span></div>
-            <div><span>아무 날 대비</span><span class="${cls(win)}">${(g>=0?"+":"")+(g*100).toFixed(1)}%p</span></div>`;
+            <div><span>${o.sell?"120일 내 놓친 상승":"120일 내 물린 폭"}</span><span class="neg">${fmtPct(pain)}</span></div>
+            <div><span>120일 · 아무 날 대비</span><span class="${cls(win)}">${(g>=0?"+":"")+(g*100).toFixed(1)}%p</span></div>`;
   }
 
   function renderOverview(){
@@ -1514,25 +1542,29 @@ var uPlot=function(){"use strict";const l="u-off",e="u-label",t="width",n="heigh
     const rows = [...results.entries()].filter(([,r]) => r.res);
     if (!rows.length) { ov.innerHTML = `<div class="empty">종목을 입력하고 분석을 누르세요. 결과가 여기 한눈에 정리됩니다.</div>`; return; }
     const ordBy = { "매수 고려": 0, "매도 고려": 1, "관망": 2 };
-    rows.sort((a, b) => (ordBy[a[1].res.cur.state] - ordBy[b[1].res.cur.state]) || (b[1].res.cur.size - a[1].res.cur.size));
+    // 판단(매수 → 매도 → 관망) 다음은 '아무 날 대비' 순. 비중 순으로 놓으면 근거 없는 신호가 위로 온다.
+    const edgeOf = (r) => { const o = oddsPick(r); if (o.none || !o.st || !(o.st.n >= 5)) return -Infinity;
+      const g = o.st.med - o.st.baseMed; return o.sell ? -g : g; };
+    rows.sort((a, b) => (ordBy[a[1].res.cur.state] - ordBy[b[1].res.cur.state])
+      || (edgeOf(b[1].res) - edgeOf(a[1].res)) || (b[1].res.cur.size - a[1].res.cur.size));
     ov.innerHTML = `<section class="tk"><h2>매매 고려 요약 · ${rows.length}종목 <span class="hint" style="font-weight:400">— 행을 누르면 상세로 갑니다</span></h2>
-      <div class="tbl ovtable"><table class="ov"><thead><tr><th>종목</th><th>판단</th><th class="r">비중</th><th class="r">점수</th><th class="r">종가</th><th class="r">20일 고점 대비</th><th class="r">20일 저점 대비</th><th>마지막 신호</th><th class="r">지금 행동 시 120일 뒤<br><span class="desc" style="font-weight:400">오를 확률 · 보통 수익</span></th><th class="r">아무 날<br>대비</th><th>신뢰도</th></tr></thead><tbody>
+      <div class="tbl ovtable"><table class="ov"><thead><tr><th>종목</th><th>판단</th><th class="r">비중</th><th class="r">점수</th><th class="r">종가</th><th class="r">20일 고점 대비</th><th class="r">20일 저점 대비</th><th>마지막 신호</th><th class="r">지금 행동 시 120일 뒤<br><span class="desc" style="font-weight:400">오를 확률 · 보통 수익</span></th><th class="r">버텨야 할<br><span class="desc" style="font-weight:400">물린 폭</span></th><th class="r">아무 날<br>대비</th><th>신뢰도</th></tr></thead><tbody>
       ${rows.map(([label, r]) => { const {cur, d} = r.res, i = d.close.length - 1, rel = reliability(r.res), m = r.data.meta || {};
         const lastIdx = Math.max(cur.lastBuy, cur.lastSell); const lastKind = lastIdx < 0 ? "—" : (lastIdx === cur.lastBuy ? "매수 " + (d.sig_kind[lastIdx]||"") : "매도 고점꺾임");
         const pill = cur.state === "매수 고려" ? `<span class="pill well"><i></i>매수 고려</span>` : cur.state === "매도 고려" ? `<span class="pill bad"><i></i>매도 고려</span>` : `<span class="pill no"><i></i>관망</span>`;
         const relTxt = (g) => `<span class="${g.c==="good"?"pos":g.c==="bad"?"neg":""}">${g.t}</span>${g.p===g.p?` <span class="desc">p=${g.p.toFixed(2)}</span>`:""}`;
-        return `<tr data-label="${label}"><td><b>${label}</b><div class="desc">${escapeHtml(m.name||"")}</div></td><td>${pill}</td><td class="num r">${cur.state==="관망"?"—":cur.size+"%"}</td><td class="num r">${fmtN(cur.score,0)}</td><td class="num r">${fmtN(d.close[i],2)}</td><td class="num r ${cls(cur.dip)}">${fmtPct(cur.dip)}</td><td class="num r ${cls(cur.rise)}">${fmtPct(cur.rise)}</td><td class="num">${lastIdx>=0?`${r.data.dates[lastIdx]} <span class="desc">${lastKind} · ${fmtPct(d.close[i]/d.close[lastIdx]-1)}</span>`:"—"}</td>${odds(r.res)}<td>${relTxt(rel.buy)} / ${relTxt(rel.sell)}</td></tr>`; }).join("")}
+        return `<tr data-label="${label}"><td><b>${label}</b><div class="desc">${escapeHtml(m.name||"")}${/:KRX$/.test(label)?` <span class="neg">· 국내 우위 미확인</span>`:""}</div></td><td>${pill}</td><td class="num r">${cur.state==="관망"?"—":cur.showSize?cur.size+"%":`<span class="hint">— ${cur.trustTag}</span>`}</td><td class="num r">${cur.state==="매도 고려"?`${fmtN(cur.sellGrade,0)}<span class="desc"> 매도</span>`:fmtN(cur.score,0)}</td><td class="num r">${fmtN(d.close[i],2)}</td><td class="num r ${cls(cur.dip)}">${fmtPct(cur.dip)}</td><td class="num r ${cls(cur.rise)}">${fmtPct(cur.rise)}</td><td class="num">${lastIdx>=0?`${r.data.dates[lastIdx]} <span class="desc">${lastKind} · ${fmtPct(d.close[i]/d.close[lastIdx]-1)}</span>`:"—"}</td>${odds(r.res)}<td>${relTxt(rel.buy)} / ${relTxt(rel.sell)}</td></tr>`; }).join("")}
       </tbody></table></div>
       <div class="ovcards">${rows.map(([label, r]) => { const {cur, d} = r.res, i = d.close.length - 1, rel = reliability(r.res), m = r.data.meta || {};
         const lastIdx = Math.max(cur.lastBuy, cur.lastSell); const lastKind = lastIdx < 0 ? "" : (lastIdx === cur.lastBuy ? "매수 " + (d.sig_kind[lastIdx]||"") : "매도 고점꺾임");
         const pill = cur.state === "매수 고려" ? `<span class="pill well"><i></i>매수 고려</span>` : cur.state === "매도 고려" ? `<span class="pill bad"><i></i>매도 고려</span>` : `<span class="pill no"><i></i>관망</span>`;
         const relTxt = (g) => `<span class="${g.c==="good"?"pos":g.c==="bad"?"neg":""}">${g.t}</span>`;
         return `<div class="ovcard" data-label="${label}">
-          <div class="top"><span class="sym">${label}</span>${pill}${cur.state!=="관망"?`<b>비중 ${cur.size}%</b>`:""}<span class="go">상세 ›</span></div>
-          <div class="nm">${escapeHtml(m.name||"")}</div>
+          <div class="top"><span class="sym">${label}</span>${pill}${cur.state!=="관망"?(cur.showSize?`<b>비중 ${cur.size}%</b>`:`<span class="hint">비중 — ${cur.trustTag}</span>`):""}<span class="go">상세 ›</span></div>
+          <div class="nm">${escapeHtml(m.name||"")}${/:KRX$/.test(label)?` <span class="neg">· 국내 — 우위 미확인 시장</span>`:""}</div>
           <div class="facts">
             <div><span>종가</span><span>${fmtN(d.close[i],2)}</span></div>
-            <div><span>점수</span><span>${fmtN(cur.score,0)}</span></div>
+            <div><span>${cur.state==="매도 고려"?"매도 등급":"점수"}</span><span>${fmtN(cur.state==="매도 고려"?cur.sellGrade:cur.score,0)}</span></div>
             <div><span>20일 고점 대비</span><span class="${cls(cur.dip)}">${fmtPct(cur.dip)}</span></div>
             <div><span>20일 저점 대비</span><span class="${cls(cur.rise)}">${fmtPct(cur.rise)}</span></div>
             ${oddsCard(r.res)}
@@ -1540,11 +1572,18 @@ var uPlot=function(){"use strict";const l="u-off",e="u-label",t="width",n="heigh
           <div class="foot">${lastIdx>=0?`<span>마지막 신호 ${r.data.dates[lastIdx]} · ${lastKind} · 그 뒤 ${fmtPct(d.close[i]/d.close[lastIdx]-1)}</span>`:""}
             <span>신호 신뢰도 — 매수 ${relTxt(rel.buy)} · 매도 ${relTxt(rel.sell)}</span></div>
         </div>`; }).join("")}</div>
-      <p class="hint" style="margin:8px 0 0">판단 = 매수 고려 / 매도 고려 / 관망. 비중 = 계획 물량 중 지금 넣을(덜어낼) 비율. <b>지금 행동 시 120일 뒤</b> = 이 종목에서 같은 신호가 났던 과거 사례들이 120일 뒤 오른(매도면 내린) 비율과 그때의 보통 수익(중앙값) — 예측이 아니라 과거 기록입니다. <b>아무 날 대비</b>가 핵심입니다: 0 근처면 신호를 기다린 보람이 없었다는 뜻이고, <b>⚠ 는 아무 날보다 오히려 나빴다</b>는 표시입니다. 신뢰도 = 그 차이가 우연인지 (p&lt;0.1 믿을 만함 · 0.1~0.3 약함 · 0.3 이상 구분 안 됨).</p></section>`;
+      <p class="hint" style="margin:8px 0 0">판단 = 매수 고려 / 매도 고려 / 관망. 비중 = 계획 물량 중 지금 넣을(덜어낼) 비율. <b>지금 행동 시 120일 뒤</b> = 이 종목에서 같은 신호가 났던 과거 사례들이 120일 뒤 오른(매도면 내린) 비율과 그때의 보통 수익(중앙값) — 예측이 아니라 과거 기록입니다. <b>버텨야 할 물린 폭</b> = 사고 나서 120일 안에 보통 이만큼까지 내려갔습니다(매도면 판 뒤 놓친 상승). 끝에 올랐더라도 도중에 이만큼 물린다는 뜻이라, 버틸 수 없는 크기면 그 기간은 들고 갈 수 없습니다. <b>아무 날 대비</b>가 핵심입니다: 0 근처면 신호를 기다린 보람이 없었다는 뜻이고, <b>⚠ 는 아무 날보다 오히려 나빴다</b>는 표시입니다. 신뢰도 = 그 차이가 우연인지 (p&lt;0.1 믿을 만함 · 0.1~0.3 약함 · 0.3 이상 구분 안 됨). <b>정렬은 아무 날 대비 순</b>입니다 — 비중이 큰 순이 아니라 근거가 큰 순으로 놓았습니다. <b>국내 종목</b>에는 표시를 달았습니다: 39종목 검증에서 국내는 12개 중 5개만 아무 날보다 나았고 중앙 −2.1%p 로, 미국(16개 중 15개 · 중앙 +1.2%p)과 달리 이 도구의 우위가 확인되지 않았습니다.</p></section>`;
     ov.querySelectorAll("[data-label]").forEach(el => el.addEventListener("click", () => showPage("detail", el.dataset.label)));
   }
   // '오늘 사면 어떻게 되나' — 점 하나로 답할 수 없으니 과거 같은 신호들의 결과 분포를 보여 준다.
   // 중앙값(보통) · 하위 25%(나쁠 때) · 상위 25%(좋을 때) · 보유 중 최대 하락까지 같이 봐야 판단이 된다.
+  // 비중이 왜 깎였는지 한 줄. 등급이 높아도 그 종목에서 신호가 안 통했으면 비중은 줄어야 한다.
+  function relNote(cur){
+    if (!(cur.rel < 0.999) || cur.sizeRaw === cur.size || !cur.showSize) return "";
+    const cl = cur.rel <= 0.3 ? "neg" : "";
+    return `<span class="${cl}">신뢰도 보정으로 ${cur.sizeRaw}% → <b>${cur.size}%</b> (×${cur.rel.toFixed(2)}) — ${cur.relWhy}${cur.edge!==undefined?` (120일 아무 날 대비 ${(cur.edge*100>=0?"+":"")+(cur.edge*100).toFixed(1)}%p · p=${cur.edgeP.toFixed(2)} · 사례 ${cur.edgeN}회)`:""}.</span> `;
+  }
+
   function outlook(res, sell){
     const HS = res.hz.eval, S = HS.map(H => (sell ? res.ss : res.bs)[H]);
     const idx = sell ? res.sells : res.buys;
@@ -1603,10 +1642,10 @@ var uPlot=function(){"use strict";const l="u-off",e="u-label",t="width",n="heigh
     승률만 보면 속습니다 — 우상향 종목은 아무 날에 사도 승률이 높으니 반드시 '아무 날이나' 줄과 견주세요.
     p가 낮아도 <b>"과거 이 기간에는"</b> 이라는 뜻일 뿐, 앞으로도 그렇다는 보장은 아닙니다(QQQ는 최근 5년 p=0.04, 2006~2016은 0.69).</p>
     <p class="hint" style="margin:8px 0 0"><b>어떤 종목에서 통했나</b> — 14종목(미국 20년 · 국내 5년, 120일 중앙값, 등급 ≥ 40)으로 확인한 결과입니다.
-    <b>① 레버리지 상품에서만 뚜렷했습니다</b> — TQQQ +31.3% vs 아무 날 +24.3%(p=0.02) · TIGER 미국나스닥100레버리지 +31.0% vs +22.8%(p=0.05). 변동폭이 커서 눌림이 뚜렷하게 찍히기 때문입니다(META p=0.02 도 붙었지만 한 사례뿐이라 우연일 수 있습니다).
-    <b>② 지수·대형주는 아무 날과 차이가 없었습니다</b> — QQQ 0.44 · SPY 0.21 · SOXX 0.35 · TSLA 0.46 · NVDA 0.28 · AMZN 0.32 · GOOGL 0.20. 얕게 빠지고 금방 회복해 '눌림'이 구분되지 않습니다.
+    <b>① 개별 p값은 대부분 0.2~0.5 로 "구분 안 됨" 이지만, 39종목의 방향을 모으면 다릅니다</b> — 미국 주식·ETF 는 16개 중 15개가 아무 날보다 나았습니다(중앙 +1.2%p · 부호검정 p=0.0003). 우위가 작아서 종목 하나만 보면 안 보일 뿐입니다.
+    <b>② 레버리지가 특별하다는 증거는 없습니다</b> — 새로 검증한 8종(SOXL·UPRO·SPXL·TECL·QLD·SSO·TNA·FAS)은 5/8 · p=0.36 이었습니다. TQQQ 가 좋았던 것(+7.1%p)은 상당 부분 운으로 보입니다.
     <b>③ 국내 대형주는 오히려 더 나빴습니다</b> — 삼성전자 +1.2% vs 아무 날 +6.6%(p=0.90) · SK하이닉스 +14.9% vs +18.3%(0.60) · KODEX200 +3.0% vs +5.2%(0.68). 이런 종목에서는 이 신호를 근거로 삼지 마세요(현대차 0.22 는 예외였습니다).
-    <b>그러니 종목마다 위 p값을 먼저 보세요</b> — 등급이 90이어도 그 종목의 p가 0.3을 넘으면 등급은 의미가 없습니다. 이 목록은 제한된 표본이라 넣으시는 종목에서 직접 확인하는 것이 맞습니다.</p>`;
+    <b>그래서 한 종목의 p값만으로 판단하지 마세요</b> — 우위가 +1%p 수준이라 종목 하나로는 거의 항상 "구분 안 됨"이 나옵니다. 다만 <b>아무 날 대비가 마이너스인 종목</b>은 다릅니다: 그건 이 신호가 그 종목에서 역효과였다는 뜻이라 근거로 삼지 마세요. +1%p 는 거래비용·세금 앞에서 얇은 마진이라는 점도 같이 보셔야 합니다.</p>`;
   }
   function sigList(res, data, d, n, rows, st, sell){
     const [H1, H2] = res.hz.eval, gcol = sell ? res.hz.key + "_sell_grade" : "bz";
