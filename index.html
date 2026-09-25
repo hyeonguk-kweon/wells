@@ -1052,7 +1052,11 @@ var uPlot=function(){"use strict";const l="u-off",e="u-label",t="width",n="heigh
     //   역효과 = 과거에 아무 날보다 나빴다 / 구분 안 됨 = 우위가 우연과 구분되지 않는다
     cur.trust = rel >= 1 ? "good" : rel >= 0.85 ? "weak" : rel >= 0.7 ? "unknown" : rel > 0.3 ? "none" : "bad";
     cur.trustTag = { good: "", weak: "약함", unknown: "사례 부족", none: "구분 안 됨", bad: "역효과" }[cur.trust];
-    cur.showSize = cur.trust === "good" || cur.trust === "weak" || cur.trust === "unknown";
+    // 숫자를 지우는 것은 '역효과'(과거에 아무 날보다 나빴다)일 때만.
+    //   39종목 검증에서 우위가 +1%p 수준이라, 정상 종목도 한 종목만 보면 대부분 p 0.2~0.5 가 나온다.
+    //   그걸 전부 지우면 화면에서 숫자가 거의 사라진다 — 대신 흐리게 표시해 근거가 약함을 알린다.
+    cur.showSize = cur.trust !== "bad";
+    cur.dimSize = cur.trust === "none" || cur.trust === "unknown";
     cur.rel = rel; cur.relWhy = relWhy; cur.sizeRaw = Math.round(isN(size) ? 0 : size / 5) * 5;
     size *= rel;
     cur.state = state; cur.size = Math.round(isN(size) ? 0 : size / 5) * 5; cur.sinceB = sinceB; cur.sinceS = sinceS;
@@ -1405,10 +1409,10 @@ var uPlot=function(){"use strict";const l="u-off",e="u-label",t="width",n="heigh
     let pill, verdictTxt;
     const now = d.close[i];
     if (cur.state === "매수 고려"){
-      pill = `<span class="pill well"><i></i>매수 고려 · ${cur.showSize ? "비중 "+cur.size+"%" : "비중 — "+cur.trustTag}</span>`;
+      pill = `<span class="pill well"><i></i>매수 고려 · ${cur.showSize ? "비중 "+cur.size+"%"+(cur.dimSize?" ("+cur.trustTag+")":"") : "비중 — "+cur.trustTag}</span>`;
       verdictTxt = `${cur.buyToday ? "오늘" : data.dates[cur.lastBuy] + " (" + sinceB + "일 전)"} ${d.sig_kind[cur.lastBuy]} 신호 · 등급 ${fmtN(d.bz[cur.lastBuy],0)} · 20일 고점 대비 ${fmtPct(d[res.hz.key+"_dip"][cur.lastBuy])}. ${cur.buyToday ? "" : `지금 가격은 신호가 ${fmtN(bPx,2)} 대비 ${fmtPct(now/bPx-1)}. `}${cur.showSize ? `계획한 매수 물량의 <b>${cur.size}%</b>를 지금 넣는 것을 고려.` : `<b>얼마를 넣으라고 말할 근거가 없습니다</b> — ${cur.relWhy}. 신호는 떴지만 이 종목에서는 그 신호가 통한 기록이 없으니, 비중은 다른 근거로 정하세요.`} ${relNote(cur)}${regTxt}`;
     } else if (cur.state === "매도 고려"){
-      pill = `<span class="pill bad"><i></i>매도 고려 · ${cur.showSize ? "비중 "+cur.size+"%" : "비중 — "+cur.trustTag}</span>`;
+      pill = `<span class="pill bad"><i></i>매도 고려 · ${cur.showSize ? "비중 "+cur.size+"%"+(cur.dimSize?" ("+cur.trustTag+")":"") : "비중 — "+cur.trustTag}</span>`;
       verdictTxt = `${cur.sellToday ? "오늘" : data.dates[cur.lastSell] + " (" + sinceS + "일 전)"} 고점 꺾임 신호 · 매도 등급 ${fmtN(d[res.hz.key+"_sell_grade"][cur.lastSell],0)} · 20일 저점 대비 ${fmtPct(d[res.hz.key+"_rise"][cur.lastSell])}. ${cur.sellToday ? "" : `지금 가격은 신호가 ${fmtN(sPx,2)} 대비 ${fmtPct(now/sPx-1)}. `}${cur.showSize ? `보유 물량의 <b>${cur.size}%</b>를 지금 덜어내는 것을 고려.` : `<b>얼마를 덜어내라고 말할 근거가 없습니다</b> — ${cur.relWhy}. 39종목 검증에서 매도 신호는 대부분의 종목에서 쓸모가 없었습니다.`} ${relNote(cur)}${regTxt}`;
     } else {
       pill = `<span class="pill no"><i></i>관망</span>`;
@@ -1553,14 +1557,14 @@ var uPlot=function(){"use strict";const l="u-off",e="u-label",t="width",n="heigh
         const lastIdx = Math.max(cur.lastBuy, cur.lastSell); const lastKind = lastIdx < 0 ? "—" : (lastIdx === cur.lastBuy ? "매수 " + (d.sig_kind[lastIdx]||"") : "매도 고점꺾임");
         const pill = cur.state === "매수 고려" ? `<span class="pill well"><i></i>매수 고려</span>` : cur.state === "매도 고려" ? `<span class="pill bad"><i></i>매도 고려</span>` : `<span class="pill no"><i></i>관망</span>`;
         const relTxt = (g) => `<span class="${g.c==="good"?"pos":g.c==="bad"?"neg":""}">${g.t}</span>${g.p===g.p?` <span class="desc">p=${g.p.toFixed(2)}</span>`:""}`;
-        return `<tr data-label="${label}"><td><b>${label}</b><div class="desc">${escapeHtml(m.name||"")}${/:KRX$/.test(label)?` <span class="neg">· 국내 우위 미확인</span>`:""}</div></td><td>${pill}</td><td class="num r">${cur.state==="관망"?"—":cur.showSize?cur.size+"%":`<span class="hint">— ${cur.trustTag}</span>`}</td><td class="num r">${cur.state==="매도 고려"?`${fmtN(cur.sellGrade,0)}<span class="desc"> 매도</span>`:fmtN(cur.score,0)}</td><td class="num r">${fmtN(d.close[i],2)}</td><td class="num r ${cls(cur.dip)}">${fmtPct(cur.dip)}</td><td class="num r ${cls(cur.rise)}">${fmtPct(cur.rise)}</td><td class="num">${lastIdx>=0?`${r.data.dates[lastIdx]} <span class="desc">${lastKind} · ${fmtPct(d.close[i]/d.close[lastIdx]-1)}</span>`:"—"}</td>${odds(r.res)}<td>${relTxt(rel.buy)} / ${relTxt(rel.sell)}</td></tr>`; }).join("")}
+        return `<tr data-label="${label}"><td><b>${label}</b><div class="desc">${escapeHtml(m.name||"")}${/:KRX$/.test(label)?` <span class="neg">· 국내 우위 미확인</span>`:""}</div></td><td>${pill}</td><td class="num r">${cur.state==="관망"?"—":!cur.showSize?`<span class="hint">— ${cur.trustTag}</span>`:cur.dimSize?`<span class="hint">${cur.size}%<br>${cur.trustTag}</span>`:cur.size+"%"}</td><td class="num r">${cur.state==="매도 고려"?`${fmtN(cur.sellGrade,0)}<span class="desc"> 매도</span>`:fmtN(cur.score,0)}</td><td class="num r">${fmtN(d.close[i],2)}</td><td class="num r ${cls(cur.dip)}">${fmtPct(cur.dip)}</td><td class="num r ${cls(cur.rise)}">${fmtPct(cur.rise)}</td><td class="num">${lastIdx>=0?`${r.data.dates[lastIdx]} <span class="desc">${lastKind} · ${fmtPct(d.close[i]/d.close[lastIdx]-1)}</span>`:"—"}</td>${odds(r.res)}<td>${relTxt(rel.buy)} / ${relTxt(rel.sell)}</td></tr>`; }).join("")}
       </tbody></table></div>
       <div class="ovcards">${rows.map(([label, r]) => { const {cur, d} = r.res, i = d.close.length - 1, rel = reliability(r.res), m = r.data.meta || {};
         const lastIdx = Math.max(cur.lastBuy, cur.lastSell); const lastKind = lastIdx < 0 ? "" : (lastIdx === cur.lastBuy ? "매수 " + (d.sig_kind[lastIdx]||"") : "매도 고점꺾임");
         const pill = cur.state === "매수 고려" ? `<span class="pill well"><i></i>매수 고려</span>` : cur.state === "매도 고려" ? `<span class="pill bad"><i></i>매도 고려</span>` : `<span class="pill no"><i></i>관망</span>`;
         const relTxt = (g) => `<span class="${g.c==="good"?"pos":g.c==="bad"?"neg":""}">${g.t}</span>`;
         return `<div class="ovcard" data-label="${label}">
-          <div class="top"><span class="sym">${label}</span>${pill}${cur.state!=="관망"?(cur.showSize?`<b>비중 ${cur.size}%</b>`:`<span class="hint">비중 — ${cur.trustTag}</span>`):""}<span class="go">상세 ›</span></div>
+          <div class="top"><span class="sym">${label}</span>${pill}${cur.state!=="관망"?(!cur.showSize?`<span class="hint">비중 — ${cur.trustTag}</span>`:cur.dimSize?`<span class="hint">비중 ${cur.size}% · ${cur.trustTag}</span>`:`<b>비중 ${cur.size}%</b>`):""}<span class="go">상세 ›</span></div>
           <div class="nm">${escapeHtml(m.name||"")}${/:KRX$/.test(label)?` <span class="neg">· 국내 — 우위 미확인 시장</span>`:""}</div>
           <div class="facts">
             <div><span>종가</span><span>${fmtN(d.close[i],2)}</span></div>
