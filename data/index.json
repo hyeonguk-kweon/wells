@@ -1,0 +1,71 @@
+{
+ "updated": "2026-09-27 01:16",
+ "items": [
+  {
+   "label": "QQQ",
+   "file": "QQQ.json",
+   "name": "Invesco QQQ Trust, Series 1",
+   "last": "2026-09-25"
+  },
+  {
+   "label": "SPY",
+   "file": "SPY.json",
+   "name": "State Street SPDR S&P 500 ETF T",
+   "last": "2026-09-25"
+  },
+  {
+   "label": "SOXX",
+   "file": "SOXX.json",
+   "name": "iShares PHLX SOX Semiconductor ",
+   "last": "2026-09-25"
+  },
+  {
+   "label": "TIGER미국나스닥100레버리지:KRX",
+   "file": "TIGER미국나스닥100레버리지_KRX.json",
+   "name": "TIGER미국나스닥100레버리지",
+   "last": "2026-09-23"
+  },
+  {
+   "label": "TIGER미국필라델피아반도체레버리지:KRX",
+   "file": "TIGER미국필라델피아반도체레버리지_KRX.json",
+   "name": "TIGER미국필라델피아반도체레버리지",
+   "last": "2026-09-23"
+  },
+  {
+   "label": "SOXL",
+   "file": "SOXL.json",
+   "name": "Direxion Daily Semiconductor Bu",
+   "last": "2026-09-25"
+  },
+  {
+   "label": "TQQQ",
+   "file": "TQQQ.json",
+   "name": "ProShares UltraPro QQQ",
+   "last": "2026-09-25"
+  },
+  {
+   "label": "GOOGL",
+   "file": "GOOGL.json",
+   "name": "Alphabet Inc.",
+   "last": "2026-09-25"
+  },
+  {
+   "label": "BTC",
+   "file": "BTC.json",
+   "name": "Grayscale Bitcoin Mini Trust (B",
+   "last": "2026-09-25"
+  },
+  {
+   "label": "ETH",
+   "file": "ETH.json",
+   "name": "Grayscale Ethereum Staking Mini",
+   "last": "2026-09-25"
+  },
+  {
+   "label": "AMZN",
+   "file": "AMZN.json",
+   "name": "Amazon.com, Inc.",
+   "last": "2026-09-25"
+  }
+ ]
+}
