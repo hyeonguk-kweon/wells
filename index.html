@@ -111,6 +111,7 @@ td:first-child{white-space:nowrap}
 .bar-cell .fill{height:100%;background:var(--accent)}
 td .desc{color:var(--muted);font-size:12px}
 .pos{color:var(--good)} .neg{color:var(--bad)}
+.ind-h{font-size:13px;margin:10px 0 2px;display:flex;gap:6px;align-items:baseline;flex-wrap:wrap}
 .odds-head{font-size:15px;line-height:1.6;margin:4px 0 10px;padding:10px 12px;border-radius:10px;background:var(--info-bg)}
 .odds{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin-bottom:8px}
 .odds .oc{border:1px solid var(--line);border-radius:10px;padding:10px 12px;display:grid;gap:4px}
@@ -1578,6 +1579,10 @@ var uPlot=function(){"use strict";const l="u-off",e="u-label",t="width",n="heigh
         </div>
         <div class="u-chart" data-price></div>
         <div class="u-chart only-detail" data-score></div>
+        <div class="ind-h"><b>RSI(14)</b> <span class="num">${fmtN(d.rsi14[i],1)}</span> <span class="hint">— 70 위 과열 · 30 아래 과매도</span></div>
+        <div class="u-chart" data-rsi></div>
+        <div class="ind-h"><b>MACD</b> <span class="num ${cls(d.macd_hist[i])}">${fmtN(d.macd_hist[i],2)}</span> <span class="hint">— 막대가 0 위로 올라서면 하락 힘이 꺾였다는 뜻 (선: MACD · 점선: 시그널)</span></div>
+        <div class="u-chart" data-macd></div>
       </div>
       <p class="lead">${verdictTxt}</p>
       <div>
@@ -1586,29 +1591,10 @@ var uPlot=function(){"use strict";const l="u-off",e="u-label",t="width",n="heigh
         ${cur.state === "매수 고려" ? `<details class="more"><summary>전체 신호 기준 자세한 표 보기</summary>${outlook(res, false)}</details>` : outlook(res, false)}
       </div>
       <div>
-        <h3>그날 종가에 샀다면 — 매수 고려 ${res.buys.length}회 (등급 ≥ ${threshold})</h3>
-        ${sigStats(res, res.buyRows, res.bs, false)}
-      </div>
-      <div>
-        <h3>현재 지표 (${lastDate})</h3>
-        <div class="tbl"><table><tbody>
-          <tr><td>RSI(14)</td><td class="num r">${fmtN(d.rsi14[i],1)}</td><td>ATR(14) / 종가</td><td class="num r">${fmtPct(d.atr_pct[i],2)}</td></tr>
-          <tr><td>20일선 기울기</td><td class="num r ${cls(d.slope20_atr[i])}">${fmtN(d.slope20_atr[i],2)} ATR</td><td>60일 최저 기울기</td><td class="num r ${cls(d.slope_min[i])}">${fmtN(d.slope_min[i],2)} ATR</td></tr>
-          <tr><td>60일 저점 이후</td><td class="num r">${fmtN(d.days_low60[i],0)}일</td><td>60일 저점 위</td><td class="num r">${fmtN(d.off_low60_atr[i],1)} ATR</td></tr>
-          <tr><td>거래량 20일/60일</td><td class="num r">${fmtN(d.vol_ratio[i],2)}</td><td>150일선 기울기</td><td class="num r ${cls(d.ma150_slope[i])}">${fmtPct(d.ma150_slope[i],2)}</td></tr>
-          <tr><td>52주 고점</td><td class="num r">${fmtN(d.peak_52w[i],2)}</td><td>200일선</td><td class="num r">${fmtN(d.ma200[i],2)}</td></tr>
-        </tbody></table></div>
-        <p class="hint" style="margin:6px 0 0">여기 여섯 줄이 아래 점수를 만드는 재료입니다.</p>
-      </div>
-      <div>
         <h3>점수 내역 (${lastDate})</h3>
         <div class="tbl"><table><tbody>${Wells.explainBZ(d,i).map(([nm,got,max,desc])=>`<tr><td>${nm}</td><td class="num r" style="white-space:nowrap">${fmtN(got,1)} / ${max}</td><td><div class="bar-cell"><div class="track"><div class="fill" style="width:${max?Math.round(100*(got||0)/max):0}%"></div></div><span class="desc">${desc}</span></div></td></tr>`).join("")}
         <tr><td>원점수 합</td><td class="num r">${fmtN(cur.path==="V자"?d.bz_v_raw[i]:d.bz_raw[i],1)}</td><td class="desc">${cur.path==="V자" ? `× 눌림 자격 ${fmtN(d.depth_gate[i],2)}` : `× 눌림 자격 ${fmtN(d.depth_gate[i],2)} × 가속 자격 ${fmtN(d.accel_gate[i],1)}`} = <b>${fmtN(cur.score,1)}</b> <span class="desc">(${cur.path}형 경로)</span></td></tr>
         </tbody></table></div>
-      </div>
-      <div>
-        <h3>매수 고려 시점 — 20일 고점에서 ${fmtPct(-cur.need,0)} 이상 빠진 뒤 첫 반등</h3>
-        ${sigList(res, data, d, n, res.buyRows, res.bs, false)}
       </div>
       <div class="only-detail">
         <h3>채점 ① 실제 눌림을 잡았나 — 사후(앞뒤를 본) 눌림 ${tr.length}개 · 낙폭 ${fmtPct(-(tr[0]?tr[0].threshold:0),0)} 이상</h3>
@@ -1905,6 +1891,9 @@ var uPlot=function(){"use strict";const l="u-off",e="u-label",t="width",n="heigh
     const H1px = () => narrow() ? 270 : 300, H2px = () => narrow() ? 90 : 120;
     const axisStyle = { stroke: css("--muted"), grid:{stroke: css("--line-soft"), width:1}, ticks:{stroke: css("--line"), width:1}, font:"11px "+css("--mono") };
     const sync = uPlot.sync("wells-"+sec.id);
+    // 모든 그래프의 y축 폭을 가격 그래프에 맞춰 x축이 세로로 정렬되게
+    const pxMax = Math.max(...d.close.filter(v=>v===v)), pxLab = pxMax>=1000 ? Math.round(pxMax).toLocaleString() : pxMax.toFixed(1);
+    const YW = () => Math.min(96, 16 + Math.max(4, pxLab.length) * (narrow()?6.5:7.5));
     const showDetail = document.body.classList.contains("detail");
     // 신호 구간 = 그 신호를 '고려'하던 창. 신호일부터 10거래일이고, 다음 신호가 나오면 거기서 끊는다.
     // (판정의 '점수가 문턱 위면 계속' 규칙까지 칠하면 음영이 몇 달씩 이어져 그래프를 읽을 수 없다)
@@ -1936,10 +1925,10 @@ var uPlot=function(){"use strict";const l="u-off",e="u-label",t="width",n="heigh
     };
     const tip = document.createElement("div"); tip.className="tip"; tip.hidden = true; priceEl.style.position="relative"; priceEl.appendChild(tip);
     const priceOpts = {
-      width: W(), height: H1px(), cursor:{ sync:{key: sync.key}, y:false, drag:{x:true,y:false} },
+      width: W(), height: H1px(), cursor:{ sync:{key: sync.key}, y:false, drag:{x:true,y:false} }, padding:[8, 24, null, 0],
       scales:{ x:{time:true} },
       axes:[ {...axisStyle, values:(u,v)=>v.map(t=>{const dt=new Date(t*1000); return dt.getUTCMonth()===0&&dt.getUTCDate()<8 ? dt.getUTCFullYear() : (dt.getUTCFullYear()+"."+String(dt.getUTCMonth()+1).padStart(2,"0"));})},
-             {...axisStyle, size:(u,vals)=>{ const w=Math.max(...(vals||[]).map(v=>String(v).length), 4); return Math.min(96, 16+w*(narrow()?6.5:7.5)); },
+             {...axisStyle, size:()=>YW(),
               values:(u,v)=>v.map(x=>x>=1000?x.toLocaleString():x)} ],
       series:[ {}, {label:"종가", stroke: css("--price"), width:1.4}, {label:"200일선", stroke: css("--ma"), width:1.2, dash:[4,3]},
                ],
@@ -1972,20 +1961,49 @@ var uPlot=function(){"use strict";const l="u-off",e="u-label",t="width",n="heigh
     };
     const up = new uPlot(priceOpts, [xs, d.close, d.ma200.map(v=>v===v?v:null)], priceEl);
     const scoreOpts = {
-      width: W(), height: H2px(), cursor:{ sync:{key: sync.key}, y:false, drag:{x:true,y:false} },
+      width: W(), height: H2px(), cursor:{ sync:{key: sync.key}, y:false, drag:{x:true,y:false} }, padding:[8, 24, null, 0],
       scales:{ x:{time:true}, y:{range:[0,100]} },
-      axes:[ {...axisStyle, show:false}, {...axisStyle, size:narrow()?40:56, splits:()=>[0,threshold,100]} ],
+      axes:[ {...axisStyle, show:false}, {...axisStyle, size:()=>YW(), splits:()=>[0,threshold,100]} ],
       series:[ {}, {label:"저점매수", stroke: css("--setup"), width:1.4},
                {label:"문턱", stroke: css("--setup"), width:1, dash:[3,3]} ],
       hooks:{ drawClear:[shade] }, legend:{show:false},
     };
     const us = new uPlot(scoreOpts, [xs, d.bz.map(v=>v===v?v:null), xs.map(()=>threshold)], scoreEl);
-    sync.sub(up); sync.sub(us);
+    // RSI · MACD 시계열 (가격 그래프와 커서·기간 연동)
+    const rsiEl = sec.querySelector("[data-rsi]"), macdEl = sec.querySelector("[data-macd]");
+    rsiEl.innerHTML = ""; macdEl.innerHTML = "";
+    const H3px = () => narrow() ? 80 : 100;
+    const yAx = {...axisStyle, size:()=>YW()};
+    const bands = (u) => { const ctx=u.ctx; ctx.save(); const L=u.bbox.left, Wd=u.bbox.width;
+      const y70=u.valToPos(70,"y",true), y30=u.valToPos(30,"y",true), yT=u.bbox.top, yB=u.bbox.top+u.bbox.height;
+      ctx.fillStyle=css("--sellzone"); ctx.fillRect(L,yT,Wd,y70-yT); ctx.fillStyle=css("--buyzone"); ctx.fillRect(L,y30,Wd,yB-y30); ctx.restore(); };
+    const ur = new uPlot({ width: W(), height: H3px(), cursor:{ sync:{key: sync.key}, y:false, drag:{x:true,y:false} }, padding:[8, 24, null, 0],
+      scales:{ x:{time:true}, y:{range:[0,100]} },
+      axes:[ {...axisStyle, show:false}, {...yAx, splits:()=>[30,50,70]} ],
+      series:[ {}, {label:"RSI", stroke: css("--price"), width:1.2} ],
+      hooks:{ drawClear:[bands] }, legend:{show:false} }, [xs, d.rsi14.map(v=>v===v?v:null)], rsiEl);
+    const bars = uPlot.paths && uPlot.paths.bars ? uPlot.paths.bars({size:[0.8, 4]}) : undefined;
+    const um = new uPlot({ width: W(), height: H3px(), cursor:{ sync:{key: sync.key}, y:false, drag:{x:true,y:false} }, padding:[8, 24, null, 0],
+      scales:{ x:{time:true} },
+      axes:[ {...axisStyle, show:false}, {...yAx, values:(u,v)=>v.map(x=>Math.abs(x)>=100?x.toFixed(0):x.toPrecision(2))} ],
+      series:[ {},
+        {label:"+", fill: css("--good"), stroke: css("--good"), width:0, paths: bars, points:{show:false}},
+        {label:"-", fill: css("--bad"), stroke: css("--bad"), width:0, paths: bars, points:{show:false}},
+        {label:"MACD", stroke: css("--price"), width:1.1},
+        {label:"시그널", stroke: css("--ma"), width:1, dash:[3,3]} ],
+      legend:{show:false} },
+      [xs, d.macd_hist.map(v=>v===v&&v>=0?v:null), d.macd_hist.map(v=>v===v&&v<0?v:null), d.macd.map(v=>v===v?v:null), d.macd_sig.map(v=>v===v?v:null)], macdEl);
+    // 보이는 구간에 맞춰 MACD y축을 다시 잡는다
+    const fitY = (u, cols) => { const [mn, mx] = [u.scales.x.min, u.scales.x.max]; let lo=Infinity, hi=-Infinity;
+      for (let k=0;k<n;k++){ if (xs[k]<mn||xs[k]>mx) continue; for (const c of cols){ const v=c[k]; if (v===v&&v!=null){ if(v<lo)lo=v; if(v>hi)hi=v; } } }
+      if (lo<hi) u.setScale("y",{min:lo-(hi-lo)*0.05, max:hi+(hi-lo)*0.05}); };
+    sync.sub(up); sync.sub(us); sync.sub(ur); sync.sub(um);
     scoreEl.style.display = showDetail ? "" : "none";
     // 기간 버튼: x축 범위 + y축을 그 구간에 맞게
     const setRange = (years) => {
       const max = xs[n-1], min = years ? Math.max(xs[0], max - years*365.25*86400) : xs[0];
-      up.setScale("x", {min, max}); us.setScale("x", {min, max});
+      up.setScale("x", {min, max}); us.setScale("x", {min, max}); ur.setScale("x", {min, max}); um.setScale("x", {min, max});
+      fitY(um, [d.macd, d.macd_sig, d.macd_hist]);
     };
     sec.querySelectorAll("[data-range] button").forEach(b => b.addEventListener("click", () => {
       sec.querySelectorAll("[data-range] button").forEach(x=>x.setAttribute("aria-pressed","false")); b.setAttribute("aria-pressed","true"); setRange(+b.dataset.y);
@@ -1993,7 +2011,7 @@ var uPlot=function(){"use strict";const l="u-off",e="u-label",t="width",n="heigh
     const defY = narrow() ? 2 : 5;
     sec.querySelectorAll("[data-range] button").forEach(x=>x.setAttribute("aria-pressed", String(+x.dataset.y === defY)));
     setRange(defY);
-    const ro = new ResizeObserver(()=>{ const w=W(); up.setSize({width:w,height:H1px()}); us.setSize({width:w,height:H2px()}); }); ro.observe(priceEl);
+    const ro = new ResizeObserver(()=>{ const w=W(); up.setSize({width:w,height:H1px()}); us.setSize({width:w,height:H2px()}); ur.setSize({width:w,height:H3px()}); um.setSize({width:w,height:H3px()}); }); ro.observe(priceEl);
     up.setCursor({left:-10, top:-10});
   }
 
