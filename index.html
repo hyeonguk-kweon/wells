@@ -1519,7 +1519,8 @@ var uPlot=function(){"use strict";const l="u-off",e="u-label",t="width",n="heigh
   function rerenderAll(){
     for (const [label, r] of results){ r.res = anaL(r.data, label); if (topPage !== "detail") render(r.sec, label, r.data, r.res); }
     renderOverview();
-    if (topPage === "detail") showDetail(detailIdx);
+    if (focusLabel && results.get(focusLabel)?.res) showPage("detail", focusLabel);
+    else if (topPage === "detail") showDetail(detailIdx);
   }
   function escapeHtml(s){ return s.replace(/[&<>"]/g, c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c])); }
 
@@ -2042,20 +2043,24 @@ var uPlot=function(){"use strict";const l="u-off",e="u-label",t="width",n="heigh
     catch(e){ info.innerHTML = "감시 종목 자료를 아직 못 받았습니다 — 아래는 예시입니다."; showSample(); return; }
     let items = idx.items || [];
     const want = decodeURIComponent(location.hash.slice(1)).split(",").map(x => x.trim()).filter(Boolean);
-    let missing = [];
-    if (want.length){
+    let missing = [], focus = null;
+    if (want.length === 1){                          // 종목 하나(#SOXX) → 전체를 불러 두고 그 종목 상세 탭을 바로 연다
+      const w = keyOf(want[0]);
+      focus = items.find(it => keyOf(it.label) === w) || items.find(it => keyOf(it.label).startsWith(w));
+      if (!focus) missing = want;
+    } else if (want.length){
       const byKey = new Map(items.map(it => [keyOf(it.label), it]));
       const pick = want.map(w => byKey.get(keyOf(w)) || [...byKey.entries()].find(([k]) => k.startsWith(keyOf(w)))?.[1]);
       missing = want.filter((w, k) => !pick[k]);
       items = [...new Set(pick.filter(Boolean))];
     }
-    info.innerHTML = `감시 종목 <b>${items.length}</b>개${want.length ? ` (전체 ${idx.items.length}개 중 · <a href="#" id="showall">전체 보기</a>)` : ""} · 시세 ${escapeHtml(idx.updated || "")} 갱신 (매일 아침 9시)<br>`
+    info.innerHTML = `감시 종목 <b>${items.length}</b>개${want.length > 1 ? ` (전체 ${idx.items.length}개 중 · <a href="#" id="showall">전체 보기</a>)` : ""} · 시세 ${escapeHtml(idx.updated || "")} 갱신 (매일 아침 9시)<br>`
       + `종목 추가·삭제는 텔레그램 <b>@wells_alert_bot</b> 에서 <code>/add 종목</code> · <code>/del 종목</code>`
       + (missing.length ? `<br><span class="neg">감시 목록에 없는 종목: ${missing.map(escapeHtml).join(", ")} — 텔레그램에서 /add 로 추가하세요</span>` : "");
     const all = $("#showall"); if (all) all.addEventListener("click", ev => { ev.preventDefault(); history.replaceState(null, "", location.pathname); loadFixed(); });
-    await runFixed(items);
+    await runFixed(items, focus && focus.label);
   }
-  async function runFixed(items){
+  async function runFixed(items, focusLabel){
     const my = ++runId, stale = () => my !== runId;
     stack.innerHTML = ""; results.clear(); renderOverview();
     const secs = items.map(it => {
@@ -2078,7 +2083,8 @@ var uPlot=function(){"use strict";const l="u-off",e="u-label",t="width",n="heigh
     const ordered = items.map(it => [it.label, results.get(it.label)]).filter(([, r]) => r);
     results.clear(); for (const [l, r] of ordered) results.set(l, r);
     renderOverview();
-    if (topPage === "detail") showDetail(detailIdx);
+    if (focusLabel && results.get(focusLabel)?.res) showPage("detail", focusLabel);
+    else if (topPage === "detail") showDetail(detailIdx);
   }
   window.addEventListener("hashchange", () => loadFixed());
   loadFixed();
