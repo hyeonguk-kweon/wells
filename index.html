@@ -258,7 +258,7 @@ p.lead{margin:0;font-size:14px;line-height:1.55;border-left:3px solid var(--acce
   <header>
     <div>
       <h1>웅덩이(저점매수) 판독기</h1>
-      <p class="sub">종목을 넣으면 전 기간 시세로 <b>지금이 저점매수 자리인지</b> 판단하고, 과거에 같은 자리에서 샀으면 어떻게 됐는지 보여 줍니다. 예측이 아니라 과거 기록입니다.</p>
+      <p class="sub">감시 종목의 전 기간 시세로 <b>지금이 저점매수 자리인지</b> 판단하고, 과거에 같은 자리에서 샀으면 어떻게 됐는지 보여 줍니다. 예측이 아니라 과거 기록입니다.</p>
       <details id="howwrap" open><summary style="cursor:pointer;margin-top:8px;font-size:12.5px;color:var(--muted)">신호·등급·점수·신호 효과는 이렇게 정합니다</summary>
       <div class="how">
         <div><b>① 매수 신호</b><span>개별 종목 — 20일 고점에서 충분히 빠진 뒤(평소 변동폭의 3배, 4~20%) 첫 반등한 날, 단 등급 40 이상. 지수(QQQ·SPY·SOXX) — 52주 고점 대비 −10% 이하.</span></div>
@@ -272,33 +272,17 @@ p.lead{margin:0;font-size:14px;line-height:1.55;border-left:3px solid var(--acce
   </header>
 
   <label hidden><input type="checkbox" id="detail"></label>
-  <div class="tabs top" id="top"><button data-top="input" aria-pressed="true">종목 입력</button><button data-top="detail" aria-pressed="false">상세</button></div>
+  <div class="tabs top" id="top"><button data-top="input" aria-pressed="true">요약</button><button data-top="detail" aria-pressed="false">상세</button></div>
 
   <div data-page="input">
   <div class="bar">
-    <div class="row">
-      <div class="field" style="flex:2 1 280px">
-        <label for="tickers">종목 (쉼표로 여러 개 · 미국은 티커, 국내는 종목명이나 6자리 코드 · 예: QQQ, TSLA, 삼성전자, KODEX 200)</label>
-        <input type="text" id="tickers" placeholder="QQQ, SPY, SOXX, TIGER미국나스닥100레버리지, TIGER미국필라델피아반도체레버리지" autocomplete="off" spellcheck="false">
-      </div>
-      <div class="field" style="flex:1 1 180px">
-        <label for="apikey">미국 · Twelve Data 키 <span id="keystate"></span></label>
-        <input type="password" id="apikey" placeholder="무료 키 붙여넣기" autocomplete="off">
-      </div>
-      <div class="field" style="flex:1 1 180px">
-        <label for="govkey">국내 · 공공데이터포털 키 <span id="gkeystate"></span></label>
-        <input type="password" id="govkey" placeholder="일반 인증키 붙여넣기" autocomplete="off">
-      </div>
-      <button class="primary" id="go">분석</button>
-    </div>
-    <div class="row bulkbar">
-      <button id="bulk">주요종목 30개 한번에 분석하기</button>
-      <button id="bulkstop" hidden>중단</button>
-      <div class="quota"><span id="quotaTxt"></span><span class="hint" id="bulkProg"></span></div>
-    </div>
-    <div class="row" style="justify-content:space-between">
-      <div class="hint">미국 종목은 <a href="https://twelvedata.com/pricing" target="_blank" rel="noopener">twelvedata.com</a> 무료 키(하루 800회), 국내 종목은 <a href="https://www.data.go.kr/data/15094808/openapi.do" target="_blank" rel="noopener">공공데이터포털</a> 주식시세·<a href="https://www.data.go.kr/data/15094806/openapi.do" target="_blank" rel="noopener">증권상품시세</a> 무료 키(각 하루 10,000회)를 씁니다. 둘 다 이 브라우저에만 저장되고 페이지 어디에도 박히지 않습니다.</div>
+    <div class="row" style="justify-content:space-between;align-items:center">
+      <div id="fixedinfo" class="hint" style="font-size:13.5px;line-height:1.6">감시 종목을 불러오는 중…</div>
       <div class="status" id="status"></div>
+    </div>
+    <div hidden>
+      <input id="tickers"><input id="apikey"><input id="govkey"><span id="keystate"></span><span id="gkeystate"></span>
+      <button id="go"></button><button id="bulk"></button><button id="bulkstop"></button><span id="quotaTxt"></span><span id="bulkProg"></span>
     </div>
   </div>
 
@@ -316,7 +300,7 @@ p.lead{margin:0;font-size:14px;line-height:1.55;border-left:3px solid var(--acce
     <div><b>등급 = max(다지기형, V자형) × 추세 보정.</b> 추세 보정은 상승추세(종가가 200일선 위 + 200일선이 20일 전보다 높음)면 <b>×1.25</b>, 아니면 <b>×0.70</b> 입니다(100 상한). 7종목 5년 검증에서 같은 신호라도 상승추세에서 난 것이 일관되게 나았습니다 — 60일 뒤 수익 기준 SOXX p 0.54→0.04 · SK하이닉스 0.96→0.10 · TIGER 0.02→0.00 · 삼성전자 −0.8%→+3.0%. 하락추세 눌림은 떨어지는 칼날이라 감점하지만, <b>TSLA 처럼 추세가 자주 뒤집히는 종목에서는 오히려 손해</b>였으므로(p 0.20→0.36) 신호를 지우지 않고 등급만 깎아 남겨 둡니다. 1.25/0.70 이라는 값 자체는 그 7종목의 결과를 보고 고른 것이라 다른 종목에서 재확인이 필요합니다. 등급(저점매수 점수) = max(다지기형, V자형). 다지기형 — 눌림 20 · 감속 30 (20일선 기울기가 60일 최저에서 얼마나 올라왔고 0에 얼마나 가까운가) · 저점 유지 15 (60일 저점을 새로 안 쓴 지 며칠) · 저점 근접 15 · 과매도 해소 10 · 거래량 고갈 10. 눌림 자격(52주 고점에서 안 빠졌으면 0)과 가속 자격(20일선 기울기가 오늘 60일 최저를 갱신 중이면 ×0.3)을 곱합니다. V자형 — 눌림 20 · 과매도 깊이 40 (최근 5일 RSI 최저가 40 아래로) · 반전 확인 25 (종가 > 어제, > 3일 고가) · 투매 거래량 15, 눌림 자격만 곱합니다(가속 자격 없음 — V자 바닥은 늘 가속 하락의 끝에 있습니다). 기울기·깊이는 모두 ATR로 나눠 지수와 개별주에 같은 눈금을 씁니다. 회차는 문턱 위가 10일 이상 이어진 구간(7일 끊김 허용). 모든 계산은 그날까지의 자료만 씁니다.</div>
     <div><b>지수 모드 (QQQ·SPY·SOXX 전용).</b> 이 세 종목은 개별주 규칙 대신 한 가지 규칙만 씁니다 — <b>52주 고점 대비 10% 이상 빠져 있으면 매수 고려</b>(재신호 금지 20일, 반등 확인 없음 — 지수는 V자로 돌아와 확인을 기다리면 바닥을 놓칩니다). 20년(2006~2026)을 반으로 갈라 전반으로 문턱을 고르고 후반으로 채점하는 검증(반대 방향도)에서 6가지 후보 중 유일하게 시기를 가리지 않고 살아남은 규칙입니다. 120일 보유, 아무 날 대비 중앙값: QQQ n=69 +6.3%p(p=0.00, 전반 +7.1/후반 +7.1) · SPY n=60 +4.0%p(0.00, +4.2/+3.9) · SOXX n=115 +2.2%p(0.13, +1.4/+2.0). 주의: 신호가 하락 도중에 켜지므로 물린 폭이 큽니다 — 120일 내 최저가 중앙 −4~−9%, 최악 −45~−58%(2008년). 다른 지수 ETF(DIA·IWM·VTI 등)는 검증하지 않아 지수 모드를 적용하지 않습니다. <b>예비 신호(속이 빈 삼각형)</b>: 52주 고점 −7%~−10%의 얕은 눌림. −10% 규칙이 못 잡는 자리를 따로 검증했더니 종목마다 달랐습니다 — QQQ +2.7%p(p=0.03, 전반 +3.8 / 후반 +5.3) · SPY +0.4%p(p=0.40) · SOXX −0.3%p(p=0.53, 전반 −6.3). 그래서 차트엔 셋 다 표시하되, 신뢰도는 QQQ만 믿을 만함으로 봅니다.</div>
     <div>채점 ① 의 '실제 눌림'만 앞뒤를 본 사후 판정입니다: 꼭지에서 max(10%, 5×ATR) 이상 떨어졌다가 바닥에서 같은 만큼 되올라온 자리, 몸통은 낙폭의 아래 절반.</div>
-    <div>시세: 미국은 Twelve Data 일봉(분할 조정), 국내는 공공데이터포털 금융위원회 주식시세·증권상품시세(원화, 무수정 종가 — 하루 뒤 13시 이후 갱신이라 전일까지만 나옵니다). 지표: Wilder RSI/ATR/ADX, Appel MACD, Bollinger(ddof=0), Keltner EMA20±1.5ATR, TTM Squeeze, Minervini VCP, Weinstein 국면.</div>
+    <div>시세: 야후 파이낸스 일봉(분할 반영 종가, 국내는 원화) — 텔레그램 알림봇이 매일 아침 9시에 받아 이 사이트에 올립니다(API 키 없음). 알림 메시지와 같은 시세를 씁니다. 지표: Wilder RSI/ATR/ADX, Appel MACD, Bollinger(ddof=0), Keltner EMA20±1.5ATR, TTM Squeeze, Minervini VCP, Weinstein 국면.</div>
   </div>
 </div>
 
@@ -2048,8 +2032,55 @@ var uPlot=function(){"use strict";const l="u-off",e="u-label",t="width",n="heigh
   showQuota();
   inp.addEventListener("keydown", e => { if (e.key === "Enter") run(); });
 
-  if (inp.value.trim() && (keyInp.value.trim() || gkeyInp.value.trim() || hasCacheFor(inp.value))) run();
-  else showSample();
+  // ── 고정 종목: 알림봇(GitHub Actions)이 매일 아침 올리는 data/*.json 만 읽는다 — API 키 없음, 사이트에서 종목 변경 없음
+  const keyOf = s => String(s).replace(/:KRX$/i, "").replace(/[\s()]/g, "").toUpperCase();
+  async function loadFixed(){
+    const info = $("#fixedinfo");
+    let idx;
+    try { idx = await fetch("data/index.json?t=" + Date.now(), {cache: "no-store"}).then(r => { if (!r.ok) throw new Error(r.status); return r.json(); }); }
+    catch(e){ info.innerHTML = "감시 종목 자료를 아직 못 받았습니다 — 아래는 예시입니다."; showSample(); return; }
+    let items = idx.items || [];
+    const want = decodeURIComponent(location.hash.slice(1)).split(",").map(x => x.trim()).filter(Boolean);
+    let missing = [];
+    if (want.length){
+      const byKey = new Map(items.map(it => [keyOf(it.label), it]));
+      const pick = want.map(w => byKey.get(keyOf(w)) || [...byKey.entries()].find(([k]) => k.startsWith(keyOf(w)))?.[1]);
+      missing = want.filter((w, k) => !pick[k]);
+      items = [...new Set(pick.filter(Boolean))];
+    }
+    info.innerHTML = `감시 종목 <b>${items.length}</b>개${want.length ? ` (전체 ${idx.items.length}개 중 · <a href="#" id="showall">전체 보기</a>)` : ""} · 시세 ${escapeHtml(idx.updated || "")} 갱신 (매일 아침 9시)<br>`
+      + `종목 추가·삭제는 텔레그램 <b>@wells_alert_bot</b> 에서 <code>/add 종목</code> · <code>/del 종목</code>`
+      + (missing.length ? `<br><span class="neg">감시 목록에 없는 종목: ${missing.map(escapeHtml).join(", ")} — 텔레그램에서 /add 로 추가하세요</span>` : "");
+    const all = $("#showall"); if (all) all.addEventListener("click", ev => { ev.preventDefault(); history.replaceState(null, "", location.pathname); loadFixed(); });
+    await runFixed(items);
+  }
+  async function runFixed(items){
+    const my = ++runId, stale = () => my !== runId;
+    stack.innerHTML = ""; results.clear(); renderOverview();
+    const secs = items.map(it => {
+      const sec = document.createElement("section"); sec.className = "tk"; sec.id = "tk-" + it.label.replace(/[^A-Z0-9]/g, "_");
+      sec.innerHTML = `<div class="verdict"><div class="name"><span class="sym">${escapeHtml(it.label)}</span><span class="meta">불러오는 중…</span></div></div>`;
+      sec.hidden = topPage === "detail"; stack.appendChild(sec); return sec;
+    });
+    await Promise.all(items.map(async (it, k) => {
+      try {
+        const data = await fetch("data/" + encodeURIComponent(it.file) + "?v=" + encodeURIComponent(it.last || ""), {cache: "no-cache"}).then(r => { if (!r.ok) throw new Error("자료 파일을 못 읽었습니다 (" + r.status + ")"); return r.json(); });
+        if (stale()) return;
+        data.label = it.label; data.meta = data.meta || {name: it.name};
+        const res = anaL(data, it.label);
+        results.set(it.label, { data, res, sec: secs[k] });
+        render(secs[k], it.label, data, res);
+      } catch(e){ if (!stale()) secs[k].innerHTML = `<div class="verdict"><div class="name"><span class="sym">${escapeHtml(it.label)}</span></div></div><div class="err">${escapeHtml(e.message || String(e))}</div>`; }
+    }));
+    if (stale()) return;
+    // 감시 목록 순서대로 결과 맵을 다시 채운다(병렬로 받아 순서가 섞이지 않게)
+    const ordered = items.map(it => [it.label, results.get(it.label)]).filter(([, r]) => r);
+    results.clear(); for (const [l, r] of ordered) results.set(l, r);
+    renderOverview();
+    if (topPage === "detail") showDetail(detailIdx);
+  }
+  window.addEventListener("hashchange", () => loadFixed());
+  loadFixed();
   function hasCacheFor(v){ return splitInput(v).every(q => store.get("ohlcv:"+parseSym(q).label)); }
   function showSample(){
     if (typeof WELLS_SAMPLE === "undefined") return;
