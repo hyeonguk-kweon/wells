@@ -42,6 +42,13 @@ h1{font-size:22px;font-weight:700;margin:0;letter-spacing:-.01em;text-wrap:balan
 h2{font-size:16px;font-weight:600;margin:0}
 h3{font-size:12px;font-weight:600;margin:0;color:var(--muted);text-transform:uppercase;letter-spacing:.06em}
 .sub{color:var(--muted);margin:4px 0 0}
+.how{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin-top:10px}
+.how>div{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:8px 10px;font-size:12.5px;line-height:1.55;color:var(--muted)}
+.how b{color:var(--ink);font-size:13px}
+.how small{font-size:11px;color:var(--muted)}
+.how span{display:block;margin-top:3px}
+@media (max-width:900px){.how{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:520px){.how{grid-template-columns:1fr}}
 header{display:flex;flex-wrap:wrap;gap:8px 20px;align-items:baseline;justify-content:space-between;margin-bottom:16px}
 .mono{font-family:var(--mono);font-variant-numeric:tabular-nums}
 .num{font-family:var(--mono);font-variant-numeric:tabular-nums}
@@ -251,7 +258,15 @@ p.lead{margin:0;font-size:14px;line-height:1.55;border-left:3px solid var(--acce
   <header>
     <div>
       <h1>웅덩이(저점매수) 판독기</h1>
-      <p class="sub">종목을 넣으면 전 기간 시세를 받아 저점매수 여부를 종목별로 한눈에 정리하고, 상세에서 근거를 보여 줍니다. 미래는 모른다고 가정합니다.</p>
+      <p class="sub">종목을 넣으면 전 기간 시세로 <b>지금이 저점매수 자리인지</b> 판단하고, 과거에 같은 자리에서 샀으면 어떻게 됐는지 보여 줍니다. 예측이 아니라 과거 기록입니다.</p>
+      <details id="howwrap" open><summary style="cursor:pointer;margin-top:8px;font-size:12.5px;color:var(--muted)">신호·등급·점수·신뢰도는 이렇게 정합니다</summary>
+      <div class="how">
+        <div><b>① 매수 신호</b><span>개별 종목 — 20일 고점에서 충분히 빠진 뒤(평소 변동폭의 3배, 4~20%) 첫 반등한 날, 단 등급 40 이상. 지수(QQQ·SPY·SOXX) — 52주 고점 대비 −10% 이하.</span></div>
+        <div><b>② 등급</b> <small>0~100 · 반등 신호의 질</small><span>눌림 깊이 · 과매도(RSI) · 반전 확인(종가가 전일·3일 고가 위) · 투매 거래량, 또는 하락 속도 둔화 · 저점 유지 · 거래량 고갈. 상승추세(200일선 위·상승 중)면 ×1.25, 아니면 ×0.70.</span></div>
+        <div><b>③ 매수 점수</b> <small>0~100 · 종목 간 우선순위</small><span>깊이 50점(지금 낙폭이 그 종목 역사에서 얼마나 깊은 편인가) + 반등 50점(비슷하게 빠졌던 과거 신호의 120일 뒤 중앙 수익, +30%면 만점).</span></div>
+        <div><b>④ 신뢰도</b> <small>이 신호를 믿어도 되나</small><span>여러 종목을 모아 검증한 그룹 결과(지수 규칙 · 미국 주식 · 레버리지 · 국내)가 기본. 그 종목 기록이 앞뒤 기간 모두 나빴으면 역효과로 내리고 관망 처리.</span></div>
+      </div>
+      </details>
     </div>
     <div class="hint">계산은 이 브라우저 안에서만 합니다 · 서버 없음</div>
   </header>
@@ -1241,6 +1256,7 @@ var uPlot=function(){"use strict";const l="u-off",e="u-label",t="width",n="heigh
   detail.addEventListener("change", () => { store.set("detail", detail.checked ? "1" : "0"); document.body.classList.toggle("detail", detail.checked); rerenderAll(); });
   document.body.classList.toggle("detail", detail.checked);
   // 기본 종목: 주소에 종목(#...)이 없으면 늘 이 5개로 시작
+  try { if (window.innerWidth < 640) $("#howwrap").removeAttribute("open"); } catch(e){}
   const DEFAULT_TICKERS = "QQQ, SPY, SOXX, TIGER미국나스닥100레버리지, TIGER미국필라델피아반도체레버리지";
   const hashT = decodeURIComponent(location.hash.slice(1)); inp.value = hashT || DEFAULT_TICKERS;
   $("#keystate").textContent = savedKey ? "(저장됨)" : "";
@@ -1563,7 +1579,7 @@ var uPlot=function(){"use strict";const l="u-off",e="u-label",t="width",n="heigh
     const trancheRow = (h) => st[h] ? `<tr><td>${h}일 뒤 · 평단 대비</td><td class="num r ${cls(st[h].obs)}">${fmtPct(st[h].obs)}</td><td class="num r ${cls(st[h].rnd)}">${fmtPct(st[h].rnd)}</td><td class="num r">${fmtN(st[h].p,2)}</td><td class="num r ${cls(st[h].obsMdd)}">${fmtPct(st[h].obsMdd)}</td><td class="num r ${cls(st[h].rndMdd)}">${fmtPct(st[h].rndMdd)}</td></tr>` : "";
     sec.innerHTML = `
       <div class="verdict">
-        <div class="big">${fmtN(cur.score,1)}<small>/ 100</small></div>
+        <div class="big" title="등급 = 오늘 반등 신호의 질 (0~100)">${fmtN(cur.score,1)}<small>/ 100</small><div class="hint" style="font-size:11px;font-weight:400;letter-spacing:0">오늘 등급</div></div>
         <div>
           <div class="name"><span class="sym">${label}</span><span class="meta">${escapeHtml(metaTxt)}</span></div>
           <div class="row" style="gap:6px;margin-top:4px">${pill}${extra.join("")}<span class="meta">기준 ${lastDate} 종가 <span class="num">${fmtN(d.close[i],2)}</span> · 고점대비 <span class="num ${cls(d.dd_52w[i])}">${fmtPct(d.dd_52w[i])}</span> · 200일선 <span class="num ${cls(d.above200[i])}">${fmtPct(d.above200[i])}</span>${data.cached?" · 오늘 받은 자료":""}</span></div>
@@ -1591,7 +1607,7 @@ var uPlot=function(){"use strict";const l="u-off",e="u-label",t="width",n="heigh
         ${cur.state === "매수 고려" ? `<details class="more"><summary>전체 신호 기준 자세한 표 보기</summary>${outlook(res, false)}</details>` : outlook(res, false)}
       </div>
       <div>
-        <h3>점수 내역 (${lastDate})</h3>
+        <h3>등급 내역 (${lastDate}) <span class="hint" style="font-weight:400">— 반등 신호의 질. 매수 신호는 등급 40 이상일 때만 켜집니다${cur.indexMode ? " (지수 종목은 등급과 무관하게 52주 고점 −10% 규칙)" : ""}</span></h3>
         <div class="tbl"><table><tbody>${Wells.explainBZ(d,i).map(([nm,got,max,desc])=>`<tr><td>${nm}</td><td class="num r" style="white-space:nowrap">${fmtN(got,1)} / ${max}</td><td><div class="bar-cell"><div class="track"><div class="fill" style="width:${max?Math.round(100*(got||0)/max):0}%"></div></div><span class="desc">${desc}</span></div></td></tr>`).join("")}
         <tr><td>원점수 합</td><td class="num r">${fmtN(cur.path==="V자"?d.bz_v_raw[i]:d.bz_raw[i],1)}</td><td class="desc">${cur.path==="V자" ? `× 눌림 자격 ${fmtN(d.depth_gate[i],2)}` : `× 눌림 자격 ${fmtN(d.depth_gate[i],2)} × 가속 자격 ${fmtN(d.accel_gate[i],1)}`} = <b>${fmtN(cur.score,1)}</b> <span class="desc">(${cur.path}형 경로)</span></td></tr>
         </tbody></table></div>
