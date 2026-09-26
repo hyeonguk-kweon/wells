@@ -111,6 +111,18 @@ td:first-child{white-space:nowrap}
 .bar-cell .fill{height:100%;background:var(--accent)}
 td .desc{color:var(--muted);font-size:12px}
 .pos{color:var(--good)} .neg{color:var(--bad)}
+.odds-head{font-size:15px;line-height:1.6;margin:4px 0 10px;padding:10px 12px;border-radius:10px;background:var(--info-bg)}
+.odds{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin-bottom:8px}
+.odds .oc{border:1px solid var(--line);border-radius:10px;padding:10px 12px;display:grid;gap:4px}
+.odds .oc .h{font-size:13px;color:var(--muted)}
+.odds .oc .p{font-size:26px;font-weight:700;line-height:1.1}
+.odds .oc .p small{font-size:12px;font-weight:400;color:var(--muted);margin-left:4px}
+.odds .oc .obar{height:6px;border-radius:3px;background:var(--line);overflow:hidden}
+.odds .oc .obar i{display:block;height:100%;background:var(--accent)}
+.odds .oc .m{font-size:14px}
+.odds .oc .r{font-size:12px;color:var(--muted)}
+@media (max-width:640px){.odds{grid-template-columns:repeat(2,minmax(0,1fr))}}
+details.more summary{cursor:pointer;color:var(--muted);font-size:13px;margin:6px 0}
 tr.now td{background:var(--info-bg)}
 .caveat{border-left:3px solid var(--warn);background:var(--warn-bg);padding:10px 12px;border-radius:0 8px 8px 0;font-size:13px}
 .caveat b{color:var(--warn)}
@@ -995,6 +1007,33 @@ var uPlot=function(){"use strict";const l="u-off",e="u-label",t="width",n="heigh
     return { score: Math.round(sDepth + sRise), sDepth: Math.round(sDepth), sRise: Math.round(sRise), depthPct, expRet, k, dd: dd[now] };
   }
 
+  // ── 신뢰도용 통계 (종목 단독 — 경고용)
+  //    ③ 비교 기준 = 신호 '이후' 6개월(126일) 동안 아무 날에 산 120일 수익의 중앙값 (시기 보정).
+  //       앞뒤 양쪽을 쓰면 하락 직전 비싸게 산 날이 섞여 무작위 가격에서도 +4.6%p 가 나오는 편향 → 이후만 쓰면 +0.04%p.
+  //    ④ 20일 안에 연달아 난 신호는 한 번의 하락(에피소드)으로 묶어 평균 → 표본 수 = 하락 횟수.
+  //    ② 에피소드를 시간순 앞뒤 절반으로 나눠 각각의 우위도 낸다 (역효과는 둘 다 마이너스일 때만).
+  function trustStats(close, idx, H = 120, W = 126, gap = 20, R = 1000) {
+    const c = close, n = c.length;
+    const fr = c.map((v, i) => (i + H < n ? c[i + H] / v - 1 : NaN_));
+    const last = n - H - 1;
+    const diff = arr(n, NaN_);
+    for (let i = 0; i <= last; i++) {
+      const w = []; for (let j = i + 1; j <= Math.min(last, i + W); j++) w.push(fr[j]);
+      if (w.length >= 20) diff[i] = fr[i] - median(w);
+    }
+    const sig = idx.filter((i) => !isN(diff[i]));
+    const eps = []; let cur = null, prev = -1e9;
+    for (const i of sig) { if (i - prev > gap) { cur = []; eps.push(cur); } cur.push(diff[i]); prev = i; }
+    const ev = eps.map((e) => e.reduce((a, b) => a + b, 0) / e.length);
+    const k = ev.length;
+    if (k < 4) return { k, edge: NaN_, p: NaN_, e1: NaN_, e2: NaN_ };
+    const edge = median(ev), h = k >> 1, e1 = median(ev.slice(0, h)), e2 = median(ev.slice(h));
+    const pool = diff.filter((x) => !isN(x)); let ge = 0, seed = 12345;
+    const rnd = () => ((seed = (seed * 1103515245 + 12345) & 0x7fffffff) / 0x7fffffff);
+    for (let r = 0; r < R; r++) { const pk = []; for (let m = 0; m < k; m++) pk.push(pool[Math.floor(rnd() * pool.length)]); if (median(pk) >= edge) ge++; }
+    return { k, edge, p: ge / R, e1, e2 };
+  }
+
   function profitDay(close, idx, maxH = 200, need = 0.7, run = 5) {
     const n = close.length;
     const full = idx.filter((i) => i + maxH < n);
@@ -1142,6 +1181,7 @@ var uPlot=function(){"use strict";const l="u-off",e="u-label",t="width",n="heigh
     cur.state = state; cur.size = Math.round(isN(size) ? 0 : size / 5) * 5; cur.sinceB = sinceB; cur.sinceS = sinceS;
     cur.when = profitDay(d.close, cur.tier === "pre" ? pres : buys);
     cur.buy = buyScore(d, cur.tier === "pre" ? pres : buys);
+    cur.tstat = trustStats(d.close, cur.tier === "pre" ? pres : buys);
     return { d, eps, tr, st, cur, threshold, horizon, hz: p, buys, sells, pres, ps, buyRows, sellRows, bs, ss,
              signals: buys, sigRows: buyRows.map((r) => ({ ...r, f60: r.f1, f120: r.f2 })), sig: { 60: bs[p.eval[0]], 120: bs[p.eval[1]] } };
   }
@@ -1446,7 +1486,7 @@ var uPlot=function(){"use strict";const l="u-off",e="u-label",t="width",n="heigh
         if (stale()) { it.sec.remove(); return; }
         if (!wasCached) fetched++;
         if (data.close.length < 260) throw new Error(`'${it.label}' 자료가 ${data.close.length}일뿐이라 판정할 수 없습니다(최소 260일).`);
-        const res = Wells.analyze(data, THR, horizon, isIndex(it.label));
+        const res = anaL(data, it.label);
         results.set(it.label, { data, res, sec: it.sec });
         render(it.sec, it.label, data, res);
         renderOverview();
@@ -1476,7 +1516,7 @@ var uPlot=function(){"use strict";const l="u-off",e="u-label",t="width",n="heigh
     }
   }
   function rerenderAll(){
-    for (const [label, r] of results){ r.res = Wells.analyze(r.data, THR, horizon, isIndex(label)); if (topPage !== "detail") render(r.sec, label, r.data, r.res); }
+    for (const [label, r] of results){ r.res = anaL(r.data, label); if (topPage !== "detail") render(r.sec, label, r.data, r.res); }
     renderOverview();
     if (topPage === "detail") showDetail(detailIdx);
   }
@@ -1496,9 +1536,9 @@ var uPlot=function(){"use strict";const l="u-off",e="u-label",t="width",n="heigh
     const now = d.close[i];
     if (cur.state === "매수 고려"){
       pill = backfire(res) ? `<span class="pill no"><i></i>관망 · 신호 있으나 역효과</span>` : `<span class="pill well"><i></i>매수 고려 · ${cur.buy.score}점</span>`;
-      verdictTxt = `${cur.buyToday ? "오늘" : data.dates[cur.lastBuy] + " (" + sinceB + "일 전)"} ${d.sig_kind[cur.lastBuy]} 신호${cur.indexMode ? "" : ` · 20일 고점 대비 ${fmtPct(d[res.hz.key+"_dip"][cur.lastBuy])}`}. ${cur.buyToday ? "" : `지금 가격은 신호가 ${fmtN(bPx,2)} 대비 ${fmtPct(now/bPx-1)}. `}<b>매수 점수 ${cur.buy.score}점</b> = ${scoreWhy(cur.buy)}. ${cur.indexMode ? "이 신호는 떨어지는 도중에 켜지므로 더 빠질 수 있습니다 — 과거 물린 폭은 아래 표를 보세요. " : ""}${regTxt}`;
+      verdictTxt = `${cur.buyToday ? "오늘" : data.dates[cur.lastBuy] + " (" + sinceB + "일 전)"} ${d.sig_kind[cur.lastBuy]} 신호${cur.indexMode ? "" : ` · 20일 고점 대비 ${fmtPct(d[res.hz.key+"_dip"][cur.lastBuy])}`}. ${cur.buyToday ? "" : `지금 가격은 신호가 ${fmtN(bPx,2)} 대비 ${fmtPct(now/bPx-1)}. `}<b>매수 점수 ${cur.buy.score}점</b> = ${scoreWhy(cur.buy)}. ${(() => { const tt = trustOf(res); return `<b>신뢰도 ${tt.t}</b> — ${tt.why}${tt.own ? ` (${tt.own})` : ""}. `; })()}${cur.indexMode ? "이 신호는 떨어지는 도중에 켜지므로 더 빠질 수 있습니다 — 과거 물린 폭은 아래 표를 보세요. " : ""}${regTxt}`;
       if (backfire(res)){ const tb = trustOf(res);
-        verdictTxt = `${cur.buyToday ? "오늘" : data.dates[cur.lastBuy] + " (" + sinceB + "일 전)"} ${d.sig_kind[cur.lastBuy]} 신호가 떴지만, <b>이 종목에서는 이 신호로 산 것이 120일 보유에서 아무 날보다 ${(Math.abs(tb.edge) * 100).toFixed(1)}%p 나빴습니다</b>(중앙값 기준). 그래서 매수 고려가 아니라 <b>관망</b>으로 봅니다 — 사려면 이 도구가 아닌 다른 근거로 판단하세요.${regTxt}`; }
+        verdictTxt = `${cur.buyToday ? "오늘" : data.dates[cur.lastBuy] + " (" + sinceB + "일 전)"} ${d.sig_kind[cur.lastBuy]} 신호가 떴지만, <b>이 종목에서는 이 신호로 산 것이 120일 보유에서 기간 앞뒤 모두 비슷한 시기 아무 날보다 나빴습니다</b> (${tb.own}). 그래서 매수 고려가 아니라 <b>관망</b>으로 봅니다 — 사려면 이 도구가 아닌 다른 근거로 판단하세요.${regTxt}`; }
     } else if (cur.state === "매도 고려"){
       pill = `<span class="pill bad"><i></i>매도 고려 · ${cur.showSize ? "비중 "+cur.size+"%"+(cur.dimSize?" ("+cur.trustTag+")":"") : "비중 — "+cur.trustTag}</span>`;
       verdictTxt = `${cur.sellToday ? "오늘" : data.dates[cur.lastSell] + " (" + sinceS + "일 전)"} 고점 꺾임 신호 · 매도 등급 ${fmtN(d[res.hz.key+"_sell_grade"][cur.lastSell],0)} · 20일 저점 대비 ${fmtPct(d[res.hz.key+"_rise"][cur.lastSell])}. ${cur.sellToday ? "" : `지금 가격은 신호가 ${fmtN(sPx,2)} 대비 ${fmtPct(now/sPx-1)}. `}${cur.showSize ? `보유 물량의 <b>${cur.size}%</b>를 지금 덜어내는 것을 고려.` : `<b>얼마를 덜어내라고 말할 근거가 없습니다</b> — ${cur.relWhy}. 39종목 검증에서 매도 신호는 대부분의 종목에서 쓸모가 없었습니다.`} ${relNote(cur)}${regTxt}`;
@@ -1541,8 +1581,9 @@ var uPlot=function(){"use strict";const l="u-off",e="u-label",t="width",n="heigh
       </div>
       <p class="lead">${verdictTxt}</p>
       <div>
-        <h3>${cur.state === "매수 고려" ? "오늘 사면 — 과거 이런 신호가 어떻게 됐나" : "매수 고려일에 샀다면 — 과거 결과 분포"}</h3>
-        ${outlook(res, false)}
+        <h3>${cur.state === "매수 고려" ? "지금 사면 며칠 뒤 얼마나 오를까 — 과거 기록" : "매수 고려일에 샀다면 — 과거 결과 분포"}</h3>
+        ${cur.state === "매수 고려" ? oddsSummary(res) : ""}
+        ${cur.state === "매수 고려" ? `<details class="more"><summary>전체 신호 기준 자세한 표 보기</summary>${outlook(res, false)}</details>` : outlook(res, false)}
       </div>
       <div>
         <h3>그날 종가에 샀다면 — 매수 고려 ${res.buys.length}회 (등급 ≥ ${threshold})</h3>
@@ -1598,15 +1639,37 @@ var uPlot=function(){"use strict";const l="u-off",e="u-label",t="width",n="heigh
   }
   // ── 요약표 도우미 ──────────────────────────────────────────────
   // 신뢰도: 지금 상태에 맞는 신호 묶음(예비면 예비 신호)이 120일 보유에서 아무 날보다 나았는지 (중앙값 기준)
-  function trustOf(res){
-    const H = res.hz.eval[2] || res.hz.eval[1];
-    const st = res.cur.tier === "pre" ? (res.ps||{})[H] : res.bs[H];
-    if (!st || !(st.n >= 20) || isNaN(st.pMed)) return { t: "사례 부족", c: "", p: NaN, edge: NaN };
-    const edge = st.med - st.baseMed;
-    if (edge <= 0)       return { t: "역효과",    c: "neg", p: st.pMed, edge };
-    if (st.pMed < 0.1)   return { t: "믿을 만함", c: "pos", p: st.pMed, edge };
-    if (st.pMed < 0.3)   return { t: "약함",      c: "",    p: st.pMed, edge };
-    return                      { t: "구분 안 됨", c: "hint", p: st.pMed, edge };
+  // 신뢰도 = 그룹 검증 결과(기본) + 종목 자체 기록(경고·승격용)
+  //   종목 하나의 성적은 기간을 반으로 나누면 뒤집히기 일쑤라(앞 절반 판정이 뒤 절반을 맞힌 게 31종목 중 17개) 기본값으로 쓰지 않는다.
+  function anaL(data, label){ const r = Wells.analyze(data, THR, horizon, isIndex(label)); r.__label = label; r.__name = (data.meta || {}).name || ""; return r; }
+  const LEV_US = /^(TQQQ|SQQQ|QLD|SSO|UPRO|SPXL|SOXL|TECL|TNA|FAS|FNGU|LABU|NVDL|TSLL|UDOW|URTY|ROM|USD)$/;
+  function groupOf(res, label){
+    const name = res.__name || "";
+    if (res.cur.indexMode) return "IDX";
+    if (/:KRX$/.test(label)) return "KR";
+    if (LEV_US.test(label) || /(2x|3x|ultra|leveraged|bull\b)/i.test(name)) return "LEV";
+    return "US";
+  }
+  function trustOf(res, label){
+    label = label || res.__label || "";
+    const ts = res.cur.tstat || {}, g = groupOf(res, label);
+    const own = isNaN(ts.edge) ? "" : `이 종목: 시기 보정 ${(ts.edge >= 0 ? "+" : "") + (ts.edge * 100).toFixed(1)}%p · 하락 ${ts.k}회 · 앞/뒤 ${(ts.e1 * 100).toFixed(1)} / ${(ts.e2 * 100).toFixed(1)} · p=${ts.p.toFixed(2)}`;
+    const base = { own, edge: ts.edge, p: ts.p };
+    // ② 역효과: 앞뒤 절반 모두 마이너스 (하락 6회 이상)
+    if (ts.k >= 6 && ts.e1 < 0 && ts.e2 < 0) return { ...base, t: "역효과", c: "neg", why: "이 종목에서 앞뒤 기간 모두 아무 때보다 나빴음" };
+    // ① 그룹 기본값
+    let t, c, why;
+    if (g === "IDX") {
+      const lab = label.replace(/:.*/, "");
+      if (res.cur.tier === "pre") { [t, c] = lab === "QQQ" ? ["믿을 만함", "pos"] : ["구분 안 됨", "hint"]; why = lab === "QQQ" ? "지수 예비 −7% 규칙 (QQQ만 20년 검증 통과)" : "지수 예비 −7% 규칙 (이 지수는 검증 미통과)"; }
+      else if (lab === "SOXX") { t = "약함"; c = ""; why = "지수 −10% 규칙 (SOXX는 p=0.13)"; }
+      else { t = "믿을 만함"; c = "pos"; why = "지수 −10% 규칙 (20년 앞뒤 절반 모두 통과)"; }
+    } else if (g === "US")  { t = "약함"; c = ""; why = "미국 주식·ETF 평균 (+1%p, 16종목 중 15개 플러스)"; }
+    else if (g === "LEV")   { t = "미확정"; c = "hint"; why = "레버리지 (8종목 중 5개 플러스 — 확증 안 됨)"; }
+    else                    { t = "우위 없음"; c = "hint"; why = "국내 (12종목 중 5개 플러스)"; }
+    // 종목 자체 기록이 앞뒤 모두 플러스이고 p<0.1 이면 한 단계 올림
+    if (t !== "믿을 만함" && ts.k >= 6 && ts.e1 > 0 && ts.e2 > 0 && ts.p < 0.1) { t = "믿을 만함"; c = "pos"; why += " + 이 종목 앞뒤 모두 우위"; }
+    return { ...base, t, c, why };
   }
   // 신호는 떴지만 이 종목에서 그 신호가 아무 날보다 나빴던 경우 → 관망으로 내림
   function backfire(res){ return res.cur.state === "매수 고려" && trustOf(res).t === "역효과"; }
@@ -1662,7 +1725,7 @@ var uPlot=function(){"use strict";const l="u-off",e="u-label",t="width",n="heigh
     rows.sort((a, b) => ((ordBy[stateOf(a[1].res)] ?? 3) - (ordBy[stateOf(b[1].res)] ?? 3))
       || (scoreOf(b[1].res) - scoreOf(a[1].res)) || (edgeOf(b[1].res) - edgeOf(a[1].res)));
     const nameOf = (label, m) => `${escapeHtml(m.name||"")}${/:KRX$/.test(label) ? ` <span class="neg">· 국내 우위 미확인</span>` : ""}`;
-    const trustTxt = (t) => `<span class="${t.c}"><b>${t.t}</b></span>${isNaN(t.edge) ? "" : `<div class="desc">아무 날보다 ${(t.edge >= 0 ? "+" : "") + (t.edge * 100).toFixed(1)}%p · p=${t.p.toFixed(2)}</div>`}`;
+    const trustTxt = (t) => `<span class="${t.c}"><b>${t.t}</b></span><div class="desc">${t.why}</div>${t.own ? `<div class="desc hint" style="font-size:11px">${t.own}</div>` : ""}`;
     const buyN = rows.filter(([,r]) => stateOf(r.res) === "매수 고려").length;
     ov.innerHTML = `<section class="tk"><h2>매수 판단 요약 · ${rows.length}종목 <span class="hint" style="font-weight:400">— 매수 고려 ${buyN} · 행을 누르면 상세로 갑니다</span></h2>
       <div class="tbl ovtable"><table class="ov"><thead><tr><th>종목</th><th>판단</th><th>판단 근거</th><th>지금 사면</th><th>신뢰도</th></tr></thead><tbody>
@@ -1687,7 +1750,7 @@ var uPlot=function(){"use strict";const l="u-off",e="u-label",t="width",n="heigh
         </div>`; }).join("")}</div>
       <p class="hint" style="margin:8px 0 0"><b>판단</b> = 매수 고려 / 관망. 신호가 떠도 그 종목에서 과거에 역효과였으면 "관망 · 신호 있으나 역효과"로 내립니다. 옆 <b>점수</b>(0~100)는 많이 빠졌고 그만큼 빠졌던 과거에 많이 오른 종목일수록 높습니다 — 깊이 50점(지금 52주 고점 대비 낙폭이 이 종목 전 기간 중 상위 몇 %인가) + 반등 50점(깊이가 비슷했던 과거 신호 8개의 120일 뒤 중앙 수익, +30% 이상 만점). 종목끼리 비교해 어디에 먼저 돈을 넣을지 정하는 용도입니다.
       <b>지금 사면</b> = 이 종목에서 같은 신호가 났던 과거 사례들을 하루씩 따라가, 10번 중 7번 이상 이익인 상태가 자리 잡은 첫 시점입니다. 그 사이 보통 얼마나 물렸는지도 같이 적었습니다 — 예측이 아니라 과거 기록입니다.
-      <b>신뢰도</b> = 그 신호가 120일 보유에서 아무 날에 산 것보다 나았는지(중앙값 기준)와 그 차이가 우연일 확률 p. 우위가 +1%p 안팎이라 종목 하나로는 대개 "약함"이나 "구분 안 됨"이 나오고, <b>역효과</b>만 확실한 경고입니다.
+      <b>신뢰도</b> = 여러 종목을 모아 검증한 <b>그룹 결과</b>가 기본입니다 — 지수 −10% 규칙(QQQ·SPY) 믿을 만함 · 미국 주식·ETF 약함(+1%p) · 레버리지 미확정 · 국내 우위 없음. 종목 하나의 기록은 기간을 반으로 나누면 뒤집히기 일쑤라(앞 절반 판정이 뒤 절반을 맞힌 게 31종목 중 17개) 경고·승격에만 씁니다: 앞뒤 절반 모두 마이너스면 <b>역효과</b>, 모두 플러스이고 p&lt;0.1이면 한 단계 올립니다. 종목 기록은 신호 이후 6개월 동안 아무 날에 산 것과 비교하고(시기 보정), 20일 안에 연달아 난 신호는 하락 1회로 셉니다.
       정렬은 매수 고려(점수 높은 순) → 역효과로 내린 관망 → 관망 순입니다.</p></section>`;
     ov.querySelectorAll("[data-label]").forEach(el => el.addEventListener("click", () => showPage("detail", el.dataset.label)));
   }
@@ -1707,6 +1770,44 @@ var uPlot=function(){"use strict";const l="u-off",e="u-label",t="width",n="heigh
     return `<span class="${cl}">신뢰도 보정으로 ${cur.sizeRaw}% → <b>${cur.size}%</b> (×${cur.rel.toFixed(2)}) — ${cur.relWhy}${cur.edge!==undefined?` (120일 아무 날 대비 ${(cur.edge*100>=0?"+":"")+(cur.edge*100).toFixed(1)}%p · p=${cur.edgeP.toFixed(2)} · 사례 ${cur.edgeN}회)`:""}.</span> `;
   }
 
+  // 지금처럼 빠졌던 과거 신호만 골라(52주 고점 대비 낙폭이 이 종목 역사에서 비슷한 순위) 기간별 결과를 낸다
+  function nowOdds(res){
+    const d = res.d, c = d.close, n = c.length, dd = d.dd_52w, now = n - 1;
+    const sig = res.cur.tier === "pre" ? (res.pres || []) : res.buys;
+    const hist = dd.filter(x => x === x).sort((a, b) => a - b);
+    const pct = v => { let k = 0; while (k < hist.length && hist[k] < v) k++; return 1 - k / hist.length; };
+    const pNow = pct(dd[now]), K = 12;
+    const q = (a, f) => { const b = [...a].sort((x, y) => x - y); if (!b.length) return NaN; const i = (b.length - 1) * f, lo = Math.floor(i); return b[lo] + (b[Math.min(b.length - 1, lo + 1)] - b[lo]) * (i - lo); };
+    return res.hz.eval.map(H => {
+      let cand = sig.filter(i => i + H < n && dd[i] === dd[i]);
+      const all = cand.length;
+      if (cand.length > K) cand = cand.map(i => [i, Math.abs(pct(dd[i]) - pNow)]).sort((a, b) => a[1] - b[1]).slice(0, K).map(x => x[0]);
+      const r = cand.map(i => c[i + H] / c[i] - 1);
+      const dip = cand.map(i => { let lo = Infinity; for (let j = i; j <= i + H; j++) if (c[j] < lo) lo = c[j]; return lo / c[i] - 1; });
+      return { H, n: r.length, all, hit: r.filter(x => x > 0).length / (r.length || 1), med: q(r, .5), q25: q(r, .25), q75: q(r, .75), dip: q(dip, .5), worst: Math.min(...dip) };
+    });
+  }
+  function oddsSummary(res){
+    const O = nowOdds(res).filter(o => o.n >= 5);
+    if (!O.length) return "";
+    const dd = res.d.dd_52w[res.d.close.length - 1];
+    const sim = O[0].all > O[0].n;
+    const ten = h => Math.round(h * 10);
+    const first = O.find(o => o.hit >= 0.7);
+    const early = O[0];
+    const main = O.find(o => o.H === 120) || O[O.length - 1];
+    const head = `<b>지금 가격에 사면</b> — ${sim ? `지금처럼 52주 고점 대비 ${fmtPct(dd)} 안팎으로 빠졌던 과거 신호 ${O[0].n}번 기준` : `과거 같은 신호 ${O[0].n}번 기준`}:<br>
+      ${early.hit < 0.6 ? `${early.H}일 안에는 오를지 내릴지 <b>반반</b>(10번 중 ${ten(early.hit)}번 오름). ` : ""}${first ? `<b>${first.H}일 뒤부터 10번 중 ${ten(first.hit)}번 오름</b>, 보통 <b class="${cls(first.med)}">${fmtPct(first.med)}</b>. ` : `200일 안에 10번 중 7번 오르는 시점이 없었습니다. `}${main && main !== first ? `${main.H}일 뒤엔 10번 중 ${ten(main.hit)}번, 보통 <b class="${cls(main.med)}">${fmtPct(main.med)}</b>. ` : ""}<br>
+      그 사이 보통 <b class="neg">${fmtPct(main.dip)}</b>까지 물렸고, 최악은 <span class="neg">${fmtPct(main.worst)}</span>였습니다.`;
+    const card = o => `<div class="oc"><div class="h">${o.H}일 뒤</div>
+      <div class="p">${Math.round(o.hit * 100)}%<small>오를 확률</small></div>
+      <div class="obar"><i style="width:${Math.round(o.hit * 100)}%"></i></div>
+      <div class="m">보통 <b class="${cls(o.med)}">${fmtPct(o.med)}</b></div>
+      <div class="r">절반은 ${fmtPct(o.q25)} ~ ${fmtPct(o.q75)}</div>
+      <div class="r">도중 보통 ${fmtPct(o.dip)} 물림</div></div>`;
+    return `<div class="odds-head">${head}</div><div class="odds">${O.map(card).join("")}</div>
+      <p class="hint" style="margin:0 0 4px">예측이 아니라 과거 기록입니다. ${sim ? `이 종목의 과거 신호 중 낙폭 순위가 지금과 가장 비슷했던 ${O[0].n}번만 골랐습니다(전체 ${O[0].all}번). ` : ""}"절반은"은 가운데 50% 사례의 범위입니다.</p>`;
+  }
   function outlook(res, sell){
     const HS = res.hz.eval, S = HS.map(H => (sell ? res.ss : res.bs)[H]);
     const idx = sell ? res.sells : res.buys;
@@ -1920,7 +2021,7 @@ var uPlot=function(){"use strict";const l="u-off",e="u-label",t="width",n="heigh
     for (const [label, s] of Object.entries(WELLS_SAMPLE.data)){
       const data = {...s, label, meta:{name: s.name}};
       const sec = document.createElement("section"); sec.className="tk"; sec.id="tk-"+label; stack.appendChild(sec);
-      const res = Wells.analyze(data, THR, horizon, isIndex(label)); results.set(label, {data, res, sec}); render(sec, label, data, res);
+      const res = anaL(data, label); results.set(label, {data, res, sec}); render(sec, label, data, res);
     }
     renderOverview();
   }
