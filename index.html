@@ -294,6 +294,7 @@ p.lead{margin:0;font-size:14px;line-height:1.55;border-left:3px solid var(--acce
   <div class="foot">
     <div class="caveat"><b>상태는 셋뿐입니다 — 매수 고려 / 매도 고려 / 관망.</b> 매수 고려 = 마지막 신호가 매수이고 10일 안이거나 점수가 아직 문턱 위. 매도 고려 = 마지막 신호가 매도이고 10일 안. <b>비중</b> = 계획한 물량 중 지금 넣을(덜어낼) 비율로, 등급 50% + 움직인 폭(조건의 몇 배) 25% + 신선도(신호 뒤 며칠) 25% 로 계산하고, 신호가에서 조건의 절반 이상 멀어졌으면 절반으로 줄입니다. 예: 등급 80·폭 2배·신호 당일 → 90%. 신호 10일 뒤 → 등급·폭만 남아 60% 안팎. <b>표 아래 p값을 먼저 보세요.</b> 매수·매도 고려 시점은 같은 규칙의 거울상입니다 — 20일 고/저점에서 max(4%, 3×ATR₆₀) 이상 움직인 뒤 종가가 직전 3일을 넘으면(매수) / 밑돌면(매도). 시야는 1~3개월. 5년 검증에서 <b>매도 고려는 종목 성격을 탑니다</b>: TSLA(60일 p=0.05)에서는 팔아서 피한 하락이 있었지만, SOXX·NVDA처럼 추세가 강한 종목은 첫 꺾임에 팔면 아무 날보다 나빴습니다(p≈0.8~0.9). 매수 쪽: 매수 시점은 <b>저점반전</b> 한 종류입니다 — 20일 고점에서 max(4%, 3×ATR₆₀) 이상 빠진 뒤 첫 반등 확인일(종가가 직전 3일 종가를 넘고, 아직 낙폭 아래 절반이거나 저점 뒤 3일 안). 예전에는 <b>다지기</b>(저점매수 점수가 60 위로 올라선 날)도 매수로 썼지만 <b>뺐습니다</b> — 14종목 검증에서 절반이 아무 날보다 나빴고 국내에서 특히 나빴습니다(120일 중앙값: 현대차 −7.2% vs 아무 날 +3.1% · SK하이닉스 −2.7% vs +18.3% · 삼성전자 −1.4% vs +6.6% · TSLA −1.1% vs +10.9%). <b>39종목(미국 20년·국내 5년)으로 검증한 결과</b>, 개별 종목만 보면 대부분 "구분 안 됨"이지만 방향을 모아 보면 다릅니다 — 효과가 없다면 "아무 날보다 나은" 종목이 절반이어야 하는데, <b>미국 주식·ETF 는 16개 중 15개</b>가 나았습니다(중앙 +1.2%p · 부호검정 p=0.0003). 파라미터 조정에 한 번도 쓰지 않은 미국 대형주 8종만 따로 봐도 7/8 이 플러스였습니다(p=0.035 · JNJ +3.0%p · JPM +2.4%p · MSFT 만 −6.1%p). <b>국내는 반대입니다</b> — 12개 중 5개만 플러스, 중앙 −2.1%p 로 오히려 나빴습니다(삼성전자 +1.2% vs 아무 날 +6.6%). <b>레버리지는 확증되지 않았습니다</b> — 새로 검증한 8종(SOXL·UPRO·SPXL·TECL·QLD·SSO·TNA·FAS)은 5/8, p=0.36 이었습니다. TQQQ(+7.1%p)가 좋았던 것은 상당 부분 운으로 보입니다. 정리하면 <b>미국 주식·ETF 에서 120일 보유 기준 아무 날보다 대략 +1%p</b> 정도의 작은 우위이고, 국내에서는 우위가 없습니다. +1%p 는 거래비용·세금을 생각하면 얇은 마진이라, 타이밍을 맞춘다는 뜻이 아니라 "아무 날보다 조금 낫다" 정도로 읽어야 합니다. 이 점수는 "떨어지던 속도가 죽어가는 자리"를 찾는 눈금이지 바닥 예언이 아닙니다. 5년 검증에서 실제 눌림은 잘 잡았지만(QQQ 4/9 · SOXX 6/9 · TSLA 13/14) 대개 바닥보다 2~8주 먼저 켜지고, 켜진 구간에 나눠 산 평단이 아무 구간보다 나았던 건 TSLA(p≈0.1~0.4) 뿐이었습니다. QQQ·SOXX 같은 지수는 얕은 V자로 빠르게 되돌아와 구분이 안 됐습니다(p≈0.7~0.9). 종목마다 아래 채점표 ①②를 직접 보세요.</div>
     <div><b>등급 = max(다지기형, V자형) × 추세 보정.</b> 추세 보정은 상승추세(종가가 200일선 위 + 200일선이 20일 전보다 높음)면 <b>×1.25</b>, 아니면 <b>×0.70</b> 입니다(100 상한). 7종목 5년 검증에서 같은 신호라도 상승추세에서 난 것이 일관되게 나았습니다 — 60일 뒤 수익 기준 SOXX p 0.54→0.04 · SK하이닉스 0.96→0.10 · TIGER 0.02→0.00 · 삼성전자 −0.8%→+3.0%. 하락추세 눌림은 떨어지는 칼날이라 감점하지만, <b>TSLA 처럼 추세가 자주 뒤집히는 종목에서는 오히려 손해</b>였으므로(p 0.20→0.36) 신호를 지우지 않고 등급만 깎아 남겨 둡니다. 1.25/0.70 이라는 값 자체는 그 7종목의 결과를 보고 고른 것이라 다른 종목에서 재확인이 필요합니다. 종목별 신뢰도(p)를 먼저 보세요. 등급(저점매수 점수) = max(다지기형, V자형). 다지기형 — 눌림 20 · 감속 30 (20일선 기울기가 60일 최저에서 얼마나 올라왔고 0에 얼마나 가까운가) · 저점 유지 15 (60일 저점을 새로 안 쓴 지 며칠) · 저점 근접 15 · 과매도 해소 10 · 거래량 고갈 10. 눌림 자격(52주 고점에서 안 빠졌으면 0)과 가속 자격(20일선 기울기가 오늘 60일 최저를 갱신 중이면 ×0.3)을 곱합니다. V자형 — 눌림 20 · 과매도 깊이 40 (최근 5일 RSI 최저가 40 아래로) · 반전 확인 25 (종가 > 어제, > 3일 고가) · 투매 거래량 15, 눌림 자격만 곱합니다(가속 자격 없음 — V자 바닥은 늘 가속 하락의 끝에 있습니다). 기울기·깊이는 모두 ATR로 나눠 지수와 개별주에 같은 눈금을 씁니다. 회차는 문턱 위가 10일 이상 이어진 구간(7일 끊김 허용). 모든 계산은 그날까지의 자료만 씁니다.</div>
+    <div><b>지수 모드 (QQQ·SPY·SOXX 전용).</b> 이 세 종목은 개별주 규칙 대신 한 가지 규칙만 씁니다 — <b>52주 고점 대비 10% 이상 빠져 있으면 매수 고려</b>(재신호 금지 20일, 반등 확인 없음 — 지수는 V자로 돌아와 확인을 기다리면 바닥을 놓칩니다). 20년(2006~2026)을 반으로 갈라 전반으로 문턱을 고르고 후반으로 채점하는 검증(반대 방향도)에서 6가지 후보 중 유일하게 시기를 가리지 않고 살아남은 규칙입니다. 120일 보유, 아무 날 대비 중앙값: QQQ n=69 +6.3%p(p=0.00, 전반 +7.1/후반 +7.1) · SPY n=60 +4.0%p(0.00, +4.2/+3.9) · SOXX n=115 +2.2%p(0.13, +1.4/+2.0). 비중은 깊이에 따라 −10%에서 30%, −20% 이상에서 100%로 늘립니다(이 배분은 검증치가 아니라 설계입니다). 주의: 신호가 하락 도중에 켜지므로 물린 폭이 큽니다 — 120일 내 최저가 중앙 −4~−9%, 최악 −45~−58%(2008년). 다른 지수 ETF(DIA·IWM·VTI 등)는 검증하지 않아 지수 모드를 적용하지 않습니다.</div>
     <div>채점 ① 의 '실제 눌림'만 앞뒤를 본 사후 판정입니다: 꼭지에서 max(10%, 5×ATR) 이상 떨어졌다가 바닥에서 같은 만큼 되올라온 자리, 몸통은 낙폭의 아래 절반.</div>
     <div>시세: 미국은 Twelve Data 일봉(분할 조정), 국내는 공공데이터포털 금융위원회 주식시세·증권상품시세(원화, 무수정 종가 — 하루 뒤 13시 이후 갱신이라 전일까지만 나옵니다). 지표: Wilder RSI/ATR/ADX, Appel MACD, Bollinger(ddof=0), Keltner EMA20±1.5ATR, TTM Squeeze, Minervini VCP, Weinstein 국면.</div>
   </div>
@@ -951,8 +952,30 @@ var uPlot=function(){"use strict";const l="u-off",e="u-label",t="width",n="heigh
     return { obs, rnd: tot / nIter, p: ge / nIter };
   }
 
-  function analyze(ohlcv, threshold = 60, horizon = "단기") {
-    const d = detectAll(swingLow(buyzone(score(enrich(ohlcv)))));
+  // ── 지수 모드 (signals.py detect_index 와 동일) ──
+  //    52주 고점 대비 10% 이상 빠져 있으면 매수 고려, 재신호 금지 20일. 반등 확인 없음.
+  //    20년 walk-forward: QQQ +6.3%p(p=0.00) · SPY +4.0%p(0.00) · SOXX +2.2%p(0.13), 시기별로도 안정.
+  const IDX_DD = 0.10, IDX_COOL = 20;
+  function detectIndex(d) {
+    const c = d.close, n = c.length;
+    const hi = new Array(n).fill(NaN_);
+    // pandas rolling(252, min_periods=60).max()
+    for (let i = 0; i < n; i++) {
+      if (i + 1 < 60) continue;
+      let m = -Infinity;
+      for (let j = Math.max(0, i - 251); j <= i; j++) if (c[j] > m) m = c[j];
+      hi[i] = m;
+    }
+    d.idx_dd = c.map((x, i) => (isN(hi[i]) ? NaN_ : x / hi[i] - 1));
+    const sig = new Array(n).fill(false);
+    let last = -1e9;
+    for (let i = 0; i < n; i++) if (!isN(d.idx_dd[i]) && d.idx_dd[i] <= -IDX_DD && i - last > IDX_COOL) { sig[i] = true; last = i; }
+    d.idx_buy = sig;
+    return d;
+  }
+
+  function analyze(ohlcv, threshold = 60, horizon = "단기", indexMode = false) {
+    const d = detectIndex(detectAll(swingLow(buyzone(score(enrich(ohlcv))))));
     const n = d.close.length, p = HZ[horizon], h = p.key;
     const mask = d.bz.map((s) => !isN(s) && s >= threshold);
     const eps = mergeEpisodes(episodes(mask), 7, 10);
@@ -963,8 +986,13 @@ var uPlot=function(){"use strict";const l="u-off",e="u-label",t="width",n="heigh
     // 14종목 검증에서 절반이 아무 날보다 나빴다 — 120일 중앙값으로 현대차 -7.2%(아무 날 +3.1%) ·
     // SK하이닉스 -2.7%(+18.3%) · 삼성전자 -1.4%(+6.6%) · TSLA -1.1%(+10.9%). 그래서 뺐다.
     const buys = [], sells = [], kind = {};
-    for (let i = 0; i < n; i++)
-      if (d[h + "_buy"][i] && !isN(d.bz[i]) && d.bz[i] >= threshold) { buys.push(i); kind[i] = "저점반전"; }
+    if (indexMode) {
+      // 지수 모드: 52주 고점 -10% 규칙. 등급 문턱을 안 거친다 — 규칙 자체를 20년 walk-forward 로 검증했다
+      for (let i = 0; i < n; i++) if (d.idx_buy[i]) { buys.push(i); kind[i] = "지수 -10%"; }
+    } else {
+      for (let i = 0; i < n; i++)
+        if (d[h + "_buy"][i] && !isN(d.bz[i]) && d.bz[i] >= threshold) { buys.push(i); kind[i] = "저점반전"; }
+    }
     for (let i = 0; i < n; i++) if (d[h + "_sell"][i] && !isN(d[h + "_sell_grade"][i]) && d[h + "_sell_grade"][i] >= threshold) { sells.push(i); kind[i] = "고점꺾임"; }
     d.sig_kind = kind;
     const fw = {}; for (const H of p.eval) fw[H] = forward(d.close, H);
@@ -1025,7 +1053,12 @@ var uPlot=function(){"use strict";const l="u-off",e="u-label",t="width",n="heigh
     //                          신호가보다 조건의 절반 이상 멀어졌으면 ×0.5
     const sinceB = lastBuy >= 0 ? last - lastBuy : 1e9, sinceS = lastSell >= 0 ? last - lastSell : 1e9;
     let state = "관망", size = 0;
-    if (lastBuy >= 0 && lastBuy > lastSell && (sinceB <= 10 || mask[last])) {
+    if (indexMode) {
+      // 깊이가 깊을수록 비중을 늘린다: -10% → 30, -20% 이상 → 100. 이 배분 자체는 검증치가 아니라 설계다.
+      const ddNow = d.idx_dd[last];
+      if (!isN(ddNow) && ddNow <= -IDX_DD) { state = "매수 고려"; size = 30 + 70 * clip01((-ddNow - IDX_DD) / IDX_DD); }
+      cur.idxDD = ddNow; cur.indexMode = true;
+    } else if (lastBuy >= 0 && lastBuy > lastSell && (sinceB <= 10 || mask[last])) {
       state = "매수 고려";
       const drift = d.close[last] / d.close[lastBuy] - 1;
       size = (50 * clip01(d.bz[last] / 100) + 25 * ramp(-d[h + "_dip"][last] / d[h + "_need"][last], 1, 2.5) + 25 * ramp(sinceB, 10, 0)) * (drift > d[h + "_need"][last] / 2 ? 0.5 : 1);
@@ -1066,7 +1099,7 @@ var uPlot=function(){"use strict";const l="u-off",e="u-label",t="width",n="heigh
 
   return { wilder, ewm, rsi, macd, atr, adx, bollinger, keltner, squeeze, pctRank, drawdown, swings,
            enrich, regime, vcpFrame, score, explain, episodes, mergeEpisodes, forward, pValue, analyze,
-           buyzone, explainBZ, swingLow, detect, detectAll, HZ, zigzag, troughs, gradeTroughs, tranche, trancheStats,
+           buyzone, explainBZ, swingLow, detect, detectAll, detectIndex, HZ, zigzag, troughs, gradeTroughs, tranche, trancheStats,
            REGIME_DESC, REGIME_MULT, PARAMS: P };
 });
 </script>
@@ -1296,6 +1329,9 @@ var uPlot=function(){"use strict";const l="u-off",e="u-label",t="width",n="heigh
   // 서로 겹치지 않게 골랐다. SPY 와 사실상 같은 VOO·IVV, 레버리지 상품은 뺐다
   const ETF10 = ["SPY","QQQ","IWM","DIA","VTI","SOXX","XLK","XLF","XLE","GLD"];
   const MAIN30 = [...CAP20, ...ETF10];
+  // 지수 모드 — 52주 고점 -10% 규칙이 20년 walk-forward 로 검증된 종목만 (다른 지수 ETF 는 미검증)
+  const INDEX_MODE = /^(QQQ|SPY|SOXX)$/;
+  const isIndex = (label) => INDEX_MODE.test(String(label).split(":")[0]);
   const LEVERAGED = /^(TQQQ|SQQQ|SOXL|SOXS|UPRO|SPXL|SPXS|TECL|TECS|QLD|SSO|UDOW|SDOW|TNA|TZA|LABU|LABD|NUGT|DUST|YINN|YANG|FNGU|BULZ)$/;
 
   // ── 하루 한도 (Twelve Data 무료: 800회/일 · 8회/분). 이 브라우저에서 보낸 횟수를 세어 보여 준다
@@ -1360,7 +1396,7 @@ var uPlot=function(){"use strict";const l="u-off",e="u-label",t="width",n="heigh
         if (stale()) { it.sec.remove(); return; }
         if (!wasCached) fetched++;
         if (data.close.length < 260) throw new Error(`'${it.label}' 자료가 ${data.close.length}일뿐이라 판정할 수 없습니다(최소 260일).`);
-        const res = Wells.analyze(data, +thr.value, horizon);
+        const res = Wells.analyze(data, +thr.value, horizon, isIndex(it.label));
         results.set(it.label, { data, res, sec: it.sec });
         render(it.sec, it.label, data, res);
         renderOverview();
@@ -1390,7 +1426,7 @@ var uPlot=function(){"use strict";const l="u-off",e="u-label",t="width",n="heigh
     }
   }
   function rerenderAll(){
-    for (const [label, r] of results){ r.res = Wells.analyze(r.data, +thr.value, horizon); if (topPage !== "detail") render(r.sec, label, r.data, r.res); }
+    for (const [label, r] of results){ r.res = Wells.analyze(r.data, +thr.value, horizon, isIndex(label)); if (topPage !== "detail") render(r.sec, label, r.data, r.res); }
     renderOverview();
     if (topPage === "detail") showDetail(detailIdx);
   }
@@ -1410,7 +1446,7 @@ var uPlot=function(){"use strict";const l="u-off",e="u-label",t="width",n="heigh
     const now = d.close[i];
     if (cur.state === "매수 고려"){
       pill = `<span class="pill well"><i></i>매수 고려 · ${cur.showSize ? "비중 "+cur.size+"%"+(cur.dimSize?" ("+cur.trustTag+")":"") : "비중 — "+cur.trustTag}</span>`;
-      verdictTxt = `${cur.buyToday ? "오늘" : data.dates[cur.lastBuy] + " (" + sinceB + "일 전)"} ${d.sig_kind[cur.lastBuy]} 신호 · 등급 ${fmtN(d.bz[cur.lastBuy],0)} · 20일 고점 대비 ${fmtPct(d[res.hz.key+"_dip"][cur.lastBuy])}. ${cur.buyToday ? "" : `지금 가격은 신호가 ${fmtN(bPx,2)} 대비 ${fmtPct(now/bPx-1)}. `}${cur.showSize ? `계획한 매수 물량의 <b>${cur.size}%</b>를 지금 넣는 것을 고려.` : `<b>얼마를 넣으라고 말할 근거가 없습니다</b> — ${cur.relWhy}. 신호는 떴지만 이 종목에서는 그 신호가 통한 기록이 없으니, 비중은 다른 근거로 정하세요.`} ${relNote(cur)}${regTxt}`;
+      verdictTxt = `${cur.buyToday ? "오늘" : data.dates[cur.lastBuy] + " (" + sinceB + "일 전)"} ${d.sig_kind[cur.lastBuy]} 신호 · 등급 ${fmtN(d.bz[cur.lastBuy],0)} · 20일 고점 대비 ${fmtPct(d[res.hz.key+"_dip"][cur.lastBuy])}. ${cur.buyToday ? "" : `지금 가격은 신호가 ${fmtN(bPx,2)} 대비 ${fmtPct(now/bPx-1)}. `}${cur.indexMode ? `지금 52주 고점 대비 <b>${fmtPct(cur.idxDD)}</b> — −10% 규칙 구간입니다. 깊이에 따라 계획 물량의 <b>${cur.size}%</b>(−10%에서 30%, −20% 이상이면 100%)를 넣는 것을 고려. 이 신호는 떨어지는 도중에 켜지므로 더 빠질 수 있습니다 — 과거 물린 폭은 아래 표를 보세요. ` : cur.showSize ? `계획한 매수 물량의 <b>${cur.size}%</b>를 지금 넣는 것을 고려.` : `<b>얼마를 넣으라고 말할 근거가 없습니다</b> — ${cur.relWhy}. 신호는 떴지만 이 종목에서는 그 신호가 통한 기록이 없으니, 비중은 다른 근거로 정하세요.`} ${relNote(cur)}${regTxt}`;
     } else if (cur.state === "매도 고려"){
       pill = `<span class="pill bad"><i></i>매도 고려 · ${cur.showSize ? "비중 "+cur.size+"%"+(cur.dimSize?" ("+cur.trustTag+")":"") : "비중 — "+cur.trustTag}</span>`;
       verdictTxt = `${cur.sellToday ? "오늘" : data.dates[cur.lastSell] + " (" + sinceS + "일 전)"} 고점 꺾임 신호 · 매도 등급 ${fmtN(d[res.hz.key+"_sell_grade"][cur.lastSell],0)} · 20일 저점 대비 ${fmtPct(d[res.hz.key+"_rise"][cur.lastSell])}. ${cur.sellToday ? "" : `지금 가격은 신호가 ${fmtN(sPx,2)} 대비 ${fmtPct(now/sPx-1)}. `}${cur.showSize ? `보유 물량의 <b>${cur.size}%</b>를 지금 덜어내는 것을 고려.` : `<b>얼마를 덜어내라고 말할 근거가 없습니다</b> — ${cur.relWhy}. 39종목 검증에서 매도 신호는 대부분의 종목에서 쓸모가 없었습니다.`} ${relNote(cur)}${regTxt}`;
@@ -1422,6 +1458,7 @@ var uPlot=function(){"use strict";const l="u-off",e="u-label",t="width",n="heigh
     if (LEVERAGED.test(label)) extra.push(`<span class="pill warn" title="일일 리밸런싱 감쇠로 지표가 기초지수보다 일그러집니다"><i></i>레버리지 — 시점은 기초지수로 보세요</span>`);
     if (cur.accel && cur.path !== "V자") extra.push(`<span class="pill bad"><i></i>가속 하락 중</span>`);
     // 39종목 검증에서 국내는 우위가 없었다 — 종목별 p 와 별개로 항상 알린다
+    if (cur.indexMode) extra.push(`<span class="pill well" title="52주 고점 대비 10% 이상 빠져 있으면 매수 고려 · 재신호 금지 20일. 20년 walk-forward 검증: QQQ +6.3%p(p=0.00) · SPY +4.0%p(0.00) · SOXX +2.2%p(0.13)"><i></i>지수 모드 — 52주 고점 −10% 규칙</span>`);
     if (/:KRX$/.test(label)) extra.push(`<span class="pill warn" title="39종목 검증: 국내 12개 중 5개만 아무 날보다 나았고 중앙 -2.1%p 였습니다"><i></i>국내 — 이 도구의 우위가 확인되지 않은 시장</span>`);
 
 
@@ -1796,7 +1833,7 @@ var uPlot=function(){"use strict";const l="u-off",e="u-label",t="width",n="heigh
     for (const [label, s] of Object.entries(WELLS_SAMPLE.data)){
       const data = {...s, label, meta:{name: s.name}};
       const sec = document.createElement("section"); sec.className="tk"; sec.id="tk-"+label; stack.appendChild(sec);
-      const res = Wells.analyze(data, +thr.value, horizon); results.set(label, {data, res, sec}); render(sec, label, data, res);
+      const res = Wells.analyze(data, +thr.value, horizon, isIndex(label)); results.set(label, {data, res, sec}); render(sec, label, data, res);
     }
     renderOverview();
   }
