@@ -251,7 +251,7 @@ p.lead{margin:0;font-size:14px;line-height:1.55;border-left:3px solid var(--acce
     <div class="row">
       <div class="field" style="flex:2 1 280px">
         <label for="tickers">종목 (쉼표로 여러 개 · 미국은 티커, 국내는 종목명이나 6자리 코드 · 예: QQQ, TSLA, 삼성전자, KODEX 200)</label>
-        <input type="text" id="tickers" placeholder="QQQ, 삼성전자" autocomplete="off" spellcheck="false">
+        <input type="text" id="tickers" placeholder="QQQ, SPY, SOXX, TIGER미국나스닥100레버리지, TIGER미국필라델피아반도체레버리지" autocomplete="off" spellcheck="false">
       </div>
       <div class="field" style="flex:1 1 180px">
         <label for="apikey">미국 · Twelve Data 키 <span id="keystate"></span></label>
@@ -1178,7 +1178,9 @@ var uPlot=function(){"use strict";const l="u-off",e="u-label",t="width",n="heigh
   const detail = $("#detail"); try { detail.checked = store.get("detail") === "1"; } catch(e){}
   detail.addEventListener("change", () => { store.set("detail", detail.checked ? "1" : "0"); document.body.classList.toggle("detail", detail.checked); rerenderAll(); });
   document.body.classList.toggle("detail", detail.checked);
-  const hashT = decodeURIComponent(location.hash.slice(1)); if (hashT) inp.value = hashT; else { const s = store.get("tickers"); if (s) inp.value = s; }
+  // 기본 종목: 주소에 종목(#...)이 없으면 늘 이 5개로 시작
+  const DEFAULT_TICKERS = "QQQ, SPY, SOXX, TIGER미국나스닥100레버리지, TIGER미국필라델피아반도체레버리지";
+  const hashT = decodeURIComponent(location.hash.slice(1)); inp.value = hashT || DEFAULT_TICKERS;
   $("#keystate").textContent = savedKey ? "(저장됨)" : "";
   $("#gkeystate").textContent = savedGKey ? "(저장됨)" : "";
 
