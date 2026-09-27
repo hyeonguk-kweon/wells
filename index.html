@@ -264,7 +264,7 @@ p.lead{margin:0;font-size:14px;line-height:1.55;border-left:3px solid var(--acce
         <div><b>① 매수 신호</b><span>개별 종목 — 20일 고점에서 충분히 빠진 뒤(평소 변동폭의 3배, 4~20%) 첫 반등한 날, 단 등급 40 이상. 지수(QQQ·SPY·SOXX) — 52주 고점 대비 −10% 이하.</span></div>
         <div><b>② 등급</b> <small>0~100 · 반등 신호의 질</small><span>눌림 깊이 · 과매도(RSI) · 반전 확인(종가가 전일·3일 고가 위) · 투매 거래량, 또는 하락 속도 둔화 · 저점 유지 · 거래량 고갈. 상승추세(200일선 위·상승 중)면 ×1.25, 아니면 ×0.70.</span></div>
         <div><b>③ 매수 점수</b> <small>0~100 · 종목 간 우선순위</small><span>깊이 50점(지금 낙폭이 그 종목 역사에서 얼마나 깊은 편인가) + 반등 50점(비슷하게 빠졌던 과거 신호의 120일 뒤 중앙 수익, +30%면 만점).</span></div>
-        <div><b>④ 신뢰도</b> <small>과거에 이 신호가 통했나</small><span>이 신호대로 샀을 때 아무 날에 산 것보다 나았는지를 별점으로: ★★★ 확실히 나음 · ★★☆ 조금 나음 · ★☆☆ 불확실 · ☆☆☆ 효과 없음 · ⚠ 역효과(오히려 손해 → 관망 처리). 여러 종목을 모아 검증한 결과가 기본입니다.</span></div>
+        <div><b>④ 신뢰도</b> <small>이 신호 믿어도 되나</small><span>과거 데이터로 따져 봤을 때 이 매수 신호를 믿어도 되나. 과거에 이 신호대로 샀을 때, 아무 때나 산 것보다 더 벌었으면 별이 많습니다: ★★★ 믿을 만함 · ★★☆ 조금 믿을 만함 · ★☆☆·☆☆☆ 믿기 어려움 · ⚠ 믿으면 안 됨(오히려 손해 → 관망)</span></div>
       </div>
       </details>
     </div>
@@ -1538,7 +1538,7 @@ var uPlot=function(){"use strict";const l="u-off",e="u-label",t="width",n="heigh
     const now = d.close[i];
     if (cur.state === "매수 고려"){
       pill = backfire(res) ? `<span class="pill no"><i></i>관망 · 신호 있으나 역효과</span>` : `<span class="pill well"><i></i>매수 고려 · ${cur.buy.score}점</span>`;
-      verdictTxt = `${cur.buyToday ? "오늘" : data.dates[cur.lastBuy] + " (" + sinceB + "일 전)"} ${d.sig_kind[cur.lastBuy]} 신호${cur.indexMode ? "" : ` · 20일 고점 대비 ${fmtPct(d[res.hz.key+"_dip"][cur.lastBuy])}`}. ${cur.buyToday ? "" : `지금 가격은 신호가 ${fmtN(bPx,2)} 대비 ${fmtPct(now/bPx-1)}. `}<b>매수 점수 ${cur.buy.score}점</b> = ${scoreWhy(cur.buy)}. ${(() => { const tt = trustOf(res); return `<b>신뢰도 ${starShort(tt)}</b> — ${tt.why}${tt.own ? ` (${tt.own})` : ""}. `; })()}${cur.indexMode ? "이 신호는 떨어지는 도중에 켜지므로 더 빠질 수 있습니다 — 과거 물린 폭은 아래 표를 보세요. " : ""}${regTxt}`;
+      verdictTxt = `${cur.buyToday ? "오늘" : data.dates[cur.lastBuy] + " (" + sinceB + "일 전)"} ${d.sig_kind[cur.lastBuy]} 신호${cur.indexMode ? "" : ` · 20일 고점 대비 ${fmtPct(d[res.hz.key+"_dip"][cur.lastBuy])}`}. ${cur.buyToday ? "" : `지금 가격은 신호가 ${fmtN(bPx,2)} 대비 ${fmtPct(now/bPx-1)}. `}<b>매수 점수 ${cur.buy.score}점</b> = ${scoreWhy(cur.buy)}. ${(() => { const tt = trustOf(res); return `<b>신뢰도 ${starShort(tt)}</b> ${plainOf(tt)}. `; })()}${cur.indexMode ? "이 신호는 떨어지는 도중에 켜지므로 더 빠질 수 있습니다 — 과거 물린 폭은 아래 표를 보세요. " : ""}${regTxt}`;
       if (backfire(res)){ const tb = trustOf(res);
         verdictTxt = `${cur.buyToday ? "오늘" : data.dates[cur.lastBuy] + " (" + sinceB + "일 전)"} ${d.sig_kind[cur.lastBuy]} 신호가 떴지만, <b>이 종목에서는 이 신호로 산 것이 120일 보유에서 기간 앞뒤 모두 비슷한 시기 아무 날보다 나빴습니다</b> (${tb.own}). 그래서 매수 고려가 아니라 <b>관망</b>으로 봅니다 — 사려면 이 도구가 아닌 다른 근거로 판단하세요.${regTxt}`; }
     } else if (cur.state === "매도 고려"){
@@ -1662,6 +1662,14 @@ var uPlot=function(){"use strict";const l="u-off",e="u-label",t="width",n="heigh
   // 신뢰도 별점 — 과거에 이 신호대로 샀을 때 아무 날에 산 것보다 나았는가
   const STAR = { "믿을 만함": ["★★★", "확실히 나음", "pos"], "약함": ["★★☆", "조금 나음", ""], "미확정": ["★☆☆", "불확실", "hint"], "구분 안 됨": ["★☆☆", "불확실", "hint"], "우위 없음": ["☆☆☆", "효과 없음", "hint"], "역효과": ["⚠", "역효과", "neg"], "사례 부족": ["–", "사례 부족", "hint"] };
   const starOf = (t) => STAR[t.t] || ["–", t.t, "hint"];
+  // 처음 보는 사람용 한 줄: "과거에 이 신호대로 샀을 때 믿을 만했나"
+  const PLAIN = { "믿을 만함": "믿을 만함 — 과거 이 신호로 샀을 때 아무 때나 산 것보다 확실히 더 벌었음",
+                  "약함": "조금 믿을 만함 — 과거 이 신호로 샀을 때 아무 때나 산 것보다 조금 더 벌었음",
+                  "미확정": "믿기 어려움 — 과거 결과가 들쭉날쭉함", "구분 안 됨": "믿기 어려움 — 과거 결과가 들쭉날쭉함",
+                  "우위 없음": "믿기 어려움 — 과거 이 신호로 사도 아무 때나 산 것과 차이 없었음",
+                  "역효과": "믿으면 안 됨 — 과거 이 신호로 사면 오히려 손해였음 (그래서 관망)",
+                  "사례 부족": "판단 불가 — 과거 사례가 너무 적음" };
+  const plainOf = (t) => PLAIN[t.t] || t.t;
   const starShort = (t) => { const [st, word] = starOf(t); return /[★☆]/.test(st) ? st : st + " " + word; };   // 별만 (⚠ 역효과·– 사례 부족은 글자 유지)
   function backfire(res){ return res.cur.state === "매수 고려" && trustOf(res).t === "역효과"; }
   function stateOf(res){ return backfire(res) ? "관망(역효과)" : res.cur.state; }
@@ -1716,7 +1724,7 @@ var uPlot=function(){"use strict";const l="u-off",e="u-label",t="width",n="heigh
     rows.sort((a, b) => ((ordBy[stateOf(a[1].res)] ?? 3) - (ordBy[stateOf(b[1].res)] ?? 3))
       || (scoreOf(b[1].res) - scoreOf(a[1].res)) || (edgeOf(b[1].res) - edgeOf(a[1].res)));
     const nameOf = (label, m) => `${escapeHtml(m.name||"")}${/:KRX$/.test(label) ? ` <span class="neg">· 국내 우위 미확인</span>` : ""}`;
-    const trustTxt = (t) => { const [st, word, c] = starOf(t); return `<span class="${c}" style="white-space:nowrap"><b style="letter-spacing:1px">${/[★☆]/.test(st) ? st : st + " " + word}</b></span><div class="desc">${t.why}</div>${t.own ? `<div class="desc hint" style="font-size:11px">${t.own}</div>` : ""}`; };
+    const trustTxt = (t) => { const [st, word, c] = starOf(t); return `<span class="${c}" style="white-space:nowrap"><b style="letter-spacing:1px">${/[★☆]/.test(st) ? st : st + " " + word}</b></span><div class="desc">${plainOf(t).replace(/^([^—]+)—/, "<b>$1</b>—")}</div>`; };
     const buyN = rows.filter(([,r]) => stateOf(r.res) === "매수 고려").length;
     ov.innerHTML = `<section class="tk"><h2>매수 판단 요약 · ${rows.length}종목 <span class="hint" style="font-weight:400">— 매수 고려 ${buyN} · 행을 누르면 상세로 갑니다</span></h2>
       <div class="tbl ovtable"><table class="ov"><thead><tr><th>종목</th><th>판단</th><th>판단 근거</th><th>지금 사면</th><th>신뢰도</th></tr></thead><tbody>
@@ -1741,7 +1749,7 @@ var uPlot=function(){"use strict";const l="u-off",e="u-label",t="width",n="heigh
         </div>`; }).join("")}</div>
       <p class="hint" style="margin:8px 0 0"><b>판단</b> = 매수 고려 / 관망. 신호가 떠도 그 종목에서 과거에 역효과였으면 "관망 · 신호 있으나 역효과"로 내립니다. 옆 <b>점수</b>(0~100)는 많이 빠졌고 그만큼 빠졌던 과거에 많이 오른 종목일수록 높습니다 — 깊이 50점(지금 52주 고점 대비 낙폭이 이 종목 전 기간 중 상위 몇 %인가) + 반등 50점(깊이가 비슷했던 과거 신호 8개의 120일 뒤 중앙 수익, +30% 이상 만점). 종목끼리 비교해 어디에 먼저 돈을 넣을지 정하는 용도입니다.
       <b>지금 사면</b> = 이 종목에서 같은 신호가 났던 과거 사례들을 하루씩 따라가, 10번 중 7번 이상 이익인 상태가 자리 잡은 첫 시점입니다. 그 사이 보통 얼마나 물렸는지도 같이 적었습니다 — 예측이 아니라 과거 기록입니다.
-      <b>신뢰도</b> = 과거에 이 신호대로 샀을 때 아무 날에 산 것보다 나았는가 — ★★★ 확실히 나음(지수 −10% 규칙, 20년 검증) · ★★☆ 조금 나음(미국 주식 평균 +1%p) · ★☆☆ 불확실(레버리지 등) · ☆☆☆ 효과 없음(국내) · ⚠ 역효과(이 종목에선 오히려 손해 → 관망). 종목 하나의 기록은 기간에 따라 뒤집히기 쉬워 여러 종목을 모은 결과를 기본으로 쓰고, 그 종목 기록은 역효과 경고(앞뒤 기간 모두 손해)와 한 단계 올림(앞뒤 모두 좋음)에만 씁니다.
+      <b>신뢰도</b> = 과거 데이터로 따져 봤을 때 이 매수 신호를 믿어도 되나 — 과거에 이 신호대로 샀을 때 아무 때나 산 것보다 더 벌었는지로 매깁니다. ★★★ 믿을 만함 · ★★☆ 조금 믿을 만함 · ★☆☆·☆☆☆ 믿기 어려움 · ⚠ 믿으면 안 됨(→ 관망). 국내 종목은 과거 검증에서 이 신호의 효과가 없어 대부분 ☆☆☆ 입니다.
       정렬은 매수 고려(점수 높은 순) → 역효과로 내린 관망 → 관망 순입니다.</p></section>`;
     ov.querySelectorAll("[data-label]").forEach(el => el.addEventListener("click", () => showPage("detail", el.dataset.label)));
   }
