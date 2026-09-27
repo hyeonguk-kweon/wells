@@ -1633,7 +1633,8 @@ var uPlot=function(){"use strict";const l="u-off",e="u-label",t="width",n="heigh
   function groupOf(res, label){
     const name = res.__name || "";
     if (res.cur.indexMode) return "IDX";
-    if (/:KRX$/.test(label)) return "KR";
+    // 국내 상장이라도 미국 지수·업종을 따라가는 ETF는 미국처럼 움직인다 (감시 종목 기록: 나스닥100 +6.0 · 나스닥레버 +6.7 · 필라델피아레버 +2.5%p, 국내 개별주는 ±1%p)
+    if (/:KRX$/.test(label)) return /(미국|나스닥|S&P|필라델피아|다우|NASDAQ)/i.test(label) ? (/레버리지/.test(label) ? "LEV" : "US") : "KR";
     if (LEV_US.test(label) || /(2x|3x|ultra|leveraged|bull\b)/i.test(name)) return "LEV";
     return "US";
   }
@@ -1724,7 +1725,7 @@ var uPlot=function(){"use strict";const l="u-off",e="u-label",t="width",n="heigh
     rows.sort((a, b) => ((ordBy[stateOf(a[1].res)] ?? 3) - (ordBy[stateOf(b[1].res)] ?? 3))
       || (scoreOf(b[1].res) - scoreOf(a[1].res)) || (edgeOf(b[1].res) - edgeOf(a[1].res)));
     const nameOf = (label, m) => `${escapeHtml(m.name||"")}`;
-    const trustTxt = (t) => { const [st, word, c] = starOf(t); return `<span class="${c}" style="white-space:nowrap"><b style="letter-spacing:1px">${/[★☆]/.test(st) ? st : st + " " + word}</b></span><div class="desc">${plainOf(t).replace(/^([^—]+)—/, "<b>$1</b>—")}</div>`; };
+    const trustTxt = (t) => { const [st, word, c] = starOf(t); return `<span class="${c}" style="white-space:nowrap"><b style="letter-spacing:1px">${st}</b></span><div class="desc">${plainOf(t).replace(/^([^—]+)—/, "<b>$1</b>—")}</div>`; };
     const buyN = rows.filter(([,r]) => stateOf(r.res) === "매수 고려").length;
     ov.innerHTML = `<section class="tk"><h2>매수 판단 요약 · ${rows.length}종목 <span class="hint" style="font-weight:400">— 매수 고려 ${buyN} · 행을 누르면 상세로 갑니다</span></h2>
       <div class="tbl ovtable"><table class="ov"><thead><tr><th>종목</th><th>판단</th><th>판단 근거</th><th>지금 사면</th><th>신뢰도</th></tr></thead><tbody>
@@ -1749,7 +1750,7 @@ var uPlot=function(){"use strict";const l="u-off",e="u-label",t="width",n="heigh
         </div>`; }).join("")}</div>
       <p class="hint" style="margin:8px 0 0"><b>판단</b> = 매수 고려 / 관망. 신호가 떠도 그 종목에서 과거에 역효과였으면 "관망 · 신호 있으나 역효과"로 내립니다. 옆 <b>점수</b>(0~100)는 많이 빠졌고 그만큼 빠졌던 과거에 많이 오른 종목일수록 높습니다 — 깊이 50점(지금 52주 고점 대비 낙폭이 이 종목 전 기간 중 상위 몇 %인가) + 반등 50점(깊이가 비슷했던 과거 신호 8개의 120일 뒤 중앙 수익, +30% 이상 만점). 종목끼리 비교해 어디에 먼저 돈을 넣을지 정하는 용도입니다.
       <b>지금 사면</b> = 이 종목에서 같은 신호가 났던 과거 사례들을 하루씩 따라가, 10번 중 7번 이상 이익인 상태가 자리 잡은 첫 시점입니다. 그 사이 보통 얼마나 물렸는지도 같이 적었습니다 — 예측이 아니라 과거 기록입니다.
-      <b>신뢰도</b> = 과거 데이터로 따져 봤을 때 이 매수 신호를 믿어도 되나 — 과거에 이 신호대로 샀을 때 아무 때나 산 것보다 더 벌었는지로 매깁니다. ★★★ 믿을 만함 · ★★☆ 조금 믿을 만함 · ★☆☆·☆☆☆ 믿기 어려움 · ⚠ 믿으면 안 됨(→ 관망). 국내 종목은 과거 검증에서 이 신호의 효과가 없어 대부분 ☆☆☆ 입니다.
+      <b>신뢰도</b> = 과거 데이터로 따져 봤을 때 이 매수 신호를 믿어도 되나 — 과거에 이 신호대로 샀을 때 아무 때나 산 것보다 더 벌었는지로 매깁니다. ★★★ 믿을 만함 · ★★☆ 조금 믿을 만함 · ★☆☆·☆☆☆ 믿기 어려움 · ⚠ 믿으면 안 됨(→ 관망). 국내 개별주는 과거 검증에서 이 신호의 효과가 없어 대부분 ☆☆☆ 입니다 (국내 상장이라도 미국 지수를 따라가는 ETF는 미국 종목 기준으로 봅니다).
       정렬은 매수 고려(점수 높은 순) → 역효과로 내린 관망 → 관망 순입니다.</p></section>`;
     ov.querySelectorAll("[data-label]").forEach(el => el.addEventListener("click", () => showPage("detail", el.dataset.label)));
   }
