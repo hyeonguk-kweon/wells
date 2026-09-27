@@ -1698,7 +1698,7 @@ var uPlot=function(){"use strict";const l="u-off",e="u-label",t="width",n="heigh
     if (res.cur.state !== "매수 고려") return { main: "—", sub: "지금은 매수 신호 없음" };
     if (!w || !w.n) return { main: "—", sub: "과거 사례 없음" };
     if (!w.day) return { main: "200일 넘게", sub: `200일 안에 10번 중 7번에 못 미침 (최고 ${Math.round(w.best * 100)}%)` };
-    return { main: `약 ${w.day}일 뒤부터`, sub: `10번 중 ${Math.round(w.frac * 10)}번 이익 · 보통 ${fmtPct(w.med)} · 그 사이 보통 ${fmtPct(w.dip)}까지 물림` };
+    return { main: `${w.day}일 뒤부터 상승`, sub: `10번 중 ${Math.round(w.frac * 10)}번 이익 · 보통 ${fmtPct(w.med)} · 그 사이 보통 ${fmtPct(w.dip)}까지 물림` };
   }
   function decisionOf(res){
     const cur = res.cur;
@@ -1723,7 +1723,7 @@ var uPlot=function(){"use strict";const l="u-off",e="u-label",t="width",n="heigh
     const edgeOf = (r) => { const t = trustOf(r); return isNaN(t.edge) ? -Infinity : t.edge; };
     rows.sort((a, b) => ((ordBy[stateOf(a[1].res)] ?? 3) - (ordBy[stateOf(b[1].res)] ?? 3))
       || (scoreOf(b[1].res) - scoreOf(a[1].res)) || (edgeOf(b[1].res) - edgeOf(a[1].res)));
-    const nameOf = (label, m) => `${escapeHtml(m.name||"")}${/:KRX$/.test(label) ? ` <span class="neg">· 국내 우위 미확인</span>` : ""}`;
+    const nameOf = (label, m) => `${escapeHtml(m.name||"")}`;
     const trustTxt = (t) => { const [st, word, c] = starOf(t); return `<span class="${c}" style="white-space:nowrap"><b style="letter-spacing:1px">${/[★☆]/.test(st) ? st : st + " " + word}</b></span><div class="desc">${plainOf(t).replace(/^([^—]+)—/, "<b>$1</b>—")}</div>`; };
     const buyN = rows.filter(([,r]) => stateOf(r.res) === "매수 고려").length;
     ov.innerHTML = `<section class="tk"><h2>매수 판단 요약 · ${rows.length}종목 <span class="hint" style="font-weight:400">— 매수 고려 ${buyN} · 행을 누르면 상세로 갑니다</span></h2>
