@@ -1,5 +1,5 @@
 {
- "updated": "2026-09-27 21:07",
+ "updated": "2026-09-29 09:33",
  "items": [
   {
    "label": "QQQ",
@@ -23,13 +23,13 @@
    "label": "TIGER미국나스닥100레버리지:KRX",
    "file": "TIGER미국나스닥100레버리지_KRX.json",
    "name": "TIGER미국나스닥100레버리지",
-   "last": "2026-09-23"
+   "last": "2026-09-28"
   },
   {
    "label": "TIGER미국필라델피아반도체레버리지:KRX",
    "file": "TIGER미국필라델피아반도체레버리지_KRX.json",
    "name": "TIGER미국필라델피아반도체레버리지",
-   "last": "2026-09-23"
+   "last": "2026-09-28"
   },
   {
    "label": "SOXL",
@@ -71,61 +71,61 @@
    "label": "KODEX미국반도체:KRX",
    "file": "KODEX미국반도체_KRX.json",
    "name": "KODEX미국반도체",
-   "last": "2026-09-23"
+   "last": "2026-09-28"
   },
   {
    "label": "KODEXAI전력핵심설비:KRX",
    "file": "KODEXAI전력핵심설비_KRX.json",
    "name": "KODEXAI전력핵심설비",
-   "last": "2026-09-23"
+   "last": "2026-09-28"
   },
   {
    "label": "RISE네트워크인프라:KRX",
    "file": "RISE네트워크인프라_KRX.json",
    "name": "RISE네트워크인프라",
-   "last": "2026-09-23"
+   "last": "2026-09-28"
   },
   {
    "label": "KODEX미국나스닥100:KRX",
    "file": "KODEX미국나스닥100_KRX.json",
    "name": "KODEX미국나스닥100",
-   "last": "2026-09-23"
+   "last": "2026-09-28"
   },
   {
    "label": "TIGERKRX금현물:KRX",
    "file": "TIGERKRX금현물_KRX.json",
    "name": "TIGERKRX금현물",
-   "last": "2026-09-23"
+   "last": "2026-09-28"
   },
   {
    "label": "LG씨엔에스:KRX",
    "file": "LG씨엔에스_KRX.json",
    "name": "LG씨엔에스",
-   "last": "2026-09-23"
+   "last": "2026-09-28"
   },
   {
    "label": "풍산:KRX",
    "file": "풍산_KRX.json",
    "name": "풍산",
-   "last": "2026-09-23"
+   "last": "2026-09-28"
   },
   {
    "label": "에코프로비엠:KRX",
    "file": "에코프로비엠_KRX.json",
    "name": "에코프로비엠",
-   "last": "2026-09-23"
+   "last": "2026-09-28"
   },
   {
    "label": "SK하이닉스:KRX",
    "file": "SK하이닉스_KRX.json",
    "name": "SK하이닉스",
-   "last": "2026-09-23"
+   "last": "2026-09-28"
   },
   {
    "label": "삼성전자:KRX",
    "file": "삼성전자_KRX.json",
    "name": "삼성전자",
-   "last": "2026-09-23"
+   "last": "2026-09-28"
   }
  ]
 }
