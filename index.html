@@ -1745,7 +1745,7 @@ var uPlot=function(){"use strict";const l="u-off",e="u-label",t="width",n="heigh
       <div class="pane" data-pane="ana" style="display:grid;gap:14px">
       <div class="chartbox">
         <div class="chart-tools">
-          <div class="legend"><span><b style="background:var(--price)"></b>종가</span><span><b style="background:var(--ma)"></b>200일선</span><span><b class="buy-legend"></b>매수 고려</span>${res.pres&&res.pres.length?`<span><b class="pre-legend"></b>예비 (−7%)</span>`:""}<span><b class="buyzone"></b>매수 고려 구간</span><span class="only-detail"><b style="background:var(--setup)"></b>저점매수 점수</span></div>
+          <div class="legend"><span><b style="background:var(--price)"></b>종가</span><span><b style="background:var(--ma)"></b>200일선</span>${zoneMap.has(label)?`<span><b class="buyzone"></b>매수 구간 (진할수록 단계↑)</span><span><b class="sellzone"></b>매도·방어 구간</span>`:`<span><b class="buy-legend"></b>매수 고려</span>${res.pres&&res.pres.length?`<span><b class="pre-legend"></b>예비 (−7%)</span>`:""}<span><b class="buyzone"></b>매수 고려 구간</span>`}<span class="only-detail"><b style="background:var(--setup)"></b>저점매수 점수</span></div>
           <div class="row" style="gap:2px" data-range>
             <button class="ghost" data-y="1">1년</button><button class="ghost" data-y="2">2년</button><button class="ghost" data-y="5" aria-pressed="true">5년</button><button class="ghost" data-y="0">전체</button>
           </div>
@@ -1785,6 +1785,7 @@ var uPlot=function(){"use strict";const l="u-off",e="u-label",t="width",n="heigh
         </tbody></table></div></details>` : `<div class="empty">결과를 알 수 있는 회차가 아직 없습니다.</div>`}
       </div>
       </div>`;
+    sec.dataset.lab = label;
     if (topPage === "detail") drawCharts(sec, data, res);
   }
   function reliability(res){
@@ -2090,7 +2091,18 @@ var uPlot=function(){"use strict";const l="u-off",e="u-label",t="width",n="heigh
     // 신호 구간 = 그 신호를 '고려'하던 창. 신호일부터 10거래일이고, 다음 신호가 나오면 거기서 끊는다.
     // (판정의 '점수가 문턱 위면 계속' 규칙까지 칠하면 음영이 몇 달씩 이어져 그래프를 읽을 수 없다)
     const SPAN = 10;                       // 신호가 '고려' 상태로 살아 있는 날 수
-    const spans = (() => {
+    // 구간 신호 종목이면 최근 요청한 '매수/매도 구간' 그래프와 동일하게: 일별 구간 상태를 칠하고 기존 ▲▼는 숨긴다
+    const ZI = zoneMap.get(sec.dataset.lab);
+    const zst = ZI ? (() => {
+      const bm = new Map(); ZI.dates.forEach((dt, k) => bm.set(dt, ZI.z.state[k]));
+      const a = new Array(n).fill(0); let last = 0, started = false;
+      for (let k = 0; k < n; k++){ const v = bm.get(data.dates[k]); if (v !== undefined){ last = v; started = true; } a[k] = started ? last : 0; }
+      return a; })() : null;
+    const spans = zst ? (() => {
+      const out = []; let k = 0;
+      while (k < n){ const s0 = zst[k]; let e = k; while (e + 1 < n && zst[e+1] === s0) e++;
+        if (s0 !== 0) out.push({kind: s0 > 0 ? "buy" : "sell", lv: Math.abs(s0), from: k, to: e}); k = e + 1; }
+      return out; })() : (() => {
       const isBuy = new Set(res.buys), isSell = new Set(res.sells), out = [];
       let cur = null;
       for (let i = 0; i < n; i++){
@@ -2111,6 +2123,7 @@ var uPlot=function(){"use strict";const l="u-off",e="u-label",t="width",n="heigh
         const x0 = u.valToPos(xs[sp.from], "x", true), x1 = u.valToPos(xs[Math.min(sp.to+1, n-1)], "x", true);
         if (x1 < L || x0 > R) continue;
         ctx.fillStyle = css(sp.kind === "buy" ? "--buyzone" : "--sellzone");
+        ctx.globalAlpha = sp.lv ? (sp.kind === "buy" ? 0.55 + 0.25 * sp.lv : 0.75 + 0.25 * sp.lv) : 1;
         ctx.fillRect(Math.max(x0,L), top, Math.max(2, Math.min(x1,R) - Math.max(x0,L)), h);
       }
       ctx.restore();
@@ -2133,15 +2146,15 @@ var uPlot=function(){"use strict";const l="u-off",e="u-label",t="width",n="heigh
           ctx.beginPath(); const k = up?1:-1;
           ctx.moveTo(x, y+k*o0); ctx.lineTo(x-w0, y+k*h0); ctx.lineTo(x+w0, y+k*h0); ctx.closePath();
           ctx.stroke(); ctx.fill(); };
-        for (const i of res.buys){ const x=u.valToPos(xs[i],"x",true), y=u.valToPos(d.close[i],"y",true); if (x<u.bbox.left||x>u.bbox.left+u.bbox.width) continue;
+        if (!zst) for (const i of res.buys){ const x=u.valToPos(xs[i],"x",true), y=u.valToPos(d.close[i],"y",true); if (x<u.bbox.left||x>u.bbox.left+u.bbox.width) continue;
           tri(x, y, true, css("--accent"));
           if (!sm) { ctx.fillStyle=css("--accent"); ctx.fillText(fmtN(d.close[i], d.close[i]>=1000?0:1), x, y+34); } }
-        for (const i of (res.pres||[])){ const x=u.valToPos(xs[i],"x",true), y=u.valToPos(d.close[i],"y",true); if (x<u.bbox.left||x>u.bbox.left+u.bbox.width) continue;
+        if (!zst) for (const i of (res.pres||[])){ const x=u.valToPos(xs[i],"x",true), y=u.valToPos(d.close[i],"y",true); if (x<u.bbox.left||x>u.bbox.left+u.bbox.width) continue;
           // 예비(-7%): 속이 빈 삼각형 — 본 신호와 구분
           ctx.save(); ctx.beginPath(); ctx.moveTo(x, y+o0); ctx.lineTo(x-w0, y+h0); ctx.lineTo(x+w0, y+h0); ctx.closePath();
           ctx.fillStyle=css("--surface"); ctx.fill(); ctx.lineWidth=2; ctx.strokeStyle=css("--accent"); ctx.stroke(); ctx.restore();
           if (!sm) { ctx.fillStyle=css("--accent"); ctx.globalAlpha=0.7; ctx.fillText(fmtN(d.close[i], d.close[i]>=1000?0:1), x, y+34); ctx.globalAlpha=1; } }
-        for (const i of res.sells){ const x=u.valToPos(xs[i],"x",true), y=u.valToPos(d.close[i],"y",true); if (x<u.bbox.left||x>u.bbox.left+u.bbox.width) continue;
+        if (!zst) for (const i of res.sells){ const x=u.valToPos(xs[i],"x",true), y=u.valToPos(d.close[i],"y",true); if (x<u.bbox.left||x>u.bbox.left+u.bbox.width) continue;
           tri(x, y, false, css("--bad"));
           if (!sm) { ctx.fillStyle=css("--bad"); ctx.fillText(fmtN(d.close[i], d.close[i]>=1000?0:1), x, y-26); } }
         ctx.restore(); }], setCursor:[u=>{
