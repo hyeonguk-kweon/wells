@@ -1,131 +1,131 @@
 {
- "updated": "2026-10-08 13:42",
+ "updated": "2026-10-09 13:45",
  "items": [
   {
    "label": "QQQ",
    "file": "QQQ.json",
    "name": "Invesco QQQ Trust, Series 1",
-   "last": "2026-10-07"
+   "last": "2026-10-08"
   },
   {
    "label": "SPY",
    "file": "SPY.json",
    "name": "State Street SPDR S&P 500 ETF T",
-   "last": "2026-10-07"
+   "last": "2026-10-08"
   },
   {
    "label": "SOXX",
    "file": "SOXX.json",
    "name": "iShares PHLX SOX Semiconductor ",
-   "last": "2026-10-07"
+   "last": "2026-10-08"
   },
   {
    "label": "TIGER미국나스닥100레버리지:KRX",
    "file": "TIGER미국나스닥100레버리지_KRX.json",
    "name": "TIGER미국나스닥100레버리지",
-   "last": "2026-10-07"
+   "last": "2026-10-08"
   },
   {
    "label": "TIGER미국필라델피아반도체레버리지:KRX",
    "file": "TIGER미국필라델피아반도체레버리지_KRX.json",
    "name": "TIGER미국필라델피아반도체레버리지",
-   "last": "2026-10-07"
+   "last": "2026-10-08"
   },
   {
    "label": "SOXL",
    "file": "SOXL.json",
    "name": "Direxion Daily Semiconductor Bu",
-   "last": "2026-10-07"
+   "last": "2026-10-08"
   },
   {
    "label": "TQQQ",
    "file": "TQQQ.json",
    "name": "ProShares UltraPro QQQ",
-   "last": "2026-10-07"
+   "last": "2026-10-08"
   },
   {
    "label": "GOOGL",
    "file": "GOOGL.json",
    "name": "Alphabet Inc.",
-   "last": "2026-10-07"
+   "last": "2026-10-08"
   },
   {
    "label": "BTC",
    "file": "BTC.json",
    "name": "Grayscale Bitcoin Mini Trust (B",
-   "last": "2026-10-07"
+   "last": "2026-10-08"
   },
   {
    "label": "ETH",
    "file": "ETH.json",
    "name": "Grayscale Ethereum Staking Mini",
-   "last": "2026-10-07"
+   "last": "2026-10-08"
   },
   {
    "label": "AMZN",
    "file": "AMZN.json",
    "name": "Amazon.com, Inc.",
-   "last": "2026-10-07"
+   "last": "2026-10-08"
   },
   {
    "label": "KODEX미국반도체:KRX",
    "file": "KODEX미국반도체_KRX.json",
    "name": "KODEX미국반도체",
-   "last": "2026-10-07"
+   "last": "2026-10-08"
   },
   {
    "label": "KODEXAI전력핵심설비:KRX",
    "file": "KODEXAI전력핵심설비_KRX.json",
    "name": "KODEXAI전력핵심설비",
-   "last": "2026-10-07"
+   "last": "2026-10-08"
   },
   {
    "label": "RISE네트워크인프라:KRX",
    "file": "RISE네트워크인프라_KRX.json",
    "name": "RISE네트워크인프라",
-   "last": "2026-10-07"
+   "last": "2026-10-08"
   },
   {
    "label": "KODEX미국나스닥100:KRX",
    "file": "KODEX미국나스닥100_KRX.json",
    "name": "KODEX미국나스닥100",
-   "last": "2026-10-07"
+   "last": "2026-10-08"
   },
   {
    "label": "TIGERKRX금현물:KRX",
    "file": "TIGERKRX금현물_KRX.json",
    "name": "TIGERKRX금현물",
-   "last": "2026-10-07"
+   "last": "2026-10-08"
   },
   {
    "label": "LG씨엔에스:KRX",
    "file": "LG씨엔에스_KRX.json",
    "name": "LG씨엔에스",
-   "last": "2026-10-07"
+   "last": "2026-10-08"
   },
   {
    "label": "풍산:KRX",
    "file": "풍산_KRX.json",
    "name": "풍산",
-   "last": "2026-10-07"
+   "last": "2026-10-08"
   },
   {
    "label": "에코프로비엠:KRX",
    "file": "에코프로비엠_KRX.json",
    "name": "에코프로비엠",
-   "last": "2026-10-07"
+   "last": "2026-10-08"
   },
   {
    "label": "SK하이닉스:KRX",
    "file": "SK하이닉스_KRX.json",
    "name": "SK하이닉스",
-   "last": "2026-10-07"
+   "last": "2026-10-08"
   },
   {
    "label": "삼성전자:KRX",
    "file": "삼성전자_KRX.json",
    "name": "삼성전자",
-   "last": "2026-10-07"
+   "last": "2026-10-08"
   }
  ]
 }
